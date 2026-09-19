@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page not found — Jamiyan Batnyam</title>
+<meta name="description" content="That page doesn't exist.">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ==========================================================================
+   Tokens
+   Site chrome: zinc neutrals, Satoshi + Inter, 20px card radius (measured
+   from the live Framer site). ContentPlus brand palette is sampled from the
+   page's own style guide board and is only used inside ContentPlus content.
+   ========================================================================== */
+:root {
+  --bg: #F4F4F5;
+  --surface: #FFFFFF;
+  --surface-sunk: #FAFAFA;
+  --ink: #18181B;
+  --ink-dim: #5F5F63;
+  --line: #E4E4E7;
+
+  --brand-purple: #6C3CF0;  /* eyebrow text: brand purple, passes AA on --bg */
+  --brand-mint: #7CF6C5;
+  --brand-yellow: #F9EB5F;
+  --brand-orange: #E86A44;
+
+  --font-display: "Satoshi", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius: 20px;
+  --radius-sm: 12px;
+
+  /* spacing scale */
+  --space-2xs: 8px;
+  --space-xs: 12px;
+  --space-s: 16px;
+  --space-m: 24px;
+  --space-l: 40px;
+  --space-xl: 64px;
+  --space-2xl: 112px;
+
+  /* rhythm */
+  --gap-section: var(--space-2xl);  /* between Tier 2 sections   */
+  --gap-block: var(--space-xl);     /* between Tier 3 blocks      */
+  --card-pad: var(--space-l);       /* inside every white card    */
+
+  /* type scale — Tier 2 is 1.8x Tier 3 and a heavier weight */
+  --h1: 44px;
+  --t2: 36px;
+  --t3: 20px;
+  --t1: 14px;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --gap-section: 72px;
+    --gap-block: 48px;
+    --card-pad: var(--space-m);
+    --h1: 34px;
+    --t2: 28px;   /* 1.56x Tier 3 */
+    --t3: 18px;
+  }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 16px/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+img, video { display: block; max-width: 100%; }
+h1, h2, h3, h4, p, figure, dl, dd { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--brand-purple); outline-offset: 3px; border-radius: 4px; }
+strong { font-weight: 500; color: var(--ink); }
+
+.skip-link {
+  position: absolute; left: 16px; top: -48px;
+  background: var(--ink); color: #fff; padding: 10px 14px; border-radius: 8px;
+  font-size: 14px; text-decoration: none; z-index: 20;
+}
+.skip-link:focus { top: 12px; }
+
+/* ==========================================================================
+   Site nav + layout
+   ========================================================================== */
+.site-nav { background: var(--surface); border-bottom: 1px solid var(--line); }
+.site-nav__inner {
+  max-width: 1240px; margin: 0 auto; padding: 18px 24px;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.site-nav__mark { font-size: 15px; text-decoration: none; color: var(--ink-dim); }
+.site-nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
+.site-nav ul a { font-size: 14px; text-decoration: none; }
+.site-nav ul a:hover { color: var(--ink-dim); }
+
+.layout {
+  max-width: 1240px; margin: 0 auto; padding: 40px 24px 0;
+  display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 56px;
+}
+.content { min-width: 0; max-width: 960px; }
+
+.rail {
+  position: sticky; top: 32px; align-self: start;
+  background: var(--surface); border-radius: var(--radius-sm); padding: 10px 16px;
+}
+.rail a {
+  display: block; padding: 6px 0; font-size: 13px; line-height: 1.5;
+  color: var(--ink-dim); text-decoration: none;
+}
+.rail a:hover { color: var(--ink); }
+.rail a[aria-current="true"] { color: var(--ink); font-weight: 500; }
+
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding-top: 0; }
+  .rail {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; gap: 22px; overflow-x: auto;
+    margin: 0 -24px 32px; padding: 12px 24px; border-radius: 0;
+    border-bottom: 1px solid var(--line); scrollbar-width: none;
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail a { white-space: nowrap; padding: 0; }
+}
+
+/* ==========================================================================
+   Type tiers
+   Tier 1 eyebrow · Tier 2 section heading · Tier 3 subheading
+   ========================================================================== */
+.eyebrow { font: 500 var(--t1)/1.4 var(--font-body); color: var(--brand-purple); margin-bottom: var(--space-2xs); }
+.t2 { font: 700 var(--t2)/1.15 var(--font-display); letter-spacing: -0.02em; }
+.t3 { font: 500 var(--t3)/1.3 var(--font-display); letter-spacing: -0.005em; }
+.body { color: var(--ink-dim); max-width: 64ch; }
+.t3 + .body, .t3 + .body-group { margin-top: var(--space-xs); }
+.body + .body { margin-top: var(--space-s); }
+.section-head .body { margin-top: var(--space-m); }
+
+/* ==========================================================================
+   Rhythm: sections and blocks
+   ========================================================================== */
+.section { margin-top: var(--gap-section); scroll-margin-top: 72px; }
+.section-head + .block { margin-top: var(--space-l); }
+.block + .block,
+.rings + .block { margin-top: var(--gap-block); }
+.block > .t3 + .body + .media-row,
+.block > .t3 + .body + .card,
+.block > .t3 + .body + .ticker,
+.block > .t3 + .card,
+.block > .body + .card { margin-top: var(--space-m); }
+
+/* ==========================================================================
+   Surfaces
+   ========================================================================== */
+.card { background: var(--surface); border-radius: var(--radius); padding: var(--card-pad); }
+
+/* fit: contain media inside a sized box so it can never be clipped */
+.fit { position: relative; }
+.fit > img, .fit > video {
+  position: absolute; inset: var(--fit-pad, 24px);
+  width: calc(100% - 2 * var(--fit-pad, 24px));
+  height: calc(100% - 2 * var(--fit-pad, 24px));
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   Hero + header
+   ========================================================================== */
+.hero-media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 7 / 4; background: #E7E7EA; }
+.hero-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.case-head {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 32px;
+  margin-top: var(--space-xl);
+}
+.case-title { font: 700 var(--h1)/1.1 var(--font-display); letter-spacing: -0.02em; }
+.case-sub { margin-top: 6px; color: var(--ink-dim); font-size: 14px; }
+.facts { display: flex; gap: 56px; }
+.facts dt { font: 500 16px/1.3 var(--font-display); }
+.facts dd { margin-top: 4px; color: var(--ink-dim); font-size: 14px; }
+@media (max-width: 560px) {
+  .case-head { flex-direction: column; gap: 20px; }
+  .facts { gap: 40px; }
+}
+
+.intro { margin-top: var(--space-xl); }
+
+/* My Roles showcase: one tall card, two stacked wide cards */
+.showcase {
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr); gap: var(--space-s);
+  margin-top: var(--space-xl);
+}
+.showcase__tall { grid-row: span 2; background: var(--surface); border-radius: var(--radius); }
+.showcase__wide { aspect-ratio: 2 / 1; background: var(--surface); border-radius: var(--radius); }
+@media (max-width: 760px) {
+  .showcase { grid-template-columns: 1fr; }
+  .showcase__tall { grid-row: auto; aspect-ratio: 4 / 5; }
+}
+
+/* ==========================================================================
+   Two-column text + media
+   Rule: the first split in each Tier 2 section puts media on the right,
+   then splits alternate within that section.
+   ========================================================================== */
+.split {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: var(--space-xl); align-items: center;
+}
+.split--media-left { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+.split--phone { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.split--media-left .split__media { order: -1; }
+@media (max-width: 760px) {
+  .split, .split--media-left, .split--phone { grid-template-columns: 1fr; gap: var(--space-m); }
+  .split--media-left .split__media { order: 0; }
+}
+
+.problem-img { border-radius: var(--radius-sm); overflow: hidden; }
+.problem-img img { width: 100%; height: auto; }
+
+/* single-phone recording cards (Onboarding, Friends & Co-Play, Parental Controls) */
+.phone-card { aspect-ratio: 4 / 5; background: var(--surface); border-radius: var(--radius); --fit-pad: 24px; }
+
+
+
+/* ==========================================================================
+   Gallery
+   ========================================================================== */
+.page-head { padding-top: var(--space-xl); }
+.page-head .t2 { font-size: var(--h1); }
+.page-head p { margin-top: var(--space-s); color: var(--ink-dim); font-size: 15px; }
+
+.toolbar {
+  margin-top: var(--space-l); display: flex; flex-wrap: wrap; gap: var(--space-m);
+  align-items: center; justify-content: space-between;
+}
+.toolbar__group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.toolbar__label { font: 500 12px/1 var(--font-body); color: var(--ink-dim); letter-spacing: .04em; margin-right: 4px; }
+.chipbtn {
+  appearance: none; cursor: pointer; position: relative;
+  padding: 9px 14px; border-radius: 999px;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line);
+  font: 500 14px/1 var(--font-body);
+}
+.chipbtn:hover { border-color: #C9C9CF; }
+.chipbtn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.chipbtn__count { opacity: .6; margin-left: 6px; font-variant-numeric: tabular-nums; }
+
+/* masonry by columns; grid mode switches to equal tiles */
+.gallery { margin-top: var(--space-l); columns: 3; column-gap: var(--space-m); }
+.gallery--grid { columns: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-m); }
+@media (min-width: 1200px) { .gallery { columns: 4; } .gallery--grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 860px)  { .gallery { columns: 2; } .gallery--grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px)  { .gallery { columns: 1; } .gallery--grid { grid-template-columns: 1fr; } }
+
+.piece { break-inside: avoid; margin: 0 0 var(--space-m); }
+.gallery--grid .piece { margin: 0; }
+.piece__open {
+  display: block; width: 100%; padding: 0; border: 0; cursor: zoom-in;
+  background: var(--surface); border-radius: var(--radius-sm); overflow: hidden;
+  position: relative; line-height: 0;
+}
+.piece__open img { width: 100%; height: auto; display: block; background: #EDEDEF; }
+.gallery--grid .piece__open { aspect-ratio: 1; }
+.gallery--grid .piece__open img { height: 100%; object-fit: cover; }
+.piece__open::after {
+  content: ""; position: absolute; inset: 0; border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px rgba(24, 24, 27, .08); pointer-events: none;
+}
+.piece[hidden] { display: none; }
+.gallery__empty { margin-top: var(--space-l); color: var(--ink-dim); }
+
+/* ==========================================================================
+   Viewer
+   ========================================================================== */
+.viewer {
+  width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh;
+  margin: 0; padding: 0; border: 0; background: transparent; overflow: hidden;
+}
+.viewer::backdrop { background: rgba(12, 12, 14, .94); }
+.viewer__stage {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  overflow: hidden; touch-action: none;
+}
+.viewer__img {
+  max-width: 92vw; max-height: 84vh; object-fit: contain;
+  cursor: zoom-in; user-select: none; -webkit-user-drag: none;
+}
+.viewer.is-zoomed .viewer__img {
+  max-width: none; max-height: none; cursor: grab;
+}
+.viewer.is-zoomed.is-panning .viewer__img { cursor: grabbing; }
+.viewer__bar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 16px; flex-wrap: wrap;
+}
+.viewer__top { position: absolute; top: 0; right: 0; z-index: 2; padding: 16px; display: flex; gap: 10px; }
+.vbtn {
+  appearance: none; cursor: pointer; position: relative;
+  min-width: 44px; height: 44px; padding: 0 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, .1); color: #fff; border: 1px solid rgba(255, 255, 255, .22);
+  font: 500 14px/1 var(--font-body); display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.vbtn:hover { background: rgba(255, 255, 255, .18); }
+.vbtn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.viewer__count { color: #fff; font: 500 14px/1 var(--font-body); font-variant-numeric: tabular-nums; opacity: .85; padding: 0 6px; }
+.viewer :focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+@media (max-width: 520px) { .viewer__img { max-width: 96vw; max-height: 74vh; } }
+
+/* ==========================================================================
+   Motion — same vocabulary as the case studies
+   ========================================================================== */
+:root { --mo-fast: 130ms; --mo-mid: 260ms; --mo-ease: cubic-bezier(.34, 1.2, .48, 1); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .chipbtn, .vbtn, .piece__open { transition: transform var(--mo-fast) var(--mo-ease), background-color var(--mo-mid) ease, border-color var(--mo-mid) ease; }
+  .chipbtn:active, .vbtn:active { transform: scale(.96); }
+  .chipbtn::after, .vbtn::after {
+    content: ""; position: absolute; inset: -3px; border-radius: 999px;
+    border: 1.5px solid currentColor; opacity: 0; pointer-events: none;
+  }
+  .is-hit::after { animation: mo-ring 420ms var(--mo-ease); }
+  @keyframes mo-ring { 0% { opacity: .8; transform: scale(1); } 100% { opacity: 0; transform: scale(1.12); } }
+
+  @media (hover: hover) {
+    .piece__open img { transition: transform var(--mo-mid) var(--mo-ease); }
+    .piece__open:hover img { transform: scale(1.03); }
+  }
+
+  .viewer[open] { animation: mo-fade var(--mo-mid) var(--mo-ease); }
+  .viewer[open]::backdrop { animation: mo-fade var(--mo-mid) var(--mo-ease); }
+  .viewer[open] .viewer__img { animation: mo-zoom var(--mo-mid) var(--mo-ease); }
+  .viewer.is-closing, .viewer.is-closing::backdrop { animation: mo-fade var(--mo-fast) var(--mo-ease) reverse; }
+  .viewer.is-zoomed .viewer__img { animation: none; }
+  @keyframes mo-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes mo-zoom { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
+
+  .motion-ready .piece { opacity: 0; transform: translateY(14px);
+    transition: opacity var(--mo-mid) var(--mo-ease), transform 380ms var(--mo-ease);
+    transition-delay: calc(var(--i, 0) * 60ms); }
+  .motion-ready .piece.is-in { opacity: 1; transform: none; }
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.site-footer { margin-top: var(--gap-section); border-top: 1px solid var(--line); }
+.site-footer__inner {
+  max-width: 1240px; margin: 0 auto; padding: 56px 24px 72px;
+  display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+}
+.site-footer__display { font: 700 32px/1.1 var(--font-display); letter-spacing: -0.01em; }
+.site-footer__sub { margin-top: 8px; font-size: 14px; }
+.site-footer__cols { display: flex; gap: 72px; }
+.site-footer h2 { font: 500 15px/1.3 var(--font-display); margin-bottom: 12px; }
+.site-footer ul { list-style: none; margin: 0; padding: 0; }
+.site-footer li + li { margin-top: 8px; }
+.site-footer ul a { font-size: 14px; color: var(--ink-dim); text-decoration: none; }
+.site-footer ul a:hover { color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+</style>
+</head>
+<body>
+<header class="site-nav">
+  <div class="site-nav__inner">
+    <a class="site-nav__mark" href="index.html#home">Jamiyan Batnyam</a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="index.html#projects">Projects</a></li>
+        <li><a href="visual.html">Gallery</a></li>
+        <li><a href="index.html#about-me">About</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap" style="max-width:1240px;margin:0 auto;padding:0 24px">
+  <section style="padding:clamp(80px,14vw,180px) 0">
+    <p class="eyebrow">404</p>
+    <h1 class="t2" style="font-size:var(--h1)">This page doesn't exist</h1>
+    <p style="margin-top:var(--space-m);color:var(--ink-dim);max-width:52ch">
+      The link may be out of date. Everything on the site is one click away below.
+    </p>
+    <div style="margin-top:var(--space-xl);display:flex;flex-wrap:wrap;gap:12px">
+      <a class="chipbtn" href="index.html">Home</a>
+      <a class="chipbtn" href="index.html#projects">Projects</a>
+      <a class="chipbtn" href="visual.html">Gallery</a>
+      <a class="chipbtn" href="index.html#about-me">About</a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div>
+      <p class="site-footer__display">THANKS FOR VISITING</p>
+      <p class="site-footer__sub">Let's keep in touch!</p>
+    </div>
+    <div class="site-footer__cols">
+      <div>
+        <h2>Connect</h2>
+        <ul>
+          <li><a href="mailto:jamyanart@gmail.com">Email</a></li>
+          <li><a href="https://www.linkedin.com/in/jbatnyam" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://drive.google.com/file/d/1n59fu4pS5daSCbGWl0T3oztfOcWMoSbP/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>My Work</h2>
+        <ul>
+          <li><a href="projects/content-plus.html">ContentPlus</a></li>
+          <li><a href="projects/liminal.html">Liminal</a></li>
+          <li><a href="projects/vibe-coding.html">Vibe Coding</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

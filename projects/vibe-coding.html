@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vibe Coding an Embedded Motorcycle Dashboard — Jamiyan Batnyam</title>
+<meta name="description" content="A UX case study on AI-assisted prototyping for a 4-inch Harley-Davidson Sportster S dashboard.">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@500,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ==========================================================================
+   Tokens
+   Site chrome: zinc neutrals, Satoshi + Inter, 20px card radius (measured
+   from the live Framer site). ContentPlus brand palette is sampled from the
+   page's own style guide board and is only used inside ContentPlus content.
+   ========================================================================== */
+:root {
+  --bg: #F4F4F5;
+  --surface: #FFFFFF;
+  --surface-sunk: #FAFAFA;
+  --ink: #18181B;
+  --ink-dim: #5F5F63;
+  --line: #E4E4E7;
+
+  /* Accents sampled from the dashboard itself (see report):
+     amber from the TC / ABS telltales, alert from the low-fuel dot and the
+     tachometer needle, green from the gear-position badge. */
+  --amber: #E8A33D;
+  --amber-soft: #F0B457;
+  --alert: #F1693F;
+  --gear-green: #8FFD80;
+  --pass: #6FE05F;
+  --brand-purple: #B4541F;  /* eyebrow on the light footer area */
+
+  --font-display: "Satoshi", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius: 20px;
+  --radius-sm: 12px;
+
+  /* spacing scale */
+  --space-2xs: 8px;
+  --space-xs: 12px;
+  --space-s: 16px;
+  --space-m: 24px;
+  --space-l: 40px;
+  --space-xl: 64px;
+  --space-2xl: 112px;
+
+  /* rhythm */
+  --gap-section: var(--space-2xl);  /* between Tier 2 sections   */
+  --gap-block: var(--space-xl);     /* between Tier 3 blocks      */
+  --card-pad: var(--space-l);       /* inside every white card    */
+
+  /* type scale — Tier 2 is 1.8x Tier 3 and a heavier weight */
+  --h1: 44px;
+  --t2: 36px;
+  --t3: 20px;
+  --t1: 14px;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --gap-section: 72px;
+    --gap-block: 48px;
+    --card-pad: var(--space-m);
+    --h1: 34px;
+    --t2: 28px;   /* 1.56x Tier 3 */
+    --t3: 18px;
+  }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 16px/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+img, video { display: block; max-width: 100%; }
+h1, h2, h3, h4, p, figure, dl, dd { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--brand-purple); outline-offset: 3px; border-radius: 4px; }
+strong { font-weight: 500; color: var(--ink); }
+
+.skip-link {
+  position: absolute; left: 16px; top: -48px;
+  background: var(--ink); color: #fff; padding: 10px 14px; border-radius: 8px;
+  font-size: 14px; text-decoration: none; z-index: 20;
+}
+.skip-link:focus { top: 12px; }
+
+/* ==========================================================================
+   Site nav + layout
+   ========================================================================== */
+.site-nav { background: var(--surface); border-bottom: 1px solid var(--line); }
+.site-nav__inner {
+  max-width: 1240px; margin: 0 auto; padding: 18px 24px;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.site-nav__mark { font-size: 15px; text-decoration: none; color: var(--ink-dim); }
+.site-nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
+.site-nav ul a { font-size: 14px; text-decoration: none; }
+.site-nav ul a:hover { color: var(--ink-dim); }
+
+.layout {
+  max-width: 1240px; margin: 0 auto; padding: 40px 24px 0;
+  display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 56px;
+}
+.content { min-width: 0; max-width: 960px; }
+
+.rail {
+  position: sticky; top: 32px; align-self: start;
+  background: var(--surface); border-radius: var(--radius-sm); padding: 10px 16px;
+}
+.rail a {
+  display: block; padding: 6px 0; font-size: 13px; line-height: 1.5;
+  color: var(--ink-dim); text-decoration: none;
+}
+.rail a:hover { color: var(--ink); }
+.rail a[aria-current="true"] { color: var(--ink); font-weight: 500; }
+
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; gap: 0; padding-top: 0; }
+  .rail {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; gap: 22px; overflow-x: auto;
+    margin: 0 -24px 32px; padding: 12px 24px; border-radius: 0;
+    border-bottom: 1px solid var(--line); scrollbar-width: none;
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail a { white-space: nowrap; padding: 0; }
+}
+
+/* ==========================================================================
+   Type tiers
+   Tier 1 eyebrow · Tier 2 section heading · Tier 3 subheading
+   ========================================================================== */
+.eyebrow { font: 500 var(--t1)/1.4 var(--font-body); color: var(--brand-purple); margin-bottom: var(--space-2xs); }
+.t2 { font: 700 var(--t2)/1.15 var(--font-display); letter-spacing: -0.02em; }
+.t3 { font: 500 var(--t3)/1.3 var(--font-display); letter-spacing: -0.005em; }
+.body { color: var(--ink-dim); max-width: 64ch; }
+.t3 + .body, .t3 + .body-group { margin-top: var(--space-xs); }
+.body + .body { margin-top: var(--space-s); }
+.section-head .body { margin-top: var(--space-m); }
+
+/* ==========================================================================
+   Rhythm: sections and blocks
+   ========================================================================== */
+.section { margin-top: var(--gap-section); scroll-margin-top: 72px; }
+.section-head + .block { margin-top: var(--space-l); }
+.block + .block,
+.rings + .block { margin-top: var(--gap-block); }
+.block > .t3 + .body + .media-row,
+.block > .t3 + .body + .card,
+.block > .t3 + .body + .ticker,
+.block > .t3 + .card,
+.block > .body + .card { margin-top: var(--space-m); }
+
+/* ==========================================================================
+   Surfaces
+   ========================================================================== */
+.card { background: var(--surface); border-radius: var(--radius); padding: var(--card-pad); }
+
+/* fit: contain media inside a sized box so it can never be clipped */
+.fit { position: relative; }
+.fit > img, .fit > video {
+  position: absolute; inset: var(--fit-pad, 24px);
+  width: calc(100% - 2 * var(--fit-pad, 24px));
+  height: calc(100% - 2 * var(--fit-pad, 24px));
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   Hero + header
+   ========================================================================== */
+.hero-media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 7 / 4; background: #E7E7EA; }
+.hero-media img { width: 100%; height: 100%; object-fit: cover; }
+
+.case-head {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 32px;
+  margin-top: var(--space-xl);
+}
+.case-title { font: 700 var(--h1)/1.1 var(--font-display); letter-spacing: -0.02em; }
+.case-sub { margin-top: 6px; color: var(--ink-dim); font-size: 14px; }
+.facts { display: flex; gap: 56px; }
+.facts dt { font: 500 16px/1.3 var(--font-display); }
+.facts dd { margin-top: 4px; color: var(--ink-dim); font-size: 14px; }
+@media (max-width: 560px) {
+  .case-head { flex-direction: column; gap: 20px; }
+  .facts { gap: 40px; }
+}
+
+.intro { margin-top: var(--space-xl); }
+
+/* My Roles showcase: one tall card, two stacked wide cards */
+.showcase {
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr); gap: var(--space-s);
+  margin-top: var(--space-xl);
+}
+.showcase__tall { grid-row: span 2; background: var(--surface); border-radius: var(--radius); }
+.showcase__wide { aspect-ratio: 2 / 1; background: var(--surface); border-radius: var(--radius); }
+@media (max-width: 760px) {
+  .showcase { grid-template-columns: 1fr; }
+  .showcase__tall { grid-row: auto; aspect-ratio: 4 / 5; }
+}
+
+/* ==========================================================================
+   Two-column text + media
+   Rule: the first split in each Tier 2 section puts media on the right,
+   then splits alternate within that section.
+   ========================================================================== */
+.split {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: var(--space-xl); align-items: center;
+}
+.split--media-left { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+.split--phone { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.split--media-left .split__media { order: -1; }
+@media (max-width: 760px) {
+  .split, .split--media-left, .split--phone { grid-template-columns: 1fr; gap: var(--space-m); }
+  .split--media-left .split__media { order: 0; }
+}
+
+.problem-img { border-radius: var(--radius-sm); overflow: hidden; }
+.problem-img img { width: 100%; height: auto; }
+
+/* single-phone recording cards (Onboarding, Friends & Co-Play, Parental Controls) */
+.phone-card { aspect-ratio: 4 / 5; background: var(--surface); border-radius: var(--radius); --fit-pad: 24px; }
+
+.evidence__open {
+  position: relative; display: block; width: 100%; aspect-ratio: 4 / 3;
+  padding: 0; border: 0; border-radius: var(--radius-sm); overflow: hidden;
+  background: #F1F1F3; cursor: zoom-in;
+}
+.evidence__open img { width: 100%; height: 100%; object-fit: contain; }
+.evidence__chip {
+  position: absolute; right: 10px; bottom: 10px;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 11px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95); color: var(--ink);
+  font: 500 13px/1 var(--font-body);
+  box-shadow: 0 1px 2px rgba(24, 24, 27, 0.18);
+}
+.evidence__chip svg { width: 14px; height: 14px; }
+.evidence__open:hover .evidence__chip { background: #fff; box-shadow: 0 2px 6px rgba(24, 24, 27, 0.22); }
+
+
+.text-button {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 0;
+  background: none; border: 0; cursor: pointer;
+  font: 500 14px/1.2 var(--font-body); color: var(--ink-dim);
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #C9C9CF;
+}
+.text-button:hover { color: var(--ink); text-decoration-color: currentColor; }
+.text-button svg { width: 14px; height: 14px; flex: none; }
+
+
+/* ==========================================================================
+   Full-size viewer
+   ========================================================================== */
+.lightbox {
+  width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh;
+  margin: 0; padding: 0; border: 0; background: transparent;
+}
+.lightbox::backdrop { background: rgba(24, 24, 27, 0.88); }
+.lightbox__stage { width: 100%; height: 100%; display: grid; place-items: center; padding: 64px 20px 24px; }
+.lightbox__stage img { max-width: min(1600px, 100%); max-height: 100%; object-fit: contain; border-radius: 8px; background: #fff; }
+.lightbox__close {
+  position: fixed; top: 16px; right: 16px;
+  padding: 10px 16px; border: 0; border-radius: 999px; cursor: pointer;
+  background: #fff; color: var(--ink); font: 500 14px/1 var(--font-body);
+}
+
+
+/* ==========================================================================
+   Motion
+   All of it lives behind prefers-reduced-motion, and none of it carries
+   meaning on its own — every state change is still stated in text.
+   Timings: press 120ms, screen 260ms, guard 340ms, overlay 300ms.
+   ========================================================================== */
+@media (prefers-reduced-motion: no-preference) {
+
+  /* 1 — press feedback */
+  .btn { transition: transform 120ms cubic-bezier(.2,.7,.3,1), background-color 160ms ease, border-color 160ms ease; }
+  .btn:active:not(:disabled) { transform: scale(0.96); }
+  .btn { position: relative; }
+  .btn::after {
+    content: ""; position: absolute; inset: -2px; border-radius: 12px;
+    border: 1.5px solid var(--amber); opacity: 0; pointer-events: none;
+  }
+  .btn.is-hit::after { animation: ring 420ms cubic-bezier(.2,.7,.3,1); }
+  .btn--alert.is-hit::after { border-color: var(--alert); }
+  @keyframes ring {
+    0%   { opacity: .9; transform: scale(1); }
+    100% { opacity: 0;  transform: scale(1.14); }
+  }
+
+  /* 2 — the screen change, via the View Transitions API where available */
+  .cluster__screen { view-transition-name: cluster-screen; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  ::view-transition-old(cluster-screen) { animation: screen-out 200ms ease both; }
+  ::view-transition-new(cluster-screen) { animation: screen-in 260ms cubic-bezier(.2,.7,.3,1) both; }
+  :root[data-vt="back"] ::view-transition-old(cluster-screen) { animation: screen-out-back 200ms ease both; }
+  :root[data-vt="back"] ::view-transition-new(cluster-screen) { animation: screen-in-back 260ms cubic-bezier(.2,.7,.3,1) both; }
+  @keyframes screen-out      { to { opacity: 0; transform: translateY(-4%) scale(.97); } }
+  @keyframes screen-in       { from { opacity: 0; transform: translateY(5%) scale(.97); } }
+  @keyframes screen-out-back { to { opacity: 0; transform: translateY(4%) scale(.97); } }
+  @keyframes screen-in-back  { from { opacity: 0; transform: translateY(-5%) scale(.97); } }
+
+  /* fallback for browsers without View Transitions */
+  .cluster__screen.is-swap { animation: screen-in 260ms cubic-bezier(.2,.7,.3,1) both; }
+
+  /* 3 — a guard rule refusing the transition */
+  .cluster.is-guard { animation: guard 340ms cubic-bezier(.36,.07,.19,.97); }
+  @keyframes guard {
+    10%, 90% { transform: translateX(-2px); }
+    30%, 70% { transform: translateX(3px); }
+    50%      { transform: translateX(-3px); }
+  }
+  .cluster.is-guard::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    box-shadow: inset 0 0 0 2px var(--amber); animation: guard-ring 600ms ease-out forwards; pointer-events: none;
+  }
+  @keyframes guard-ring { from { opacity: .95; } to { opacity: 0; } }
+  .node--locked[data-active="true"] { animation: pop 300ms cubic-bezier(.2,.7,.3,1); }
+  @keyframes pop { 0% { transform: scale(.94); } 60% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
+  /* 4 — an overlay interrupting */
+  .cluster.is-overlay::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    box-shadow: inset 0 0 0 2px var(--alert); animation: guard-ring 700ms ease-out forwards; pointer-events: none;
+  }
+  .chip[data-active="true"] { animation: pop 300ms cubic-bezier(.2,.7,.3,1); }
+
+  /* 5 — the traversed edge, with a dot running down it */
+  .edge { position: relative; transition: color 200ms ease; }
+  .edge::before {
+    content: ""; position: absolute; left: 3px; top: 2px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--amber); opacity: 0;
+  }
+  .edge.is-travel::before { animation: travel 420ms cubic-bezier(.4,0,.2,1); }
+  @keyframes travel {
+    0%   { opacity: 0; transform: translateY(-10px); }
+    30%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(14px); }
+  }
+
+  /* 6 — a readout value that just changed */
+  .val.is-updated { animation: flip 260ms cubic-bezier(.2,.7,.3,1); }
+  @keyframes flip {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .readout__msg.is-updated { animation: flip 300ms cubic-bezier(.2,.7,.3,1); }
+
+  /* 7 — the score, counted up once when it scrolls into view */
+  .score__bar span { transition: width 1100ms cubic-bezier(.2,.7,.3,1); }
+  .score__bar.is-armed span { width: 0; transition: none; }
+
+  /* the active node settling */
+  .node { transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease; }
+}
+
+/* the cluster needs a positioning context for the rings above */
+.cluster { position: relative; }
+
+/* ==========================================================================
+   Dark canvas
+   The case study body runs edge-to-edge dark; every reused component picks
+   the new values up through the same tokens.
+   ========================================================================== */
+.dark {
+  --bg: #0E0F12;
+  --surface: #17191E;
+  --surface-sunk: #1F222A;
+  --ink: #F2F3F5;
+  --ink-dim: #A8ADB8;      /* 8.5:1 on the dark background */
+  --line: #2A2E37;
+  --brand-purple: var(--amber);   /* section labels */
+  background: var(--bg);
+  color: var(--ink);
+  padding-bottom: var(--space-2xl);
+}
+.dark .rail { background: var(--surface); }
+.dark .rail a { color: var(--ink-dim); }
+.dark .rail a:hover, .dark .rail a[aria-current="true"] { color: var(--ink); }
+.dark .card { border: 1px solid var(--line); }
+.dark .evidence__open { background: #101217; }
+.dark .evidence__chip { background: rgba(23, 25, 30, 0.94); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); }
+.dark .evidence__open:hover .evidence__chip { background: var(--surface-sunk); }
+.dark .text-button { color: var(--ink-dim); text-decoration-color: #4A4F5B; }
+.dark .text-button:hover { color: var(--ink); }
+.dark :focus-visible { outline-color: var(--amber-soft); }
+@media (max-width: 1000px) { .dark .rail { border-bottom: 1px solid var(--line); } }
+
+.mono { font-variant-numeric: tabular-nums; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+
+/* ==========================================================================
+   Challenge cards — five cards on a six-column grid, so no row has a hole
+   ========================================================================== */
+.cards5 { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-s); }
+.cards5 > * { grid-column: span 2; }
+.cards5 > *:nth-child(4), .cards5 > *:nth-child(5) { grid-column: span 3; }
+.card-num { font: 500 12px/1 var(--font-body); color: var(--amber); letter-spacing: 0.04em; }
+.card-title { margin-top: var(--space-s); font: 500 18px/1.3 var(--font-display); }
+.card-body { margin-top: 10px; font-size: 15px; line-height: 1.55; color: var(--ink-dim); }
+@media (max-width: 900px) { .cards5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cards5 > *, .cards5 > *:nth-child(4), .cards5 > *:nth-child(5) { grid-column: span 1; }
+  .cards5 > *:nth-child(5) { grid-column: span 2; } }
+@media (max-width: 560px) { .cards5 { grid-template-columns: 1fr; }
+  .cards5 > *, .cards5 > *:nth-child(5) { grid-column: span 1; } }
+
+/* ==========================================================================
+   Process — a loop, drawn as one
+   ========================================================================== */
+.loop { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+.loop__step { flex: 1 1 150px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--space-m); }
+.loop__step h4 { font: 500 16px/1.3 var(--font-display); }
+.loop__step p { margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--ink-dim); }
+.loop__arrow { align-self: center; color: var(--amber); font-size: 18px; line-height: 1; }
+.loop__back {
+  margin-top: 10px; display: flex; align-items: center; gap: 10px;
+  font: 500 13px/1 var(--font-body); color: var(--amber);
+}
+.loop__back::before, .loop__back::after { content: ""; height: 1px; background: linear-gradient(90deg, transparent, var(--amber)); flex: 1; }
+.loop__back::before { background: linear-gradient(90deg, var(--amber), transparent); }
+@media (max-width: 760px) { .loop__arrow { transform: rotate(90deg); align-self: center; } .loop__step { flex: 1 1 100%; } }
+
+/* ==========================================================================
+   System-logic concepts, tagged with the terms the simulator reports
+   ========================================================================== */
+.concepts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-s); }
+.concept { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: var(--space-m); }
+.concept h4 { font: 500 17px/1.3 var(--font-display); }
+.concept p { margin-top: 8px; font-size: 14px; line-height: 1.55; color: var(--ink-dim); }
+.tag {
+  display: inline-block; padding: 3px 8px; border-radius: 5px;
+  font: 500 11px/1.4 var(--font-body); letter-spacing: 0.03em;
+  background: rgba(232, 163, 61, 0.14); color: var(--amber-soft); border: 1px solid rgba(232, 163, 61, 0.3);
+}
+@media (max-width: 900px) { .concepts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .concepts { grid-template-columns: 1fr; } }
+
+/* ==========================================================================
+   The simulator: cluster + controls + readout, beside the state machine
+   ========================================================================== */
+.sim { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-l); align-items: start; }
+@media (max-width: 900px) { .sim { grid-template-columns: 1fr; } }
+
+.cluster {
+  position: relative; aspect-ratio: 1; border-radius: 50%;
+  background: #05070A; border: 1px solid var(--line); overflow: hidden;
+  display: grid; place-items: center;
+}
+.cluster__screen { position: absolute; inset: 0; display: grid; place-items: center; }
+.cluster__screen img { width: 100%; height: 100%; object-fit: contain; }
+.cluster__blank { padding: 12% 14%; text-align: center; color: var(--ink-dim); font-size: 14px; line-height: 1.5; }
+.cluster__blank strong { display: block; color: var(--ink); font: 500 17px/1.3 var(--font-display); margin-bottom: 8px; }
+
+.controls { margin-top: var(--space-m); display: grid; gap: var(--space-s); }
+.controls__row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.controls__label { flex: 1 0 100%; font: 500 12px/1 var(--font-body); color: var(--ink-dim); letter-spacing: 0.04em; }
+.btn {
+  appearance: none; cursor: pointer;
+  padding: 11px 16px; border-radius: 10px;
+  background: var(--surface-sunk); color: var(--ink); border: 1px solid var(--line);
+  font: 500 14px/1 var(--font-body);
+}
+.btn:hover { border-color: #3C4插; }
+.btn:hover { border-color: #3C424E; background: #262A33; }
+.btn[aria-pressed="true"] { background: var(--amber); border-color: var(--amber); color: #12140F; }
+.btn--alert[aria-pressed="true"] { background: var(--alert); border-color: var(--alert); color: #14100E; }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.controls__note { font-size: 13px; line-height: 1.5; color: var(--ink-dim); }
+
+.readout {
+  margin-top: var(--space-m); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: #101217; padding: var(--space-m);
+}
+.readout dl { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 12px; margin: 0; }
+.readout dt { font: 500 12px/1.5 var(--font-body); color: var(--ink-dim); letter-spacing: 0.03em; }
+.readout dd { margin: 0; font-size: 14px; line-height: 1.5; }
+.readout .val { color: var(--amber-soft); }
+.readout .val--none { color: var(--ink-dim); }
+.readout__msg { margin-top: var(--space-s); padding-top: var(--space-s); border-top: 1px solid var(--line); font-size: 14px; line-height: 1.55; }
+.readout__msg[data-kind="guard"] { color: var(--amber-soft); }
+.readout__msg[data-kind="edge"] { color: var(--alert); }
+
+/* the state machine, drawn from the same data the simulator runs on */
+.machine { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--card-pad); }
+.machine h4 { font: 500 16px/1.3 var(--font-display); }
+.machine__hint { margin-top: 6px; font-size: 13px; line-height: 1.5; color: var(--ink-dim); }
+.machine__flow { margin-top: var(--space-m); display: flex; flex-direction: column; gap: 6px; }
+.node {
+  padding: 11px 14px; border-radius: 8px;
+  background: var(--surface-sunk); border: 1px solid var(--line);
+  font: 500 14px/1.25 var(--font-body); color: var(--ink-dim);
+}
+.node[data-active="true"] { background: var(--amber); border-color: var(--amber); color: #12140F; }
+.node--locked { margin-left: 26px; border-style: dashed; position: relative; }
+.node--locked::before {
+  content: ""; position: absolute; left: -14px; top: -10px; bottom: 50%;
+  border-left: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  width: 12px; border-bottom-left-radius: 6px;
+}
+.edge { color: #949BA8; font-size: 13px; line-height: 1; padding-left: 14px; }
+.edge[data-active="true"] { color: var(--amber); }
+.machine__return { margin-top: 12px; font-size: 13px; color: var(--ink-dim); }
+.machine__overlays { margin-top: var(--space-m); padding-top: var(--space-m); border-top: 1px solid var(--line); display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  padding: 7px 11px; border-radius: 999px; font: 500 12px/1 var(--font-body);
+  border: 1px solid var(--line); color: var(--ink-dim); background: transparent;
+}
+.chip[data-active="true"] { border-color: var(--alert); color: var(--alert); }
+
+
+.sim__caption { margin-top: var(--space-m); font-size: 13px; line-height: 1.6; color: var(--ink-dim); }
+
+/* ==========================================================================
+   Iteration comparison
+   ========================================================================== */
+.compare__tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.compare__frame {
+  margin-top: var(--space-m); aspect-ratio: 4 / 3; border-radius: var(--radius-sm);
+  background: #101217; border: 1px solid var(--line); overflow: hidden;
+  display: grid; place-items: center;
+}
+.compare__frame img { width: 100%; height: 100%; object-fit: contain; }
+.compare__caption { margin-top: var(--space-s); font-size: 14px; line-height: 1.55; color: var(--ink-dim); }
+
+/* ==========================================================================
+   Iterations
+   ========================================================================== */
+.iter { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--card-pad); }
+.iter + .iter { margin-top: var(--space-m); }
+.iter__label { font: 500 12px/1 var(--font-body); color: var(--amber); letter-spacing: 0.04em; }
+.iter__title { margin-top: 10px; font: 700 24px/1.2 var(--font-display); letter-spacing: -0.015em; }
+.iter__shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-m); margin-top: var(--space-l); }
+@media (max-width: 760px) { .iter__shots { grid-template-columns: 1fr; } }
+.verdicts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-m); margin-top: var(--space-l); }
+@media (max-width: 760px) { .verdicts { grid-template-columns: 1fr; } }
+.verdict h4 { font: 500 13px/1 var(--font-body); padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.verdict--good h4 { color: var(--pass); }
+.verdict--bad h4 { color: var(--alert); }
+.verdict ul { margin: 12px 0 0; padding-left: 18px; }
+.verdict li { font-size: 14px; line-height: 1.55; color: var(--ink-dim); }
+.verdict li + li { margin-top: 7px; }
+.takeaway {
+  margin-top: var(--space-l); padding: var(--space-m);
+  border-radius: var(--radius-sm); border-left: 3px solid var(--amber);
+  background: rgba(232, 163, 61, 0.08);
+}
+.takeaway h4 { font: 500 12px/1 var(--font-body); color: var(--amber); letter-spacing: 0.04em; }
+.takeaway p { margin-top: 10px; font: 500 17px/1.45 var(--font-display); }
+@media (max-width: 760px) { .takeaway p { font-size: 15px; } }
+
+/* ==========================================================================
+   Scorecard
+   ========================================================================== */
+.score { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--space-l); align-items: center; }
+@media (max-width: 760px) { .score { grid-template-columns: 1fr; gap: var(--space-m); } }
+.score__label { font: 500 12px/1 var(--font-body); color: var(--ink-dim); letter-spacing: 0.05em; }
+.score__big { margin-top: 12px; font: 700 clamp(56px, 9vw, 92px)/1 var(--font-display); letter-spacing: -0.03em; }
+.score__big small { font-size: 0.42em; color: var(--ink-dim); letter-spacing: -0.01em; }
+.score__sub { margin-top: 10px; font-size: 14px; color: var(--ink-dim); }
+.score__bar { margin-top: var(--space-m); height: 8px; border-radius: 999px; background: var(--surface-sunk); overflow: hidden; }
+.score__bar span { display: block; height: 100%; width: 97.78%; background: var(--pass); }
+.score__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
+.score__cell { background: var(--surface); padding: var(--space-m); }
+.score__cell p:first-child { font: 500 13px/1 var(--font-body); color: var(--ink-dim); }
+.score__num { margin-top: 10px; font: 700 26px/1 var(--font-display); letter-spacing: -0.02em; }
+.score__num--fail { color: var(--alert); }
+
+/* ==========================================================================
+   State gallery
+   ========================================================================== */
+.states { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-m); }
+.states figure { margin: 0; }
+.states .evidence__open { aspect-ratio: 1; border-radius: 50%; }
+.states figcaption { margin-top: 10px; text-align: center; font-size: 13px; color: var(--ink-dim); }
+@media (max-width: 900px) { .states { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .states { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* three-column notes (how I measured) */
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-s); }
+@media (max-width: 760px) { .trio { grid-template-columns: 1fr; } }
+
+/* ==========================================================================
+   Ideation pair
+   ========================================================================== */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-l); }
+@media (max-width: 760px) { .pair { grid-template-columns: 1fr; gap: var(--space-m); } }
+
+/* ==========================================================================
+   Full-width media
+   ========================================================================== */
+.card--media img { width: 100%; height: auto; border-radius: 8px; }
+.strip-card { --fit-pad: 0px; }
+.strip-card .fit { aspect-ratio: 8 / 3; }   /* Videos + Activities strips share 2.66:1 */
+.device-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-m); }
+.device-pair .fit { aspect-ratio: 4 / 3; --fit-pad: 0px; }
+@media (max-width: 560px) { .device-pair { grid-template-columns: 1fr; } }
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.site-footer { margin-top: var(--gap-section); border-top: 1px solid var(--line); }
+.site-footer__inner {
+  max-width: 1240px; margin: 0 auto; padding: 56px 24px 72px;
+  display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+}
+.site-footer__display { font: 700 32px/1.1 var(--font-display); letter-spacing: -0.01em; }
+.site-footer__sub { margin-top: 8px; font-size: 14px; }
+.site-footer__cols { display: flex; gap: 72px; }
+.site-footer h2 { font: 500 15px/1.3 var(--font-display); margin-bottom: 12px; }
+.site-footer ul { list-style: none; margin: 0; padding: 0; }
+.site-footer li + li { margin-top: 8px; }
+.site-footer ul a { font-size: 14px; color: var(--ink-dim); text-decoration: none; }
+.site-footer ul a:hover { color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-nav">
+  <div class="site-nav__inner">
+    <a class="site-nav__mark" href="../index.html#home">Jamiyan Batnyam</a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="../index.html#home">Home</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../visual.html">Gallery</a></li>
+        <li><a href="../index.html#about-me">About</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="dark">
+<div class="layout">
+  <nav class="rail" aria-label="Case study sections">
+    <a href="#overview">Overview</a>
+    <a href="#challenge">Challenge</a>
+    <a href="#process">Process</a>
+    <a href="#iterations">Iterations</a>
+    <a href="#final-delivery">Final Delivery</a>
+    <a href="#reflection">Reflection</a>
+  </nav>
+
+  <main id="main" class="content">
+
+    <!-- ================================================================ HERO -->
+    <section id="hero">
+      <div class="hero-media" style="aspect-ratio:1413/1113; background:#05070A">
+        <img src="https://framerusercontent.com/images/3WinJVulNQwWIQ1isblfTQpUG5k.png?scale-down-to=2048"
+             alt="The prototype dashboard: a round instrument cluster reading 0 MPH" width="1413" height="1113"
+             style="object-fit:contain">
+      </div>
+    </section>
+
+    <!-- ============================================================ OVERVIEW -->
+    <section id="overview" class="intro" style="scroll-margin-top:72px">
+      <h1 class="case-title">Vibe Coding an Embedded Motorcycle Dashboard</h1>
+      <p class="body" style="margin-top:var(--space-s); font-size:18px; color:var(--ink)">A UX case study on AI-assisted prototyping for a 4-inch Harley-Davidson Sportster S dashboard</p>
+      <p class="body" style="margin-top:var(--space-m)">I approached this project as an experiment in learning how to work with AI critically. My goal was not to create a perfect prototype, but to understand how far vibe coding could go when the interface was not a simple website or mobile app.</p>
+
+      <div class="trio" style="margin-top:var(--space-xl)">
+        <div class="card"><p class="card-num">Role</p><p class="card-body" style="margin-top:12px">UX Designer / AI-assisted prototyper</p></div>
+        <div class="card"><p class="card-num">Tools</p><p class="card-body" style="margin-top:12px">Claude, Codex, ChatGPT</p></div>
+        <div class="card"><p class="card-num">Focus</p><p class="card-body" style="margin-top:12px">Embedded UI, state machines, interaction logic</p></div>
+      </div>
+    </section>
+
+    <!-- =========================================================== CHALLENGE -->
+    <section id="challenge" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Project Challenge</p>
+        <h2 class="t2">This was not a normal app screen</h2>
+        <p class="body">The prototype was a 4-inch digital motorcycle dashboard. That meant I had to think about rider attention, physical controls, safety rules, and what should happen when several system events happen at once.</p>
+      </div>
+      <div class="block">
+        <div class="cards5">
+          <article class="card">
+            <p class="card-num">01</p>
+            <h4 class="card-title">Glanceable by design</h4>
+            <p class="card-body">The rider cannot look away for long, so the dashboard needed clear hierarchy and fast recognition.</p>
+          </article>
+          <article class="card">
+            <p class="card-num">02</p>
+            <h4 class="card-title">Physical controls</h4>
+            <p class="card-body">The UI had to work through motorcycle controls like Page, Home, Trip, and D-pad input instead of touch.</p>
+          </article>
+          <article class="card">
+            <p class="card-num">03</p>
+            <h4 class="card-title">Riding guard rules</h4>
+            <p class="card-body">Some features, especially Settings and Diagnostics, needed to lock or change behavior while riding.</p>
+          </article>
+          <article class="card">
+            <p class="card-num">04</p>
+            <h4 class="card-title">Priority overlays</h4>
+            <p class="card-body">Low fuel, incoming calls, and prompts needed interruption rules so the rider always sees the highest-priority event.</p>
+          </article>
+          <article class="card">
+            <p class="card-num">05</p>
+            <h4 class="card-title">Small screen, big system</h4>
+            <p class="card-body">The interface only had five main sections, but the logic underneath included states, triggers, guards, overlays, and edge cases.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= PROCESS -->
+    <section id="process" class="section">
+      <div class="section-head">
+        <p class="eyebrow">My Process</p>
+        <h2 class="t2">Analyze &rarr; document &rarr; build &rarr; test &rarr; repeat</h2>
+        <p class="body">I treated vibe coding as a learning loop, not a shortcut. Each prompt became a design decision, and each failure told me what I had not explained clearly enough yet.</p>
+      </div>
+      <div class="block">
+        <div class="loop">
+          <div class="loop__step">
+            <h4>Analyze</h4>
+            <p>I studied the dashboard structure, rider context, and safety constraints.</p>
+          </div>
+          <span class="loop__arrow" aria-hidden="true">&rarr;</span>
+          <div class="loop__step">
+            <h4>Document</h4>
+            <p>I mapped sections, controls, states, overlays, and guard rules.</p>
+          </div>
+          <span class="loop__arrow" aria-hidden="true">&rarr;</span>
+          <div class="loop__step">
+            <h4>Build</h4>
+            <p>I used AI to create working HTML, CSS, and JavaScript prototypes.</p>
+          </div>
+          <span class="loop__arrow" aria-hidden="true">&rarr;</span>
+          <div class="loop__step">
+            <h4>Test</h4>
+            <p>I tested the output with checklist criteria instead of trusting the visual result.</p>
+          </div>
+          <span class="loop__arrow" aria-hidden="true">&rarr;</span>
+          <div class="loop__step">
+            <h4>Repeat</h4>
+            <p>I updated prompts and prototype logic based on what failed.</p>
+          </div>
+        </div>
+        <p class="loop__back">back to analyze</p>
+      </div>
+    </section>
+
+    <!-- ======================================================== SYSTEM LOGIC -->
+    <section class="section" style="scroll-margin-top:72px">
+      <div class="section-head">
+        <p class="eyebrow">System Logic Under The Surface</p>
+        <h2 class="t2">The hard part was what the screen had to remember.</h2>
+        <p class="body">Once the prototype became interactive, I had to define the invisible rules behind the interface. These were the concepts that made the project more like an embedded HMI than a normal website. Every tag below shows up in the simulator further down the page.</p>
+      </div>
+      <div class="block">
+        <div class="concepts">
+          <article class="concept">
+            <p><span class="tag">State</span></p>
+            <h4 style="margin-top:12px">State</h4>
+            <p>A state is where the system currently is, like Home, Navigation, Media, Vehicle, Settings, or Settings Locked.</p>
+          </article>
+          <article class="concept">
+            <p><span class="tag">Transition</span></p>
+            <h4 style="margin-top:12px">Transition</h4>
+            <p>A transition is the move from one state to another, such as pressing Page to move from Home to Navigation.</p>
+          </article>
+          <article class="concept">
+            <p><span class="tag">Trigger</span></p>
+            <h4 style="margin-top:12px">Trigger</h4>
+            <p>A trigger is what causes the system to change, like a button press, a low-fuel event, or an incoming call.</p>
+          </article>
+          <article class="concept">
+            <p><span class="tag">Guard</span></p>
+            <h4 style="margin-top:12px">Guard rule</h4>
+            <p>A guard rule decides whether a change is allowed, like blocking Settings while the motorcycle is moving.</p>
+          </article>
+          <article class="concept">
+            <p><span class="tag">Overlay</span></p>
+            <h4 style="margin-top:12px">Overlay</h4>
+            <p>An overlay interrupts the normal screen when something important happens, such as Low Fuel or Incoming Call.</p>
+          </article>
+          <article class="concept">
+            <p><span class="tag">Edge case</span></p>
+            <h4 style="margin-top:12px">Edge case</h4>
+            <p>An edge case is the situation that breaks the simple version of the design, like receiving a call while another prompt is active.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== ITERATIONS -->
+    <section id="iterations" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Iteration Process</p>
+        <h2 class="t2">From prompting to system thinking.</h2>
+        <p class="body">At the beginning of this project, I thought the hardest part would be building the dashboard interface. After three iterations, I realized the bigger challenge was learning how to communicate system logic clearly enough for AI to build it without guessing.</p>
+        <p class="body" style="margin-top:var(--space-s)">Each iteration taught me something different. The first showed me the limits of a generic prompt. The second helped me understand the cost of long chats, token limits, and visual replication problems. The final iteration with Codex gave me the strongest result, but it also proved that AI still needs detailed guidance, testing, and human decision-making.</p>
+      </div>
+
+      <div class="block">
+        <div class="card" data-compare>
+          <h3 class="t3">How close each iteration got</h3>
+          <p class="body" style="margin-top:8px; font-size:14px">Same frame, same scale &mdash; switch between the three attempts and the bike itself.</p>
+          <div class="compare__tabs" style="margin-top:var(--space-m)" role="group" aria-label="Choose an iteration to compare">
+            <button class="btn" type="button" data-cmp="1" aria-pressed="true">Iteration 1</button>
+            <button class="btn" type="button" data-cmp="2" aria-pressed="false">Iteration 2</button>
+            <button class="btn" type="button" data-cmp="3" aria-pressed="false">Iteration 3</button>
+            <button class="btn" type="button" data-cmp="ref" aria-pressed="false">Real Sportster S</button>
+          </div>
+          <div class="compare__frame">
+            <img id="cmp-img" src="https://framerusercontent.com/images/pKgCeeavTuVpLTJjlRHfO5AE5G8.png?scale-down-to=1024" alt="Iteration 1 prototype screen" width="563" height="435">
+          </div>
+          <p class="compare__caption" id="cmp-cap" aria-live="polite">Iteration 1: useful for testing logic direction, but not visually close enough.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <article class="iter">
+          <p class="iter__label">Iteration 1 / Claude Sonnet 4.6</p>
+          <h3 class="iter__title">Starting with the logic</h3>
+          <p class="body" style="margin-top:var(--space-m)">For the first iteration, I gave Claude all of my motorcycle dashboard logic documents and asked it to create a prototype. My main mistake was making the prompt too general and expecting the AI to understand the full system at once. Claude understood some of the logic, but the visual design was weak. The result felt more like a logic test than a realistic Harley-Davidson dashboard prototype.</p>
+          <div class="iter__shots">
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/pKgCeeavTuVpLTJjlRHfO5AE5G8.png?scale-down-to=2048" data-alt="Iteration 1 prototype screen" aria-label="View the iteration 1 screen full size"><img src="https://framerusercontent.com/images/pKgCeeavTuVpLTJjlRHfO5AE5G8.png?scale-down-to=1024" alt="" width="563" height="435" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <p class="caption">Iteration 1: useful for testing logic direction, but not visually close enough.</p>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=2048" data-alt="Photo of the real Harley-Davidson dashboard" aria-label="View the reference photo full size"><img src="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=1024" alt="" width="1280" height="720" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <p class="caption">Reference: actual Harley-Davidson dashboard home-screen proportions.</p>
+            </figure>
+          </div>
+          <div class="verdicts">
+            <div class="verdict verdict--good">
+              <h4>What worked</h4>
+              <ul>
+                <li>The prototype started to follow the system logic from my documents.</li>
+                <li>Claude understood some of the dashboard structure.</li>
+                <li>The process showed me that detailed documentation matters.</li>
+                <li>It gave me a starting point for testing embedded UI logic.</li>
+              </ul>
+            </div>
+            <div class="verdict verdict--bad">
+              <h4>What did not work</h4>
+              <ul>
+                <li>The prompt was too broad and not specific enough.</li>
+                <li>Claude made assumptions instead of asking questions.</li>
+                <li>The visual design did not look close to the actual dashboard.</li>
+                <li>I treated the AI like it could solve the whole project at once.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="takeaway">
+            <h4>Key takeaway</h4>
+            <p>Prompting is part of the design process. I should have asked Claude to plan first, break the project into smaller parts, and ask me questions before making decisions.</p>
+          </div>
+        </article>
+
+        <article class="iter">
+          <p class="iter__label">Iteration 2 / Claude Opus 4.7</p>
+          <h3 class="iter__title">Trying to improve the visual design</h3>
+          <p class="body" style="margin-top:var(--space-m)">For the second iteration, I tried to make the dashboard look closer to the real Harley-Davidson Sportster S display. At first, I continued from the previous Claude chat, but the chat had become too long, so Claude started losing context and using tokens quickly. I then started a fresh chat with Opus and worked more step by step. The result improved and felt more like a circular motorcycle dashboard, but it still did not fully match the reference.</p>
+          <div class="iter__shots">
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/0pqKxf2epsZH2GHxF4iR9RE2BHk.png?scale-down-to=2048" data-alt="Iteration 2 prototype screen" aria-label="View the iteration 2 screen full size"><img src="https://framerusercontent.com/images/0pqKxf2epsZH2GHxF4iR9RE2BHk.png?scale-down-to=1024" alt="" width="1324" height="1188" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <p class="caption">Iteration 2: closer circular structure, but the lower notch and proportions still needed work.</p>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/Ci0Uc7sCcrFZINOPD9y9HeSC6Yc.png?scale-down-to=2048" data-alt="Cleaned-up reference image" aria-label="View the cleaned reference image full size"><img src="https://framerusercontent.com/images/Ci0Uc7sCcrFZINOPD9y9HeSC6Yc.png?scale-down-to=1024" alt="" width="1005" height="738" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <p class="caption">Cleaned reference image used later to guide the final Codex build.</p>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/pEu8rqpmeXya9DLouL8Lz93Z2w.png?scale-down-to=2048" data-alt="A further iteration 2 screen" aria-label="View this iteration 2 screen full size"><img src="https://framerusercontent.com/images/pEu8rqpmeXya9DLouL8Lz93Z2w.png?scale-down-to=1024" alt="" width="645" height="601" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <p class="caption"><!-- FLAG: on the live page this image repeats the caption above it. Needs its own. --></p>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/ScuZrwHb0pwG4dgiTMexiCRY1IA.png?scale-down-to=2048" data-alt="A further reference image" aria-label="View this reference image full size"><img src="https://framerusercontent.com/images/ScuZrwHb0pwG4dgiTMexiCRY1IA.png?scale-down-to=1024" alt="" width="1365" height="768" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <p class="caption"><!-- FLAG: on the live page this image repeats the caption above it. Needs its own. --></p>
+            </figure>
+          </div>
+          <div class="verdicts">
+            <div class="verdict verdict--good">
+              <h4>What worked</h4>
+              <ul>
+                <li>Starting a fresh chat improved the results.</li>
+                <li>Breaking the work into smaller steps helped Claude perform better.</li>
+                <li>The dashboard became more circular and more motorcycle-like.</li>
+                <li>The logic still worked fairly well because the original documents were detailed.</li>
+                <li>I learned how important model choice is for complex design tasks.</li>
+              </ul>
+            </div>
+            <div class="verdict verdict--bad">
+              <h4>What did not work</h4>
+              <ul>
+                <li>Continuing the old chat caused context and token problems.</li>
+                <li>Claude struggled to replicate the dashboard accurately from reference images.</li>
+                <li>The bottom curved notch was especially difficult to recreate.</li>
+                <li>Some visual fixes broke other parts of the design.</li>
+                <li>Token limits slowed the process and made experimentation harder.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="takeaway">
+            <h4>Key takeaway</h4>
+            <p>AI is not always good at visual precision, especially when the design depends on specific shapes, spacing, and proportions. A fresh chat, a clear plan, and smaller prompts produced better results than one long overloaded conversation.</p>
+          </div>
+        </article>
+
+        <article class="iter">
+          <p class="iter__label">Iteration 3 / Codex GPT-5.5</p>
+          <h3 class="iter__title">Building the strongest prototype</h3>
+          <p class="body" style="margin-top:var(--space-m)">For the third and final iteration, I switched from Claude to Codex, which made the process smoother and gave me more room to experiment. This time, I started with a clearer process. Before adding all the logic, I focused on replicating the home screen as closely as possible.</p>
+          <p class="body" style="margin-top:var(--space-s)">The first result was better than earlier versions, but it still needed refinement. I realized my reference image was a low-quality YouTube screenshot, so I used Gemini to clean it up and remove the background. After giving Codex the improved reference, the design became much closer.</p>
+          <p class="body" style="margin-top:var(--space-s)">A method that helped a lot was drawing on screenshots to mark problem areas. When I did not know how to describe a shape, I asked AI what to call it, then used that wording to write more specific prompts.</p>
+          <div class="iter__shots">
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/5yVjq5M5txb6Pkw3o458a6mjI.png?scale-down-to=2048" data-alt="Iteration 3 home page" aria-label="View the iteration 3 home page full size"><img src="https://framerusercontent.com/images/5yVjq5M5txb6Pkw3o458a6mjI.png?scale-down-to=1024" alt="" width="1022" height="1000" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <p class="caption">Iteration 3: Home page</p>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/58ioPSq9GfaPyLCCr3XzftgSJw.png?scale-down-to=2048" data-alt="Iteration 3 home page" aria-label="View the second iteration 3 home page full size"><img src="https://framerusercontent.com/images/58ioPSq9GfaPyLCCr3XzftgSJw.png?scale-down-to=1024" alt="" width="1082" height="938" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <p class="caption">Iteration 3: Home page</p>
+            </figure>
+          </div>
+          <div class="verdicts">
+            <div class="verdict verdict--good">
+              <h4>What worked</h4>
+              <ul>
+                <li>Codex handled the project more smoothly than Claude.</li>
+                <li>It was better at recreating the dashboard from reference images.</li>
+                <li>Token limits were less disruptive.</li>
+                <li>Starting with the home screen helped control the design.</li>
+                <li>Using a cleaned-up reference image improved the visual result.</li>
+                <li>Screenshot markup helped me explain specific design problems more clearly.</li>
+              </ul>
+            </div>
+            <div class="verdict verdict--bad">
+              <h4>What did not work</h4>
+              <ul>
+                <li>The bottom curved notch still required many prompts to fix.</li>
+                <li>Adding the same visual system to every page caused layout issues.</li>
+                <li>Some shapes overlapped when new design elements were added.</li>
+                <li>A few logic items still did not work perfectly.</li>
+                <li>Bottom information icons like fuel, time, and other indicators needed more polish.</li>
+                <li>When I tried to add too many visual details, parts of the design broke.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="takeaway">
+            <h4>Key takeaway</h4>
+            <p>Codex gave me the strongest result, but it still required constant direction. The biggest improvement came from combining clear system documents, better reference images, smaller tasks, and visual markup.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ====================================================== FINAL DELIVERY -->
+    <section id="final-delivery" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Final Prototype</p>
+        <h2 class="t2">Stage 29 tested the full system, not only one screen</h2>
+        <p class="body">The final prototype included multiple sections, locked states, and prompt overlays. These screenshots show the kinds of states I checked during manual testing.</p>
+      </div>
+
+      <div class="block">
+        <h3 class="t3">Try the logic</h3>
+        <div class="sim" style="margin-top:var(--space-m)">
+          <div>
+            <div class="cluster" id="cluster">
+              <div class="cluster__screen" id="cluster-screen">
+                <img id="cluster-img" src="https://framerusercontent.com/images/FA93dZWX2qzBLxaxiBtOEZEhS4.png?scale-down-to=1024" alt="" width="817" height="831">
+                <div class="cluster__blank" id="cluster-blank" hidden>
+                  <strong>Settings</strong>
+                  No screenshot of the unlocked Settings screen exists in the Stage 29 set. Set the bike to Riding to see the guard rule take over.
+                </div>
+              </div>
+            </div>
+
+            <div class="controls">
+              <div class="controls__row">
+                <span class="controls__label">Handlebar controls</span>
+                <button class="btn" type="button" id="btn-page">Page</button>
+                <button class="btn" type="button" id="btn-home">Home</button>
+                <button class="btn" type="button" disabled>Trip</button>
+                <button class="btn" type="button" disabled>D-pad</button>
+              </div>
+              <div class="controls__row">
+                <span class="controls__label">Vehicle</span>
+                <button class="btn" type="button" id="btn-riding" aria-pressed="true">Riding</button>
+                <button class="btn" type="button" id="btn-parked" aria-pressed="false">Parked</button>
+              </div>
+              <div class="controls__row">
+                <span class="controls__label">Events</span>
+                <button class="btn btn--alert" type="button" id="btn-fuel" aria-pressed="false">Low Fuel</button>
+                <button class="btn btn--alert" type="button" id="btn-call" aria-pressed="false">Incoming Call</button>
+                <button class="btn" type="button" id="btn-dismiss">Dismiss</button>
+              </div>
+              <p class="controls__note">Trip and the D-pad were part of the real control set, but their in-page behavior is not documented on this page, so they stay inactive here.</p>
+            </div>
+          </div>
+
+          <div>
+            <div class="machine">
+              <h4>The state machine underneath</h4>
+              <p class="machine__hint">Page steps through the sections. The diagram follows whatever you press.</p>
+              <div class="machine__flow">
+            <span class="node" data-node="home">Home</span>
+            <span class="edge" data-edge="navigation" aria-hidden="true">&darr; Page</span>
+            <span class="node" data-node="navigation">Navigation</span>
+            <span class="edge" data-edge="media" aria-hidden="true">&darr; Page</span>
+            <span class="node" data-node="media">Media</span>
+            <span class="edge" data-edge="vehicle" aria-hidden="true">&darr; Page</span>
+            <span class="node" data-node="vehicle">Vehicle</span>
+            <span class="edge" data-edge="settings" aria-hidden="true">&darr; Page</span>
+            <span class="node" data-node="settings">Settings</span>
+                <span class="edge" data-edge="locked" aria-hidden="true">&darr; guard</span>
+                <span class="node node--locked" data-node="locked">Settings Locked</span>
+              </div>
+              <p class="machine__return">Home returns to the Home state from anywhere.</p>
+              <div class="machine__overlays">
+                <span class="chip" data-chip="lowfuel">Low Fuel overlay</span>
+                <span class="chip" data-chip="call">Incoming Call overlay</span>
+              </div>
+            </div>
+
+            <div class="readout">
+              <dl>
+                <dt>State</dt><dd><span class="val" id="out-state">Home</span></dd>
+                <dt>Guard</dt><dd><span class="val val--none" id="out-guard">none active</span></dd>
+                <dt>Overlay</dt><dd><span class="val val--none" id="out-overlay">none</span></dd>
+                <dt>Last trigger</dt><dd><span class="val val--none" id="out-trigger">&mdash;</span></dd>
+              </dl>
+              <p class="readout__msg" id="out-msg" data-kind="" aria-live="polite">Riding. Press Page to move through the sections.</p>
+            </div>
+          </div>
+        </div>
+        <p class="sim__caption">This replays the prototype's documented logic using screenshots from the Stage 29 build; it is not the running prototype. The overlay stills were captured over the Home screen, so they show Home underneath whichever section you raise them from.</p>
+      </div>
+
+      <div class="block">
+        <h3 class="t3">The states I checked</h3>
+        <div class="states" style="margin-top:var(--space-m)">
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/FA93dZWX2qzBLxaxiBtOEZEhS4.png?scale-down-to=2048" data-alt="Stage 29 prototype, Home state" aria-label="View the Home state full size"><img src="https://framerusercontent.com/images/FA93dZWX2qzBLxaxiBtOEZEhS4.png?scale-down-to=1024" alt="" width="817" height="831" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <figcaption>Home</figcaption>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/v7w46X3zvLmSbXIkf7olDMDJ9ZI.png?scale-down-to=2048" data-alt="Stage 29 prototype, Navigation state" aria-label="View the Navigation state full size"><img src="https://framerusercontent.com/images/v7w46X3zvLmSbXIkf7olDMDJ9ZI.png?scale-down-to=1024" alt="" width="834" height="835" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <figcaption>Navigation</figcaption>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/0xyovrNo0JXYCMg7gqkwvpLJkxw.png?scale-down-to=2048" data-alt="Stage 29 prototype, Media state" aria-label="View the Media state full size"><img src="https://framerusercontent.com/images/0xyovrNo0JXYCMg7gqkwvpLJkxw.png?scale-down-to=1024" alt="" width="834" height="832" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <figcaption>Media</figcaption>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/YsxhpexWaHX4O6D4DRppW5bKik.png?scale-down-to=2048" data-alt="Stage 29 prototype, Vehicle state" aria-label="View the Vehicle state full size"><img src="https://framerusercontent.com/images/YsxhpexWaHX4O6D4DRppW5bKik.png?scale-down-to=1024" alt="" width="835" height="833" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <figcaption>Vehicle</figcaption>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/Ax1azBDK0017Gsw5LHANDDfM7w.png?scale-down-to=2048" data-alt="Stage 29 prototype, Settings locked state" aria-label="View the Settings locked state full size"><img src="https://framerusercontent.com/images/Ax1azBDK0017Gsw5LHANDDfM7w.png?scale-down-to=1024" alt="" width="822" height="822" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <figcaption>Settings locked</figcaption>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/bmkRzhiyMa233e0QFomXPp6yCkw.png?scale-down-to=2048" data-alt="Stage 29 prototype, Low Fuel overlay state" aria-label="View the Low Fuel overlay state full size"><img src="https://framerusercontent.com/images/bmkRzhiyMa233e0QFomXPp6yCkw.png?scale-down-to=1024" alt="" width="822" height="822" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <figcaption>Low Fuel overlay</figcaption>
+            </figure>
+            <figure>
+              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/Ch4MS7jPQoCOVy160kMcF7n6LHQ.png?scale-down-to=2048" data-alt="Stage 29 prototype, Incoming Call overlay state" aria-label="View the Incoming Call overlay state full size"><img src="https://framerusercontent.com/images/Ch4MS7jPQoCOVy160kMcF7n6LHQ.png?scale-down-to=1024" alt="" width="822" height="822" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <figcaption>Incoming Call overlay</figcaption>
+            </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== MEASUREMENT -->
+    <section class="section">
+      <div class="section-head">
+        <p class="eyebrow">How I Measured The Prototype</p>
+        <h2 class="t2">AI checklist plus manual testing.</h2>
+        <p class="body">To measure the prototype, I used two types of testing: an AI-assisted checklist and my own manual review. The checklist helped me evaluate structure and logic, while manual testing helped me catch visual and interaction problems that were easier to notice by actually using the prototype.</p>
+      </div>
+
+      <div class="block">
+        <div class="trio">
+          <div class="card"><h4 class="card-title">AI checklist testing</h4><p class="card-body">The checklist turned the prototype into measurable criteria instead of relying only on opinion. It helped me check expected logic, states, guard rules, overlays, and page structure.</p></div>
+          <div class="card"><h4 class="card-title">Manual testing</h4><p class="card-body">Manual testing helped me evaluate the prototype like a designer. I could see when shapes overlapped, when the hierarchy felt off, or when something technically worked but did not feel polished.</p></div>
+          <div class="card"><h4 class="card-title">What I learned from both</h4><p class="card-body">The checklist was best for structure and logic. Manual testing was best for visual quality, interaction feel, and whether the design matched my intention.</p></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="card">
+          <div class="score">
+            <div>
+              <p class="score__label">FINAL MANUAL SCORE</p>
+              <p class="score__big mono">88<small> / 90</small></p>
+              <p class="score__sub">97.78% passed on the Stage 29 manual checklist.</p>
+              <div class="score__bar" role="img" aria-label="97.78 percent of checks passed"><span></span></div>
+            </div>
+            <div class="score__grid">
+              <div class="score__cell"><p>Appearance</p><p class="score__num mono">20 / 21</p></div>
+              <div class="score__cell"><p>Manual logic</p><p class="score__num mono">68 / 69</p></div>
+              <div class="score__cell"><p>Failed</p><p class="score__num mono score__num--fail">2</p></div>
+              <div class="score__cell"><p>Untestable</p><p class="score__num mono">0</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================== HARDER -->
+    <section class="section">
+      <div class="section-head">
+        <p class="eyebrow">Why Vibe Coding Was Harder Here</p>
+        <h2 class="t2">Visual similarity was not enough</h2>
+      </div>
+      <div class="block split">
+        <div>
+          <p class="body">AI tools perform well with common requests like "build me an app" or "make a landing page." There are millions of those examples in their training data. An embedded motorcycle dashboard is not one of those things.</p>
+          <p class="body" style="margin-top:var(--space-s)">Claude, Codex, or Figma Make could draw a screen that looked close. What they struggled with was the logic underneath the screen: the rules that decide what should happen when the rider presses the Page button while a Low Fuel warning is active, the vehicle is moving, and the headset is disconnected.</p>
+          <p class="body" style="margin-top:var(--space-s)">Figma can hide that complexity, because static screens never have to answer "what happens next." HTML has to. That forced me to think like an engineer as much as a designer.</p>
+        </div>
+        <div class="split__media">
+          <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=2048" data-alt="Photo of the real Harley-Davidson dashboard" aria-label="View the Sportster S reference photo full size"><img src="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=1024" alt="" width="1280" height="720" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+          <p class="caption">Actual Sportster S reference image used to judge shape, hierarchy, and visual accuracy.</p>
+        </div>
+      </div>
+      <div class="block">
+        <div class="takeaway">
+          <h4>The realization</h4>
+          <p>Visual similarity was not enough. The prototype also needed correct logic, and that is where AI needed the most direction from me.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== REFLECTION -->
+    <section id="reflection" class="section">
+      <div class="section-head">
+        <p class="eyebrow">Final Reflection</p>
+        <h2 class="t2">This project changed how I think about UX screens</h2>
+        <p class="body">This project helped me see that UX design is not only about screens. It is also about the logic underneath the screens. Working with AI pushed me closer to how designers and engineers communicate, because I had to describe states, triggers, guard rules, overlays, and edge cases instead of only describing how the UI should look.</p>
+        <p class="body" style="margin-top:var(--space-s)">I also learned that creative ownership matters more when AI is involved. AI helped me build faster, but I still had to decide what counted as good, what counted as unsafe, what needed to be tested, and what failures should stay visible in the final story.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+</div>
+
+<dialog class="lightbox" aria-label="Full-size image">
+  <button class="lightbox__close" type="button">Close</button>
+  <div class="lightbox__stage"><img alt=""></div>
+</dialog>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div>
+      <p class="site-footer__display">THANKS FOR VISITING</p>
+      <p class="site-footer__sub">Let's keep in touch!</p>
+    </div>
+    <div class="site-footer__cols">
+      <div>
+        <h2>Connect</h2>
+        <ul>
+          <li><a href="mailto:jamyanart@gmail.com">Email</a></li>
+          <li><a href="https://www.linkedin.com/in/jbatnyam" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://drive.google.com/file/d/1n59fu4pS5daSCbGWl0T3oztfOcWMoSbP/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>My Work</h2>
+        <ul>
+          <li><a href="content-plus.html">ContentPlus</a></li>
+          <li><a href="liminal.html">Liminal</a></li>
+          <li><a href="vibe-coding.html" aria-current="page">Vibe Coding</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var hasIO = "IntersectionObserver" in window;
+
+  /* ------------------------------------------------------- full-size viewer */
+  var box = document.querySelector(".lightbox");
+  if (box && typeof box.showModal === "function") {
+    var boxImg = box.querySelector("img"), opener = null;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-full]"), function (btn) {
+      btn.addEventListener("click", function () {
+        opener = btn;
+        boxImg.src = btn.getAttribute("data-full");
+        boxImg.alt = btn.getAttribute("data-alt") || "";
+        box.showModal();
+        box.querySelector(".lightbox__close").focus();
+      });
+    });
+    box.querySelector(".lightbox__close").addEventListener("click", function () { box.close(); });
+    box.addEventListener("click", function (e) { if (e.target !== boxImg) box.close(); });
+    box.addEventListener("close", function () { boxImg.removeAttribute("src"); if (opener) opener.focus(); });
+  } else {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-full]"), function (btn) {
+      btn.addEventListener("click", function () { window.open(btn.getAttribute("data-full"), "_blank", "noopener"); });
+    });
+  }
+
+  /* ----------------------------------------------------------- the simulator
+     States, transitions, guards and overlays all come from the case study's
+     own text; nothing here is invented. */
+  var CDN = "https://framerusercontent.com/images/";
+  var SHOT = {
+    home: "FA93dZWX2qzBLxaxiBtOEZEhS4",
+    navigation: "v7w46X3zvLmSbXIkf7olDMDJ9ZI",
+    media: "0xyovrNo0JXYCMg7gqkwvpLJkxw",
+    vehicle: "YsxhpexWaHX4O6D4DRppW5bKik",
+    locked: "Ax1azBDK0017Gsw5LHANDDfM7w",
+    lowfuel: "bmkRzhiyMa233e0QFomXPp6yCkw",
+    call: "Ch4MS7jPQoCOVy160kMcF7n6LHQ"
+  };
+  var LABEL = { home: "Home", navigation: "Navigation", media: "Media",
+                vehicle: "Vehicle", settings: "Settings",
+                lowfuel: "Low Fuel", call: "Incoming Call" };
+  var ORDER = ["home", "navigation", "media", "vehicle", "settings"];
+
+  var img = document.getElementById("cluster-img");
+  if (img) {
+    var blank = document.getElementById("cluster-blank");
+    var state = "home", riding = true, overlay = null, lastEdge = null;
+
+    function shotFor() {
+      if (overlay) return SHOT[overlay];
+      if (state === "settings") return riding ? SHOT.locked : null;
+      return SHOT[state];
+    }
+    function altFor() {
+      if (overlay) return LABEL[overlay] + " overlay over the Home screen";
+      if (state === "settings" && riding) return "Settings locked while riding";
+      return LABEL[state] + " screen";
+    }
+    function say(msg, kind) {
+      var el = document.getElementById("out-msg");
+      if (el.textContent !== msg) { el.textContent = msg; flash(el, "is-updated"); }
+      el.setAttribute("data-kind", kind || "");
+    }
+    function setVal(id, text, none) {
+      var el = document.getElementById(id);
+      var changed = el.textContent !== text;
+      el.textContent = text;
+      el.className = "val" + (none ? " val--none" : "");
+      if (changed) flash(el, "is-updated");
+    }
+    function render() {
+      var shot = shotFor();
+      if (shot) {
+        img.hidden = false; blank.hidden = true;
+        img.src = CDN + shot + ".png?scale-down-to=1024";
+        img.alt = altFor();
+      } else {
+        img.hidden = true; blank.hidden = false;
+      }
+      setVal("out-state", state === "settings" && riding ? "Settings (locked)" : LABEL[state], false);
+      setVal("out-guard", state === "settings" && riding ? "Settings locked while riding" : "none active",
+             !(state === "settings" && riding));
+      setVal("out-overlay", overlay ? LABEL[overlay] : "none", !overlay);
+
+      Array.prototype.forEach.call(document.querySelectorAll("[data-node]"), function (n) {
+        var id = n.getAttribute("data-node");
+        var on = id === state || (id === "locked" && state === "settings" && riding);
+        if (id === "settings" && state === "settings" && riding) on = false;
+        n.setAttribute("data-active", on ? "true" : "false");
+      });
+      Array.prototype.forEach.call(document.querySelectorAll("[data-edge]"), function (e) {
+        e.setAttribute("data-active", e.getAttribute("data-edge") === lastEdge ? "true" : "false");
+      });
+      Array.prototype.forEach.call(document.querySelectorAll("[data-chip]"), function (c) {
+        c.setAttribute("data-active", c.getAttribute("data-chip") === overlay ? "true" : "false");
+      });
+      document.getElementById("btn-fuel").setAttribute("aria-pressed", overlay === "lowfuel" ? "true" : "false");
+      document.getElementById("btn-call").setAttribute("aria-pressed", overlay === "call" ? "true" : "false");
+      document.getElementById("btn-riding").setAttribute("aria-pressed", riding ? "true" : "false");
+      document.getElementById("btn-parked").setAttribute("aria-pressed", riding ? "false" : "true");
+    }
+    function trigger(name) { setVal("out-trigger", name, false); }
+
+    /* ---- motion helpers (all no-ops when reduced motion is requested) ---- */
+    function motionOK() { return !reduce.matches; }
+    function flash(el, cls) {
+      if (!el || !motionOK()) return;
+      el.classList.remove(cls);
+      void el.offsetWidth;                 /* restart the animation */
+      el.classList.add(cls);
+      el.addEventListener("animationend", function h() {
+        el.classList.remove(cls);
+        el.removeEventListener("animationend", h);
+      });
+    }
+    Array.prototype.forEach.call(document.querySelectorAll(".sim .btn"), function (btn) {
+      btn.addEventListener("click", function () { if (!btn.disabled) flash(btn, "is-hit"); });
+    });
+    var screenEl = document.getElementById("cluster-screen");
+    var clusterEl = document.getElementById("cluster");
+    var vtBusy = false;
+    function swap(direction, fn) {
+      /* correctness first: the DOM must always end up matching the state,
+         even if someone mashes the buttons mid-transition. */
+      if (!motionOK() || !document.startViewTransition || vtBusy) {
+        fn();
+        if (motionOK() && !document.startViewTransition) flash(screenEl, "is-swap");
+        return;
+      }
+      vtBusy = true;
+      document.documentElement.setAttribute("data-vt", direction || "fwd");
+      var t = document.startViewTransition(fn);
+      t.finished.then(done, done);
+      function done() {
+        vtBusy = false;
+        document.documentElement.removeAttribute("data-vt");
+        fn();                              /* re-sync in case an update was skipped */
+      }
+    }
+
+    document.getElementById("btn-page").addEventListener("click", function () {
+      var i = ORDER.indexOf(state);
+      state = ORDER[(i + 1) % ORDER.length];
+      lastEdge = state;
+      trigger("Page");
+      var guarded = (state === "settings" && riding);
+      if (guarded) {
+        say("Guard rule: Settings is locked while the motorcycle is moving, so the transition lands on Settings Locked.", "guard");
+      } else if (state === "settings") {
+        say("Parked, so Settings is allowed. The Stage 29 set has no screenshot of this screen.", "");
+      } else {
+        say("Transition: Page moved the system to " + LABEL[state] + ".", "");
+      }
+      swap("fwd", render);
+      flash(document.querySelector('[data-edge="' + state + '"]'), "is-travel");
+      if (guarded) flash(clusterEl, "is-guard");
+    });
+    document.getElementById("btn-home").addEventListener("click", function () {
+      state = "home"; lastEdge = null; trigger("Home");
+      say("Transition: Home returns to the Home state from anywhere.", "");
+      swap("back", render);
+    });
+    function setRiding(v) {
+      riding = v; trigger(v ? "Riding" : "Parked");
+      if (state === "settings") {
+        say(v ? "Guard rule: the bike started moving, so Settings locks."
+              : "Guard rule cleared: parked, so Settings is allowed again.", "guard");
+      } else {
+        say(v ? "Riding. Settings will lock if you reach it." : "Parked. Settings is unlocked.", "");
+      }
+      var guarding = (state === "settings");
+      swap(v ? "fwd" : "back", render);
+      if (guarding) flash(clusterEl, "is-guard");
+    }
+    document.getElementById("btn-riding").addEventListener("click", function () { setRiding(true); });
+    document.getElementById("btn-parked").addEventListener("click", function () { setRiding(false); });
+
+    function raise(name) {
+      var was = overlay;
+      overlay = name; trigger(LABEL[name]);
+      if (was && was !== name) {
+        say("Edge case: " + LABEL[name] + " arrived while the " + LABEL[was] +
+            " overlay was already up. Which one wins is not settled on this page.", "edge");
+      } else {
+        say("Overlay: " + LABEL[name] + " interrupts " + LABEL[state] + ".", "");
+      }
+      swap("fwd", render);
+      flash(clusterEl, "is-overlay");
+    }
+    document.getElementById("btn-fuel").addEventListener("click", function () { raise("lowfuel"); });
+    document.getElementById("btn-call").addEventListener("click", function () { raise("call"); });
+    document.getElementById("btn-dismiss").addEventListener("click", function () {
+      if (!overlay) { say("No overlay is active.", ""); return; }
+      var was = overlay; overlay = null; trigger("Dismiss");
+      say(LABEL[was] + " dismissed. Back to " + LABEL[state] + ".", "");
+      swap("back", render);
+    });
+    render();
+  }
+
+  /* ------------------------------------------------- iteration comparison */
+  var CMP = {
+    "1": ["pKgCeeavTuVpLTJjlRHfO5AE5G8.png", 563, 435, "Iteration 1 prototype screen",
+          "Iteration 1: useful for testing logic direction, but not visually close enough."],
+    "2": ["0pqKxf2epsZH2GHxF4iR9RE2BHk.png", 1324, 1188, "Iteration 2 prototype screen",
+          "Iteration 2: closer circular structure, but the lower notch and proportions still needed work."],
+    "3": ["5yVjq5M5txb6Pkw3o458a6mjI.png", 1022, 1000, "Iteration 3 home page",
+          "Iteration 3: Home page"],
+    "ref": ["D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg", 1280, 720, "Photo of the real Harley-Davidson dashboard",
+            "Actual Sportster S reference image used to judge shape, hierarchy, and visual accuracy."]
+  };
+  var cmpImg = document.getElementById("cmp-img"), cmpCap = document.getElementById("cmp-cap");
+  if (cmpImg) {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-cmp]"), function (btn) {
+      btn.addEventListener("click", function () {
+        var d = CMP[btn.getAttribute("data-cmp")];
+        cmpImg.src = CDN + d[0] + "?scale-down-to=1024";
+        cmpImg.width = d[1]; cmpImg.height = d[2]; cmpImg.alt = d[3];
+        cmpCap.textContent = d[4];
+        Array.prototype.forEach.call(document.querySelectorAll("[data-cmp]"), function (b) {
+          b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+        });
+      });
+    });
+  }
+
+  /* --------------------------------------------------- score, counted once */
+  var scoreEl = document.querySelector(".score__big");
+  var barEl = document.querySelector(".score__bar");
+  if (scoreEl && barEl && hasIO && !reduce.matches) {
+    var target = 88, dur = 900;
+    barEl.classList.add("is-armed");
+    var numNode = scoreEl.firstChild;             /* the "88" text node */
+    numNode.nodeValue = "0";
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      io.disconnect();
+      barEl.classList.remove("is-armed");
+      var start = null;
+      requestAnimationFrame(function step(t) {
+        if (start === null) start = t;
+        var p = Math.min((t - start) / dur, 1);
+        var eased = 1 - Math.pow(1 - p, 3);
+        numNode.nodeValue = String(Math.round(target * eased));
+        if (p < 1) requestAnimationFrame(step);
+      });
+    }, { threshold: 0.5 });
+    io.observe(scoreEl);
+  }
+
+  /* ---------------------------------------------------------- rail scrollspy */
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); }).filter(Boolean);
+  function atBottom() {
+    return window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  }
+  function setActive(id) {
+    links.forEach(function (a) {
+      if (a.getAttribute("href") === "#" + id) a.setAttribute("aria-current", "true");
+      else a.removeAttribute("aria-current");
+    });
+  }
+  if (hasIO && targets.length) {
+    var sio = new IntersectionObserver(function (entries) {
+      var vis = entries.filter(function (e) { return e.isIntersecting; })
+                       .sort(function (a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+      if (atBottom()) setActive(targets[targets.length - 1].id);
+      else if (vis.length) setActive(vis[0].target.id);
+    }, { rootMargin: "-20% 0px -70% 0px" });
+    targets.forEach(function (t) { sio.observe(t); });
+    setActive(targets[0].id);
+    window.addEventListener("scroll", function () {
+      if (atBottom()) setActive(targets[targets.length - 1].id);
+    }, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>

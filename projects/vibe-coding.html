@@ -120,25 +120,57 @@ strong { font-weight: 500; color: var(--ink); }
 
 .rail {
   position: sticky; top: 32px; align-self: start;
-  background: var(--surface); border-radius: var(--radius-sm); padding: 10px 16px;
+  background: var(--surface); border-radius: var(--radius-sm); padding: 14px 16px 13px;
 }
+.rail__eyebrow {
+  margin: 0 0 14px; font: 500 9px/1 var(--font-body);
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim);
+}
+.rail__nav { display: flex; flex-direction: column; gap: 2px; }
 .rail a {
-  display: block; padding: 6px 0; font-size: 13px; line-height: 1.5;
+  display: flex; align-items: center; gap: 12px;
+  padding: 7px 0; font-size: 12px; line-height: 1.4;
   color: var(--ink-dim); text-decoration: none;
 }
+.rail__num {
+  flex: none; font-size: 9px; letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums; color: var(--ink-dim); opacity: .65;
+}
 .rail a:hover { color: var(--ink); }
-.rail a[aria-current="true"] { color: var(--ink); font-weight: 500; }
+.rail a:hover .rail__num { opacity: 1; }
+.rail a[aria-current="true"] { color: var(--brand-purple); font-weight: 700; }
+.rail a[aria-current="true"] .rail__num { color: var(--brand-purple); opacity: 1; }
+
+.rail__progress { margin-top: 20px; }
+.rail__bar { height: 2px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.rail__bar > span {
+  display: block; height: 100%; width: 100%;
+  background: var(--brand-purple); transform: scaleX(0); transform-origin: left;
+}
+.rail__meta {
+  margin: 8px 0 0; font: 500 9px/1.4 var(--font-body);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-dim); font-variant-numeric: tabular-nums;
+}
 
 @media (max-width: 1000px) {
   .layout { grid-template-columns: 1fr; gap: 0; padding-top: 0; }
   .rail {
     position: sticky; top: 0; z-index: 10;
-    display: flex; gap: 22px; overflow-x: auto;
-    margin: 0 -24px 32px; padding: 12px 24px; border-radius: 0;
-    border-bottom: 1px solid var(--line); scrollbar-width: none;
+    margin: 0 -24px 32px; padding: 10px 24px 9px; border-radius: 0;
+    border-bottom: 1px solid var(--line);
   }
-  .rail::-webkit-scrollbar { display: none; }
-  .rail a { white-space: nowrap; padding: 0; }
+  .rail__eyebrow { display: none; }
+  .rail__nav {
+    flex-direction: row; gap: 20px; overflow-x: auto;
+    margin: 0 -24px; padding: 0 24px; scrollbar-width: none;
+  }
+  .rail__nav::-webkit-scrollbar { display: none; }
+  .rail a { white-space: nowrap; padding: 0; min-height: 40px; gap: 7px; }
+  .rail__progress { margin-top: 7px; display: flex; align-items: center; gap: 12px; }
+  .rail__bar { flex: 1; }
+  .rail__meta { flex: none; margin: 0; }
+  .section, .intro { scroll-margin-top: 104px; }
 }
 
 /* ==========================================================================
@@ -393,7 +425,9 @@ strong { font-weight: 500; color: var(--ink); }
 }
 .dark .rail { background: var(--surface); }
 .dark .rail a { color: var(--ink-dim); }
-.dark .rail a:hover, .dark .rail a[aria-current="true"] { color: var(--ink); }
+.dark .rail a:hover { color: var(--ink); }
+.dark .rail__eyebrow, .dark .rail__meta { color: var(--ink-dim); }
+.dark .rail__bar { background: var(--line); }
 .dark .card { border: 1px solid var(--line); }
 .dark .evidence__open { background: #101217; }
 .dark .evidence__chip { background: rgba(23, 25, 30, 0.94); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); }
@@ -657,14 +691,22 @@ strong { font-weight: 500; color: var(--ink); }
 
 <div class="dark">
 <div class="layout">
-  <nav class="rail" aria-label="Case study sections">
-    <a href="#overview">Overview</a>
-    <a href="#challenge">Challenge</a>
-    <a href="#process">Process</a>
-    <a href="#iterations">Iterations</a>
-    <a href="#final-delivery">Final Delivery</a>
-    <a href="#reflection">Reflection</a>
-  </nav>
+  <aside class="rail">
+    <p class="rail__eyebrow">In this case study</p>
+    <nav class="rail__nav" aria-label="Case study sections">
+      <a href="#overview"><span class="rail__num" aria-hidden="true">01</span>Overview</a>
+      <a href="#challenge"><span class="rail__num" aria-hidden="true">02</span>Challenge</a>
+      <a href="#process"><span class="rail__num" aria-hidden="true">03</span>Process</a>
+      <a href="#iterations"><span class="rail__num" aria-hidden="true">04</span>Iterations</a>
+      <a href="#final-delivery"><span class="rail__num" aria-hidden="true">05</span>Final Delivery</a>
+      <a href="#reflection"><span class="rail__num" aria-hidden="true">06</span>Reflection</a>
+    </nav>
+    <div class="rail__progress">
+      <div class="rail__bar" id="rail-bar" role="progressbar" aria-label="Reading progress"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+      <p class="rail__meta" id="rail-meta">0% read</p>
+    </div>
+  </aside>
 
   <main id="main" class="content">
 
@@ -1454,7 +1496,8 @@ strong { font-weight: 500; color: var(--ink); }
 
   /* ---------------------------------------------------------- rail scrollspy */
   var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
-  var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); }).filter(Boolean);
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); })
+                     .filter(Boolean);
   function atBottom() {
     return window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
   }
@@ -1473,10 +1516,68 @@ strong { font-weight: 500; color: var(--ink); }
     }, { rootMargin: "-20% 0px -70% 0px" });
     targets.forEach(function (t) { sio.observe(t); });
     setActive(targets[0].id);
+    // The last section is short and can't reach the trigger band; mark it at page bottom.
     window.addEventListener("scroll", function () {
       if (atBottom()) setActive(targets[targets.length - 1].id);
     }, { passive: true });
   }
+
+  /* Keep the active link in view when the rail is a horizontal strip (mobile). */
+  var railNav = document.querySelector(".rail__nav");
+  if (railNav) {
+    var centreActive = function () {
+      if (railNav.scrollWidth <= railNav.clientWidth) return;
+      var cur = railNav.querySelector("[aria-current]");
+      if (!cur) return;
+      var navBox = railNav.getBoundingClientRect(), curBox = cur.getBoundingClientRect();
+      railNav.scrollTo({
+        left: railNav.scrollLeft + (curBox.left - navBox.left) - navBox.width / 2 + curBox.width / 2,
+        behavior: "auto"
+      });
+    };
+    var mo = new MutationObserver(centreActive);
+    links.forEach(function (a) { mo.observe(a, { attributes: true, attributeFilter: ["aria-current"] }); });
+  }
+
+  /* ------------------------------------------------- reading progress + time */
+  (function () {
+    var bar  = document.getElementById("rail-bar");
+    var meta = document.getElementById("rail-meta");
+    var body = document.getElementById("main");
+    if (!bar || !meta || !body) return;
+    var fill = bar.firstElementChild;
+    if (!fill) return;
+
+    /* Reading time is measured from this page's own words - never hardcoded.
+       200 wpm is the common estimate for online prose. */
+    var WPM = 200;
+    var words = body.textContent.trim().split(/\s+/).filter(Boolean).length;
+    var totalMin = Math.max(1, Math.round(words / WPM));
+    meta.textContent = "0% \u00B7 " + totalMin + " min read";
+    bar.setAttribute("aria-valuetext", "0 percent read, " + totalMin + " minutes left");
+
+    var frame = 0;
+    function update() {
+      frame = 0;
+      var scrollable = body.offsetHeight - window.innerHeight;
+      var pct = scrollable > 0 ? -body.getBoundingClientRect().top / scrollable : 1;
+      if (atBottom()) pct = 1;
+      pct = Math.max(0, Math.min(1, pct));
+
+      var whole = Math.round(pct * 100);
+      var left = Math.max(0, Math.round(totalMin * (1 - pct)));
+      fill.style.transform = "scaleX(" + pct.toFixed(4) + ")";
+      bar.setAttribute("aria-valuenow", String(whole));
+      bar.setAttribute("aria-valuetext", whole + " percent read, " + left + " minutes left");
+
+      var text = whole + "% \u00B7 " + (left > 0 ? left + " min left" : "finished");
+      if (meta.textContent !== text) meta.textContent = text;
+    }
+    function schedule() { if (!frame) frame = requestAnimationFrame(update); }
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    update();
+  })();
 })();
 </script>
 </body>

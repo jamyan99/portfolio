@@ -384,6 +384,8 @@ strong { font-weight: 500; color: var(--ink); }
   display: inline-flex; align-items: center; gap: 7px;
 }
 .footer-btn:hover { color: var(--ink); border-color: #C2C2C9; }
+/* beats display:inline-flex, so the script-only buttons stay hidden without JS */
+.footer-btn[hidden] { display: none; }
 .footer-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .footer-btn--plain { border-color: transparent; padding-inline: 0; margin-left: auto; }
 .footer-btn--plain:hover { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; }

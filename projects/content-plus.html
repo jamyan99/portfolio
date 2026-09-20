@@ -136,6 +136,8 @@ strong { font-weight: 500; color: var(--ink); }
 .rail a[aria-current="true"] .rail__num { color: var(--brand-purple); opacity: 1; }
 
 .rail__progress { margin-top: 20px; }
+/* beats the display:flex the mobile rule sets, so [hidden] still hides it */
+.rail__progress[hidden] { display: none; }
 .rail__bar { height: 2px; border-radius: 2px; background: var(--line); overflow: hidden; }
 .rail__bar > span {
   display: block; height: 100%; width: 100%;
@@ -623,6 +625,8 @@ strong { font-weight: 500; color: var(--ink); }
   display: inline-flex; align-items: center; gap: 7px;
 }
 .footer-btn:hover { color: var(--ink); border-color: #C2C2C9; }
+/* beats display:inline-flex, so the script-only buttons stay hidden without JS */
+.footer-btn[hidden] { display: none; }
 .footer-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .footer-btn--plain { border-color: transparent; padding-inline: 0; margin-left: auto; }
 .footer-btn--plain:hover { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; }
@@ -751,7 +755,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       <a href="#final-delivery"><span class="rail__num" aria-hidden="true">05</span>Final Delivery</a>
       <a href="#reflection"><span class="rail__num" aria-hidden="true">06</span>Reflection</a>
     </nav>
-    <div class="rail__progress">
+    <div class="rail__progress" id="rail-progress" hidden>
       <div class="rail__bar" id="rail-bar" role="progressbar" aria-label="Reading progress"
            aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
       <p class="rail__meta" id="rail-meta">0% read</p>
@@ -1376,12 +1380,15 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 
   /* ------------------------------------------------- reading progress + time */
   (function () {
+    var wrap = document.getElementById("rail-progress");
     var bar  = document.getElementById("rail-bar");
     var meta = document.getElementById("rail-meta");
     var body = document.getElementById("main");
-    if (!bar || !meta || !body) return;
+    if (!wrap || !bar || !meta || !body) return;
     var fill = bar.firstElementChild;
     if (!fill) return;
+    /* Only show the indicator once it can actually track scrolling. */
+    wrap.hidden = false;
 
     /* Reading time is measured from this page's own words - never hardcoded.
        200 wpm is the common estimate for online prose. */
@@ -1411,6 +1418,10 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     function schedule() { if (!frame) frame = requestAnimationFrame(update); }
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
+    /* rAF is frozen in a background tab, so refresh directly when the page
+       is shown again or restored from the back/forward cache. */
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) update(); });
+    window.addEventListener("pageshow", update);
     update();
   })();
 })();

@@ -8,7 +8,7 @@ step, no dependencies. Every page is a single self-contained file.
 | File | What it is |
 |---|---|
 | `index.html` | Home: hero, featured work, gallery teaser, about, toolbelt |
-| `visual.html` | Gallery: filterable, with a full-screen viewer and zoom |
+| `visual.html` | Gallery: even 3-up grid by default, filterable, with a full-screen viewer and zoom |
 | `projects/content-plus.html` | Case study: educational screen time for kids |
 | `projects/liminal.html` | Case study: wellness app for anxiety support |
 | `projects/vibe-coding.html` | Case study: AI-assisted motorcycle dashboard, with a live simulator |
@@ -56,6 +56,15 @@ them before committing if repository size matters.
 
 - **Shared chrome.** Every page uses the same nav, footer, spacing scale, and
   heading tiers.
+- **Case study side navigation.** A sticky numbered index with a reading-progress
+  bar. Progress comes from real scroll position; the time remaining is derived at
+  runtime from that page's own word count at 200 wpm, so it never goes stale when
+  the copy changes. It is exposed as a `progressbar` with a live `aria-valuetext`
+  and as visible text, and it only appears once the script is running. Below
+  1000px the rail becomes a horizontal scrolling strip pinned under the header.
+- **Footer utilities.** Copy-email, a reduce-motion toggle that overrides the OS
+  setting and is remembered in `localStorage`, and back-to-top. The first two are
+  revealed by script, so they are never present as dead controls without JS.
 - **Motion.** CSS transitions and keyframes plus `IntersectionObserver`, tuned per
   project: quick with a slight bounce for ContentPlus, slow and settling for
   Liminal, precise for Vibe Coding. All of it behind `prefers-reduced-motion`.

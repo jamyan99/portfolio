@@ -235,16 +235,14 @@ strong { font-weight: 500; color: var(--ink); }
 
 /* ==========================================================================
    Ticker carousels (Sketches, Mid-Fi Wireframes)
-   Auto-advances by scrolling a real overflow container, so touch, trackpad,
-   and arrow keys all work. Pauses on hover, focus, and touch; has a
-   pause button; does not move under prefers-reduced-motion.
+   A plain horizontal scroll container: touch, trackpad, drag, and arrow keys
+   all work. Nothing moves on its own, so there is no pause control to give.
    ========================================================================== */
 .ticker__viewport {
-  overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  /* scrolled by hand now, so the bar is the affordance and the edge fade goes */
+  overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: thin; padding-bottom: 8px;
 }
-.ticker__viewport::-webkit-scrollbar { display: none; }
 .ticker__viewport:focus-visible { outline-offset: 4px; }
 .ticker__track { display: flex; gap: var(--space-s); list-style: none; margin: 0; padding: 0; width: max-content; }
 .ticker__track img {
@@ -257,14 +255,6 @@ strong { font-weight: 500; color: var(--ink); }
   .ticker--sketches { --ticker-h: 200px; }
   .ticker--wireframes { --ticker-h: 300px; }
 }
-.ticker__toggle {
-  display: block; margin: 10px 0 0 auto; padding: 6px 0;
-  background: none; border: 0; cursor: pointer;
-  font: 500 13px/1 var(--font-body); color: var(--ink-dim);
-}
-.ticker__toggle:hover { color: var(--ink); }
-.ticker.is-static .ticker__viewport { -webkit-mask-image: none; mask-image: none; scrollbar-width: thin; padding-bottom: 8px; }
-.ticker.is-static .ticker__toggle { display: none; }
 
 
 
@@ -363,9 +353,9 @@ strong { font-weight: 500; color: var(--ink); }
 :root { --mo-fast: 130ms; --mo-mid: 260ms; --mo-ease: cubic-bezier(.34, 1.2, .48, 1); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .cta, .ticker__toggle { transition: transform var(--mo-fast) var(--mo-ease), background-color var(--mo-mid) ease, border-color var(--mo-mid) ease; position: relative; }
-  .cta:active, .ticker__toggle:active { transform: scale(.97); }
-  .cta::after, .ticker__toggle::after {
+  .cta { transition: transform var(--mo-fast) var(--mo-ease), background-color var(--mo-mid) ease, border-color var(--mo-mid) ease; position: relative; }
+  .cta:active { transform: scale(.97); }
+  .cta::after {
     content: ""; position: absolute; inset: -3px; border-radius: 999px;
     border: 1.5px solid currentColor; opacity: 0; pointer-events: none;
   }
@@ -577,7 +567,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
               <li><img src="https://framerusercontent.com/images/vRLibkmELuryfLc85DpKnlDUt8.jpg?scale-down-to=256" alt="" width="1280" height="1280" loading="lazy"></li>
               </ul>
             </div>
-            <button class="ticker__toggle" type="button">Pause motion</button>
           </div>
         </div>
       </div>
@@ -644,53 +633,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   var hasIO = "IntersectionObserver" in window;
 
-  /* ---- toolbelt carousel: the same component as the case studies -------- */
-  document.querySelectorAll("[data-ticker]").forEach(function (root) {
-    var vp = root.querySelector(".ticker__viewport");
-    var track = root.querySelector(".ticker__track");
-    var btn = root.querySelector(".ticker__toggle");
-    Array.prototype.slice.call(track.children).forEach(function (li) {
-      var c = li.cloneNode(true);
-      c.setAttribute("aria-hidden", "true");
-      Array.prototype.forEach.call(c.querySelectorAll("img"), function (i) { i.alt = ""; });
-      track.appendChild(c);
-    });
-    var SPEED = 26, pos = 0, last = null, visible = !hasIO, hover = false, focused = false, userPaused = false, resumeAt = 0;
-    function half() { return track.scrollWidth / 2; }
-    function running() {
-      return visible && !hover && !focused && !userPaused && !reduce.matches && performance.now() >= resumeAt;
-    }
-    function frame(t) {
-      requestAnimationFrame(frame);
-      if (last === null) { last = t; return; }
-      var dt = Math.min((t - last) / 1000, 0.1); last = t;
-      if (!running()) return;
-      pos += SPEED * dt;
-      var h = half(); if (h > 0 && pos >= h) pos -= h;
-      vp.scrollLeft = pos;
-    }
-    requestAnimationFrame(frame);
-    vp.addEventListener("scroll", function () {
-      if (Math.abs(vp.scrollLeft - pos) < 2) return;
-      var h = half(); if (h > 0 && vp.scrollLeft >= h) vp.scrollLeft -= h;
-      pos = vp.scrollLeft; resumeAt = performance.now() + 2500;
-    }, { passive: true });
-    vp.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") hover = true; });
-    vp.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") hover = false; });
-    vp.addEventListener("pointerdown", function () { resumeAt = performance.now() + 3000; });
-    root.addEventListener("focusin", function () { focused = true; });
-    root.addEventListener("focusout", function () { focused = false; });
-    btn.addEventListener("click", function () {
-      userPaused = !userPaused;
-      btn.textContent = userPaused ? "Play motion" : "Pause motion";
-      pos = vp.scrollLeft;
-    });
-    if (hasIO) new IntersectionObserver(function (e) { visible = e[0].isIntersecting; }).observe(vp);
-    function applyMotion() { root.classList.toggle("is-static", reduce.matches); }
-    applyMotion();
-    if (reduce.addEventListener) reduce.addEventListener("change", applyMotion);
-  });
-
   /* ---- reveals and press rings ------------------------------------------ */
   if (reduce.matches || !hasIO) return;
   document.documentElement.classList.add("motion-ready");
@@ -714,7 +656,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     marked.forEach(function (el) { el.classList.add("is-in"); });
   }, 4000);
   document.addEventListener("click", function (e) {
-    var b = e.target.closest(".cta, .ticker__toggle");
+    var b = e.target.closest(".cta");
     if (!b) return;
     b.classList.remove("is-hit"); void b.offsetWidth; b.classList.add("is-hit");
     b.addEventListener("animationend", function h() {

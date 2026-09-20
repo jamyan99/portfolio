@@ -70,6 +70,11 @@ them before committing if repository size matters.
   Liminal, precise for Vibe Coding. All of it behind `prefers-reduced-motion`.
 - **Interactive pieces.** The dashboard simulator and iteration comparison in
   Vibe Coding; the filters, layout toggle, and zoomable viewer in the gallery.
+- **Image strips.** The toolbelt and the wireframe/sketch strips are plain
+  horizontal scrollers - drag, trackpad, arrow keys. Nothing advances on its
+  own, so there is no pause/play control anywhere on the site. The only
+  playback controls left are the native ones on the `<video>` recordings,
+  which are what lets a visitor stop a clip that autoplays.
 - **Accessibility.** Keyboard operable throughout, visible focus rings, live
   regions for anything that changes on screen, and content that never depends on
   JavaScript or motion to be readable.

@@ -501,16 +501,14 @@ strong { font-weight: 500; color: var(--ink); }
 
 /* ==========================================================================
    Ticker carousels (Sketches, Mid-Fi Wireframes)
-   Auto-advances by scrolling a real overflow container, so touch, trackpad,
-   and arrow keys all work. Pauses on hover, focus, and touch; has a
-   pause button; does not move under prefers-reduced-motion.
+   A plain horizontal scroll container: touch, trackpad, drag, and arrow keys
+   all work. Nothing moves on its own, so there is no pause control to give.
    ========================================================================== */
 .ticker__viewport {
-  overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  /* scrolled by hand now, so the bar is the affordance and the edge fade goes */
+  overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: thin; padding-bottom: 8px;
 }
-.ticker__viewport::-webkit-scrollbar { display: none; }
 .ticker__viewport:focus-visible { outline-offset: 4px; }
 .ticker__track { display: flex; gap: var(--space-s); list-style: none; margin: 0; padding: 0; width: max-content; }
 .ticker__track img {
@@ -521,14 +519,6 @@ strong { font-weight: 500; color: var(--ink); }
 @media (max-width: 760px) {
   .ticker--wireframes { --ticker-h: 300px; }
 }
-.ticker__toggle {
-  display: block; margin: 10px 0 0 auto; padding: 6px 0;
-  background: none; border: 0; cursor: pointer;
-  font: 500 13px/1 var(--font-body); color: var(--ink-dim);
-}
-.ticker__toggle:hover { color: var(--ink); }
-.ticker.is-static .ticker__viewport { -webkit-mask-image: none; mask-image: none; scrollbar-width: thin; padding-bottom: 8px; }
-.ticker.is-static .ticker__toggle { display: none; }
 
 /* ==========================================================================
    Full-width media
@@ -617,14 +607,14 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 @media (prefers-reduced-motion: no-preference) {
 
   /* --- press feedback ---------------------------------------------------- */
-  .evidence__open, .text-button, .ticker__toggle, .lightbox__close {
+  .evidence__open, .text-button, .lightbox__close {
     transition: transform var(--mo-fast) var(--mo-ease);
   }
-  .evidence__open:active, .text-button:active, .ticker__toggle:active { transform: scale(0.98); }
+  .evidence__open:active, .text-button:active { transform: scale(0.98); }
   .lightbox__close:active { transform: scale(0.94); }
 
-  .evidence__open, .text-button, .ticker__toggle { position: relative; }
-  .evidence__open::after, .text-button::after, .ticker__toggle::after {
+  .evidence__open, .text-button { position: relative; }
+  .evidence__open::after, .text-button::after {
     content: ""; position: absolute; inset: -3px; border-radius: 14px;
     border: 1.5px solid var(--mo-accent); opacity: 0; pointer-events: none;
   }
@@ -913,7 +903,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
               <li><img src="https://framerusercontent.com/images/63x1Wmr6gml27d4JSp6T73uTjaw.png?scale-down-to=1024" alt="Low-fidelity wireframe screen" width="2010" height="4370" loading="lazy"></li>
             </ul>
           </div>
-          <button class="ticker__toggle" type="button">Pause motion</button>
         </div>
       </div>
 
@@ -996,7 +985,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
               <li><img src="https://framerusercontent.com/images/VuSA61wpGv56xcLOdn4J4AT8.png?scale-down-to=1024" alt="Mid-fidelity wireframe screen" width="2010" height="4370" loading="lazy"></li>
             </ul>
           </div>
-          <button class="ticker__toggle" type="button">Pause motion</button>
         </div>
       </div>
 
@@ -1166,74 +1154,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   var hasIO = "IntersectionObserver" in window;
 
-  /* ---------------------------------------------------------------- tickers */
-  Array.prototype.forEach.call(document.querySelectorAll("[data-ticker]"), function (root) {
-    var vp = root.querySelector(".ticker__viewport");
-    var track = root.querySelector(".ticker__track");
-    var btn = root.querySelector(".ticker__toggle");
-    var SPEED = 28; // px per second
-
-    // Duplicate the set once so the loop is seamless; clones are hidden from AT.
-    Array.prototype.slice.call(track.children).forEach(function (li) {
-      var c = li.cloneNode(true);
-      c.setAttribute("aria-hidden", "true");
-      Array.prototype.forEach.call(c.querySelectorAll("img"), function (i) { i.alt = ""; });
-      track.appendChild(c);
-    });
-
-    var pos = 0, last = null;
-    var visible = !hasIO, hover = false, focused = false, userPaused = false, resumeAt = 0;
-
-    function half() { return track.scrollWidth / 2; }
-    function running() {
-      return visible && !hover && !focused && !userPaused && !reduce.matches &&
-             performance.now() >= resumeAt;
-    }
-    function frame(t) {
-      requestAnimationFrame(frame);
-      if (last === null) { last = t; return; }
-      var dt = Math.min((t - last) / 1000, 0.1);
-      last = t;
-      if (!running()) return;
-      pos += SPEED * dt;
-      var h = half();
-      if (h > 0 && pos >= h) pos -= h;
-      vp.scrollLeft = pos;
-    }
-    requestAnimationFrame(frame);
-
-    // Any scroll we didn't cause is the visitor's: follow it, wrap, and hold off.
-    vp.addEventListener("scroll", function () {
-      if (Math.abs(vp.scrollLeft - pos) < 2) return;
-      var h = half();
-      if (h > 0 && vp.scrollLeft >= h) vp.scrollLeft -= h;
-      pos = vp.scrollLeft;
-      resumeAt = performance.now() + 2500;
-    }, { passive: true });
-
-    vp.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") hover = true; });
-    vp.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") hover = false; });
-    vp.addEventListener("pointerdown", function () { resumeAt = performance.now() + 3000; });
-    root.addEventListener("focusin", function () { focused = true; });
-    root.addEventListener("focusout", function () { focused = false; });
-
-    btn.addEventListener("click", function () {
-      userPaused = !userPaused;
-      btn.textContent = userPaused ? "Play motion" : "Pause motion";
-      pos = vp.scrollLeft;
-    });
-
-    if (hasIO) {
-      new IntersectionObserver(function (entries) {
-        visible = entries[0].isIntersecting;
-      }).observe(vp);
-    }
-
-    function applyMotion() { root.classList.toggle("is-static", reduce.matches); }
-    applyMotion();
-    if (reduce.addEventListener) reduce.addEventListener("change", applyMotion);
-  });
-
   /* ---------------------------------------------------------------- videos */
   // HTML ships with controls (works without JS). With JS and motion allowed,
   // recordings autoplay muted while on screen; with reduced motion they wait
@@ -1395,7 +1315,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 
   /* press ring on every button that has one */
   document.addEventListener("click", function (e) {
-    var btn = e.target.closest(".evidence__open, .text-button, .ticker__toggle");
+    var btn = e.target.closest(".evidence__open, .text-button");
     if (!btn) return;
     btn.classList.remove("is-hit");
     void btn.offsetWidth;

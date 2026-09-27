@@ -9,32 +9,45 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@500,700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ==========================================================================
    Tokens
-   Site chrome: zinc neutrals, Satoshi + Inter, 20px card radius (measured
-   from the live Framer site). ContentPlus brand palette is sampled from the
-   page's own style guide board and is only used inside ContentPlus content.
+   Themed with ContentPlus 2.0 (Figma "Design System 2.0" style tile):
+   cream + ink, grape for interaction, Fredoka + Nunito. The editorial layout
+   is unchanged. Site chrome (top nav, footer) keeps Satoshi + Inter so it
+   matches the rest of the portfolio. The ink outline + lip shadow is kept
+   for media frames only.
    ========================================================================== */
 :root {
-  --bg: #F4F4F5;
+  --bg: #FFFCE8;            /* cream, bg/app */
   --surface: #FFFFFF;
-  --surface-sunk: #FAFAFA;
-  --ink: #18181B;
-  --ink-dim: #5F5F63;
-  --line: #E4E4E7;
+  --surface-sunk: #FFF9DC;
+  --ink: #1E1537;           /* text/primary */
+  --ink-dim: #5E5677;       /* slate, text/secondary: 6.6:1 on cream */
+  --line: #E4E0EE;          /* cloud, border/default */
 
-  --brand-purple: #6C3CF0;  /* eyebrow text: brand purple, passes AA on --bg */
-  --brand-mint: #7CF6C5;
-  --brand-yellow: #F9EB5F;
-  --brand-orange: #E86A44;
+  --brand-purple: #7437FA;  /* grape, action/primary: 5.6:1 on cream */
+  --brand-mint: #37FABF;
+  --brand-yellow: #F8ED5D;
+  --brand-orange: #E86B45;
 
-  --font-display: "Satoshi", "Inter", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* content categories */
+  --cp-video: #FF7A57;
+  --cp-game: #14C495;
+  --cp-activity: #4DAAFF;
+  --cp-reward: #FFC21A;
 
-  --radius: 20px;
-  --radius-sm: 12px;
+  /* the 2.0 "lip": ink outline + hard shadow, media frames only */
+  --frame: 0 0 0 2px var(--ink), 0 6px 0 2px rgba(30, 21, 55, 0.22);
+
+  --font-display: "Fredoka", "Nunito", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-chrome-display: "Satoshi", "Inter", system-ui, sans-serif;
+  --font-chrome-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius: 24px;
+  --radius-sm: 16px;
 
   /* spacing scale */
   --space-2xs: 8px;
@@ -84,7 +97,10 @@ img, video { display: block; max-width: 100%; }
 h1, h2, h3, h4, p, figure, dl, dd { margin: 0; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--brand-purple); outline-offset: 3px; border-radius: 4px; }
-strong { font-weight: 500; color: var(--ink); }
+strong { font-weight: 700; color: var(--ink); }
+
+/* site chrome stays in the portfolio's own type */
+.skip-link, .site-nav, .site-footer { font-family: var(--font-chrome-body); }
 
 .skip-link {
   position: absolute; left: 16px; top: -48px;
@@ -176,9 +192,9 @@ strong { font-weight: 500; color: var(--ink); }
    Type tiers
    Tier 1 eyebrow · Tier 2 section heading · Tier 3 subheading
    ========================================================================== */
-.eyebrow { font: 500 var(--t1)/1.4 var(--font-body); color: var(--brand-purple); margin-bottom: var(--space-2xs); }
-.t2 { font: 700 var(--t2)/1.15 var(--font-display); letter-spacing: -0.02em; }
-.t3 { font: 500 var(--t3)/1.3 var(--font-display); letter-spacing: -0.005em; }
+.eyebrow { font: 800 var(--t1)/1.4 var(--font-body); letter-spacing: 0.02em; color: var(--brand-purple); margin-bottom: var(--space-2xs); }
+.t2 { font: 700 var(--t2)/1.12 var(--font-display); letter-spacing: -0.005em; }
+.t3 { font: 600 var(--t3)/1.3 var(--font-display); }
 .body { color: var(--ink-dim); max-width: 64ch; }
 .t3 + .body, .t3 + .body-group { margin-top: var(--space-xs); }
 .body + .body { margin-top: var(--space-s); }
@@ -190,7 +206,7 @@ strong { font-weight: 500; color: var(--ink); }
 .section { margin-top: var(--gap-section); scroll-margin-top: 72px; }
 .section-head + .block { margin-top: var(--space-l); }
 .block + .block,
-.rings + .block { margin-top: var(--gap-block); }
+.tally + .block { margin-top: var(--gap-block); }
 .block > .t3 + .body + .media-row,
 .block > .t3 + .body + .card,
 .block > .t3 + .body + .ticker,
@@ -214,17 +230,17 @@ strong { font-weight: 500; color: var(--ink); }
 /* ==========================================================================
    Hero + header
    ========================================================================== */
-.hero-media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 7 / 4; background: #E7E7EA; }
+.hero-media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 3 / 2; background: var(--surface-sunk); }
 .hero-media img { width: 100%; height: 100%; object-fit: cover; }
 
 .case-head {
   display: flex; justify-content: space-between; align-items: flex-start; gap: 32px;
   margin-top: var(--space-xl);
 }
-.case-title { font: 700 var(--h1)/1.1 var(--font-display); letter-spacing: -0.02em; }
+.case-title { font: 700 var(--h1)/1.08 var(--font-display); letter-spacing: -0.005em; }
 .case-sub { margin-top: 6px; color: var(--ink-dim); font-size: 14px; }
 .facts { display: flex; gap: 56px; }
-.facts dt { font: 500 16px/1.3 var(--font-display); }
+.facts dt { font: 600 16px/1.3 var(--font-display); }
 .facts dd { margin-top: 4px; color: var(--ink-dim); font-size: 14px; }
 @media (max-width: 560px) {
   .case-head { flex-direction: column; gap: 20px; }
@@ -233,16 +249,30 @@ strong { font-weight: 500; color: var(--ink); }
 
 .intro { margin-top: var(--space-xl); }
 
-/* My Roles showcase: one tall card, two stacked wide cards */
+/* My Roles showcase: the tablet on its own, full width, then the recording
+   and the phones. Row 2 columns are proportional to each item's aspect ratio
+   (9:16, 3:2), so both come out exactly the same height. */
 .showcase {
-  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr); gap: var(--space-s);
+  display: grid; grid-template-columns: 56.25fr 150fr; gap: var(--space-s);
   margin-top: var(--space-xl);
 }
-.showcase__tall { grid-row: span 2; background: var(--surface); border-radius: var(--radius); }
-.showcase__wide { aspect-ratio: 2 / 1; background: var(--surface); border-radius: var(--radius); }
+.showcase__tablet, .showcase__scene { border-radius: var(--radius); overflow: hidden; background: var(--surface-sunk); }
+/* square render centred in a wide frame; #FFFBF0 is the render's own edge colour, so the join is invisible */
+.showcase__tablet { grid-column: 1 / -1; aspect-ratio: 16 / 9; background: #FFFBF0; }
+.showcase__tablet img { width: 100%; height: 100%; object-fit: contain; }
+.showcase__scene { aspect-ratio: 3 / 2; }
+.showcase__scene img { width: 100%; height: 100%; object-fit: cover; }
+.showcase__video { aspect-ratio: 9 / 16; background: var(--surface); border-radius: var(--radius); }
 @media (max-width: 760px) {
+  /* one column; the recording stays phone-sized instead of stretching full width */
   .showcase { grid-template-columns: 1fr; }
-  .showcase__tall { grid-row: auto; aspect-ratio: 4 / 5; }
+  .showcase__tablet { aspect-ratio: 1; }
+  .showcase__video { justify-self: center; width: 62%; }
+}
+
+/* the 2.0 lip on every media frame, nowhere else */
+.hero-media, .showcase > *, .phone-card, .strip-card, .device-card, .evidence__open, .harm {
+  box-shadow: var(--frame);
 }
 
 /* ==========================================================================
@@ -262,8 +292,36 @@ strong { font-weight: 500; color: var(--ink); }
   .split--media-left .split__media { order: 0; }
 }
 
-.problem-img { border-radius: var(--radius-sm); overflow: hidden; }
-.problem-img img { width: 100%; height: auto; }
+/* Problem Space: the old poster's list, set live on the sunshine panel */
+.harm {
+  position: relative; margin: 0;
+  background: var(--brand-yellow); border-radius: var(--radius);
+  padding: var(--space-l) var(--space-l) var(--space-l);
+}
+.harm__title { font: 800 var(--t1)/1.4 var(--font-body); letter-spacing: 0.02em; }
+.harm__list {
+  list-style: none; margin: var(--space-s) 0 0; padding: 0; counter-reset: harm;
+  max-width: calc(100% - 120px);
+}
+.harm__list li {
+  counter-increment: harm;
+  display: flex; align-items: baseline; gap: 14px;
+  padding: 11px 0; border-bottom: 2px solid rgba(30, 21, 55, 0.14);
+  font: 600 24px/1.2 var(--font-display);
+}
+.harm__list li:last-child { border-bottom: 0; }
+.harm__list li::before {
+  content: counter(harm, decimal-leading-zero);
+  flex: none; width: 24px; font: 800 12px/1 var(--font-body); color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+.harm__koko { position: absolute; right: 12px; bottom: 12px; width: 132px; height: auto; }
+@media (max-width: 760px) {
+  .harm { padding: var(--space-m); }
+  .harm__list { max-width: calc(100% - 84px); }
+  .harm__list li { font-size: 20px; }
+  .harm__koko { width: 96px; right: 8px; bottom: 8px; }
+}
 
 /* single-phone recording cards (Onboarding, Friends & Co-Play, Parental Controls) */
 .phone-card { aspect-ratio: 4 / 5; background: var(--surface); border-radius: var(--radius); --fit-pad: 24px; }
@@ -272,27 +330,35 @@ strong { font-weight: 500; color: var(--ink); }
    Research method colour system
    One brand colour per method, used everywhere that method appears.
    ========================================================================== */
-.m-int   { --m: #6C3CF0; --m-ink: #FFFFFF; --m-back: #CDBFFB; --m-soft: #EFEAFE; --m-num: #5A2DDB; }
-.m-obs   { --m: #7CF6C5; --m-ink: #0E3B2C; --m-back: #B3F3D9; --m-soft: #E4FBF2; --m-num: #0B6B4A; }
-.m-probe { --m: #E86A44; --m-ink: #1F0D07; --m-back: #F4BDAB; --m-soft: #FDEDE7; --m-num: #B0401D; }
+/* 2.0 category colours: classroom grape, game teal, video coral */
+.m-int   { --m: #7437FA; --m-ink: #FFFFFF; --m-back: #CDB8FD; --m-soft: #F1EAFF; --m-num: #7437FA; }
+.m-obs   { --m: #14C495; --m-ink: #1E1537; --m-back: #A5EBD6; --m-soft: #E3F9F2; --m-num: #0A7A5B; }
+.m-probe { --m: #FF7A57; --m-ink: #1E1537; --m-back: #FFC7B6; --m-soft: #FFEDE7; --m-num: #B8401F; }
 
 /* ==========================================================================
-   Research-count rings
+   Research counts: a unit chart, one token per session, in the same order
+   and colours as the method cards below
    ========================================================================== */
-.rings { display: flex; justify-content: center; margin-top: var(--space-xl); }
-.ring {
-  border-radius: 50%; aspect-ratio: 1;
-  display: flex; flex-direction: column; align-items: center; text-align: center;
+.tally { margin-top: var(--space-xl); border-top: 2px solid var(--ink); }
+.tally__row {
+  display: grid; grid-template-columns: 76px minmax(0, 1fr) auto;
+  align-items: center; gap: var(--space-m);
+  padding: 18px 0; border-bottom: 1.5px solid var(--line);
 }
-.ring--outer { width: min(440px, 100%); background: var(--m-soft); box-shadow: inset 0 0 0 1.5px var(--m-back); padding-top: 6%; }
-.ring--mid { width: 72%; background: var(--m-soft); box-shadow: inset 0 0 0 1.5px var(--m-back); margin-top: auto; margin-bottom: 5%; padding-top: 9%; }
-.ring--inner { width: 52%; background: var(--m); color: var(--m-ink); margin-top: auto; margin-bottom: 8%; justify-content: center; }
-.ring__num { font: 700 26px/1.15 var(--font-display); color: var(--m-num); }
-.ring--inner .ring__num { color: inherit; }
-.ring__label { font: 500 15px/1.3 var(--font-body); }
-@media (max-width: 760px) {
-  .ring__num { font-size: 20px; }
-  .ring__label { font-size: 13px; }
+.tally__row:last-child { border-bottom: 2px solid var(--ink); }
+.tally__num { font: 700 48px/1 var(--font-display); color: var(--m-num); font-variant-numeric: tabular-nums; }
+.tally__label { font: 600 20px/1.25 var(--font-display); }
+.tally__dots { display: flex; gap: 10px; }
+.tally__dots .dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--m); box-shadow: 0 0 0 2px var(--ink), 0 3px 0 2px rgba(30, 21, 55, 0.22);
+}
+@media (max-width: 560px) {
+  .tally__row { grid-template-columns: 56px minmax(0, 1fr); row-gap: 12px; }
+  .tally__num { font-size: 36px; grid-row: span 2; align-self: start; }
+  .tally__label { font-size: 18px; }
+  .tally__dots { gap: 8px; }
+  .tally__dots .dot { width: 20px; height: 20px; }
 }
 
 /* ==========================================================================
@@ -333,8 +399,8 @@ strong { font-weight: 500; color: var(--ink); }
   position: relative; z-index: 1;
   display: block; min-height: 128px; padding: 16px 16px 18px;
   border-radius: 4px; background: var(--m); color: var(--m-ink);
-  font: 500 17px/1.3 var(--font-display); letter-spacing: -0.005em;
-  box-shadow: 0 1px 0 rgba(24, 24, 27, 0.12), 0 16px 22px -18px rgba(24, 24, 27, 0.5);
+  font: 600 17px/1.3 var(--font-display);
+  box-shadow: 0 3px 0 rgba(30, 21, 55, 0.18);
 }
 @media (max-width: 760px) {
   .notes { gap: 20px 16px; }
@@ -345,7 +411,7 @@ strong { font-weight: 500; color: var(--ink); }
 .evidence__open {
   position: relative; display: block; width: 100%; aspect-ratio: 4 / 3;
   padding: 0; border: 0; border-radius: var(--radius-sm); overflow: hidden;
-  background: #F1F1F3; cursor: zoom-in;
+  background: var(--surface-sunk); cursor: zoom-in;
 }
 .evidence__open img { width: 100%; height: 100%; object-fit: contain; }
 .evidence__chip {
@@ -354,23 +420,23 @@ strong { font-weight: 500; color: var(--ink); }
   padding: 7px 11px; border-radius: 999px;
   background: rgba(255, 255, 255, 0.95); color: var(--ink);
   font: 500 13px/1 var(--font-body);
-  box-shadow: 0 1px 2px rgba(24, 24, 27, 0.18);
+  box-shadow: 0 0 0 1.5px var(--ink);
 }
 .evidence__chip svg { width: 14px; height: 14px; }
-.evidence__open:hover .evidence__chip { background: #fff; box-shadow: 0 2px 6px rgba(24, 24, 27, 0.22); }
+.evidence__open:hover .evidence__chip { background: #fff; }
 
 /* ==========================================================================
    Information Architecture (rebuilt as a nested list)
    ========================================================================== */
-.ia { --ia-line: #BDBDC4; --ia-w: 1.5px; --ia-mid: 19px; }
+.ia { --ia-line: #C4BDD6; --ia-w: 1.5px; --ia-mid: 19px; }
 :where(.ia-tree, .ia-tree ul) { list-style: none; margin: 0; padding: 0; }
 .ia-node {
   position: relative; z-index: 1; display: block;
   padding: 9px 10px; border-radius: 8px;
-  background: #F4F4F5; border: 1px solid #E4E4E7;
-  font: 500 14px/1.25 var(--font-body); text-align: center; color: var(--ink);
+  background: var(--bg); border: 1px solid var(--line);
+  font: 600 14px/1.25 var(--font-body); text-align: center; color: var(--ink);
 }
-.ia-node--key { background: var(--brand-yellow); border-color: #E0CF45; }
+.ia-node--key { background: var(--brand-yellow); border-color: #D9CC3A; }
 .ia-top { display: flex; flex-direction: column; align-items: center; }
 .ia-top > .ia-node, .ia-home > .ia-node { width: 190px; margin: 0 auto; }
 .ia-home { position: relative; padding-top: 20px; }
@@ -468,20 +534,11 @@ strong { font-weight: 500; color: var(--ink); }
   .ia-col > ul > li::before { bottom: -20px; }
 }
 
-.ia__foot { margin-top: var(--space-l); display: flex; justify-content: flex-end; }
-.text-button {
-  display: inline-flex; align-items: center; gap: 6px; padding: 6px 0;
-  background: none; border: 0; cursor: pointer;
-  font: 500 14px/1.2 var(--font-body); color: var(--ink-dim);
-  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #C9C9CF;
-}
-.text-button:hover { color: var(--ink); text-decoration-color: currentColor; }
-.text-button svg { width: 14px; height: 14px; flex: none; }
 
 /* ==========================================================================
    User Testing Results (rebuilt from the diagram)
    ========================================================================== */
-.ut__title { text-align: center; font: 500 18px/1.3 var(--font-display); }
+.ut__title { text-align: center; font: 600 18px/1.3 var(--font-display); }
 .ut__grid {
   position: relative; z-index: 0;
   display: grid; grid-template-columns: minmax(0, 1fr) 200px minmax(0, 1fr);
@@ -500,7 +557,7 @@ strong { font-weight: 500; color: var(--ink); }
   border-radius: 50%; border: 1.5px dashed #DAD6B8;
 }
 .ut__item { display: flex; gap: 14px; align-items: flex-start; max-width: 290px; }
-.ut__item h4 { font: 500 16px/1.3 var(--font-display); }
+.ut__item h4 { font: 600 16px/1.3 var(--font-display); }
 .ut__item p { margin-top: 4px; font-size: 14px; line-height: 1.45; color: var(--ink-dim); }
 .ut__item--left { justify-self: end; flex-direction: row-reverse; text-align: right; }
 .ut__item--right { justify-self: start; }
@@ -536,7 +593,7 @@ strong { font-weight: 500; color: var(--ink); }
   width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh;
   margin: 0; padding: 0; border: 0; background: transparent;
 }
-.lightbox::backdrop { background: rgba(24, 24, 27, 0.88); }
+.lightbox::backdrop { background: rgba(30, 21, 55, 0.9); }
 .lightbox__stage { width: 100%; height: 100%; display: grid; place-items: center; padding: 64px 20px 24px; }
 .lightbox__stage img { max-width: min(1600px, 100%); max-height: 100%; object-fit: contain; border-radius: 8px; background: #fff; }
 .lightbox__close {
@@ -553,15 +610,21 @@ strong { font-weight: 500; color: var(--ink); }
 
 /* ==========================================================================
    Ticker carousels (Sketches, Mid-Fi Wireframes)
-   A plain horizontal scroll container: touch, trackpad, drag, and arrow keys
-   all work. Nothing moves on its own, so there is no pause control to give.
+   Loop sideways forever by scrolling a real overflow container, so touch,
+   trackpad, drag, and arrow keys still work. No pause button by design; the
+   loop holds still under prefers-reduced-motion and the footer's
+   "Reduce motion" toggle, where the strip falls back to a manual scroller.
    ========================================================================== */
 .ticker__viewport {
-  /* scrolled by hand now, so the bar is the affordance and the edge fade goes */
-  overflow-x: auto; overflow-y: hidden;
-  scrollbar-width: thin; padding-bottom: 8px;
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
 }
 .ticker__viewport:focus-visible { outline-offset: 4px; }
+.ticker.is-static .ticker__viewport {
+  -webkit-mask-image: none; mask-image: none;
+  scrollbar-width: thin; padding-bottom: 8px;
+}
 .ticker__track { display: flex; gap: var(--space-s); list-style: none; margin: 0; padding: 0; width: max-content; }
 .ticker__track img {
   height: var(--ticker-h); width: auto; max-width: none;
@@ -578,6 +641,47 @@ strong { font-weight: 500; color: var(--ink); }
    Full-width media
    ========================================================================== */
 .card--media img { width: 100%; height: auto; border-radius: 8px; }
+
+/* ==========================================================================
+   Style Guide (live, from the ContentPlus 2.0 style tile)
+   ========================================================================== */
+.sg > * + * { margin-top: var(--space-l); padding-top: var(--space-l); border-top: 1.5px solid var(--line); }
+.sg__label { font: 800 var(--t1)/1.4 var(--font-body); letter-spacing: 0.02em; color: var(--brand-purple); }
+.sg__sub { margin-top: 4px; font-size: 14px; color: var(--ink-dim); }
+.sg__title { font: 700 32px/1.1 var(--font-display); }
+
+.sg__koko { list-style: none; margin: var(--space-m) 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-s); }
+.sg__koko li { text-align: center; }
+.sg__koko img { width: 100%; max-width: 184px; height: auto; margin: 0 auto; }
+.sg__koko b { display: block; margin-top: 8px; font: 600 20px/1.3 var(--font-display); }
+.sg__koko span { display: block; margin-top: 2px; font-size: 14px; line-height: 1.35; color: var(--ink-dim); }
+
+.sg__colors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-l); }
+.sg__chips { list-style: none; margin: var(--space-s) 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.sg__chips li { font-size: 12px; line-height: 1.3; color: var(--ink-dim); }
+.sg__chips i {
+  display: block; aspect-ratio: 1; margin-bottom: 10px; border-radius: 12px; background: var(--c);
+  box-shadow: 0 0 0 2px var(--ink), 0 3px 0 2px rgba(30, 21, 55, 0.22);
+}
+.sg__chips b { display: block; font: 600 14px/1.3 var(--font-display); color: var(--ink); }
+
+.sg__type { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-l); }
+.sg__specimen { margin-top: var(--space-s); color: var(--ink); }
+.sg__specimen--display { font: 700 56px/1.05 var(--font-display); }
+.sg__specimen--body { font: 600 22px/1.4 var(--font-body); }
+
+.sg__icons { list-style: none; margin: var(--space-m) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.sg__icons img { width: 40px; height: 40px; }
+
+@media (max-width: 760px) {
+  .sg__koko { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: var(--space-m); }
+  .sg__colors, .sg__type { grid-template-columns: 1fr; }
+  .sg__specimen--display { font-size: 44px; }
+  .sg__title { font-size: 28px; }
+}
+@media (max-width: 560px) {
+  .sg__chips { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 14px; }
+}
 .strip-card { --fit-pad: 0px; }
 .strip-card .fit { aspect-ratio: 8 / 3; }   /* Videos + Activities strips share 2.66:1 */
 .device-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-m); }
@@ -592,10 +696,10 @@ strong { font-weight: 500; color: var(--ink); }
   max-width: 1240px; margin: 0 auto; padding: 56px 24px 72px;
   display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;
 }
-.site-footer__display { font: 700 32px/1.1 var(--font-display); letter-spacing: -0.01em; }
+.site-footer__display { font: 700 32px/1.1 var(--font-chrome-display); letter-spacing: -0.01em; }
 .site-footer__sub { margin-top: 8px; font-size: 14px; }
 .site-footer__cols { display: flex; gap: 72px; }
-.site-footer h2 { font: 500 15px/1.3 var(--font-display); margin-bottom: 12px; }
+.site-footer h2 { font: 500 15px/1.3 var(--font-chrome-display); margin-bottom: 12px; }
 .site-footer ul { list-style: none; margin: 0; padding: 0; }
 .site-footer li + li { margin-top: 8px; }
 .site-footer ul a { font-size: 14px; color: var(--ink-dim); text-decoration: none; }
@@ -611,7 +715,7 @@ strong { font-weight: 500; color: var(--ink); }
 .footer-btn {
   appearance: none; background: transparent; cursor: pointer;
   border: 1px solid var(--line); border-radius: 999px; padding: 8px 15px;
-  font: 500 13px/1 var(--font-body); color: var(--ink-dim); text-decoration: none;
+  font: 500 13px/1 var(--font-chrome-body); color: var(--ink-dim); text-decoration: none;
   display: inline-flex; align-items: center; gap: 7px;
 }
 .footer-btn:hover { color: var(--ink); border-color: #C2C2C9; }
@@ -656,14 +760,14 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 @media (prefers-reduced-motion: no-preference) {
 
   /* --- press feedback ---------------------------------------------------- */
-  .evidence__open, .text-button, .lightbox__close {
+  .evidence__open, .lightbox__close {
     transition: transform var(--mo-fast) var(--mo-ease);
   }
-  .evidence__open:active, .text-button:active { transform: scale(0.98); }
+  .evidence__open:active { transform: scale(0.98); }
   .lightbox__close:active { transform: scale(0.94); }
 
-  .evidence__open, .text-button { position: relative; }
-  .evidence__open::after, .text-button::after {
+  .evidence__open { position: relative; }
+  .evidence__open::after {
     content: ""; position: absolute; inset: -3px; border-radius: 14px;
     border: 1.5px solid var(--mo-accent); opacity: 0; pointer-events: none;
   }
@@ -757,9 +861,9 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     <!-- ================================================================ HERO -->
     <section id="hero">
       <div class="hero-media">
-        <img src="https://framerusercontent.com/images/lo1avRb91BBF060CPnvXiDb5s.png"
-             alt="Kids holding up a board showing ContentPlus on a tablet, phone, and TV"
-             width="1122" height="1027">
+        <img src="../assets/img/content-plus/cover.jpg"
+             alt="ContentPlus 2.0 on a phone and a tablet standing on a yellow plinth, both showing the kids' home screen"
+             width="1536" height="1024">
       </div>
 
       <div class="case-head">
@@ -786,18 +890,18 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       </div>
 
       <div class="showcase">
-        <div class="showcase__tall fit" style="--fit-pad:28px">
+        <div class="showcase__tablet">
+          <img src="../assets/img/content-plus/thumb.jpg"
+               alt="ContentPlus 2.0 home screen on a tablet in a yellow stand" width="1254" height="1254" loading="lazy">
+        </div>
+        <div class="showcase__video fit" style="--fit-pad:12px">
           <video data-autoplay controls muted loop playsinline preload="metadata"
                  aria-label="Screen recording of the ContentPlus home screen on a phone"
                  src="https://framerusercontent.com/assets/F79BwC1yKMatA8SjZl9bvlSiwkQ.mp4"></video>
         </div>
-        <div class="showcase__wide fit">
-          <img src="https://framerusercontent.com/images/EMvsZLDm40FiKheuK9PvrbXYYdU.png?scale-down-to=1024"
-               alt="ContentPlus device, screen side, showing the video library" width="3882" height="2861" loading="lazy">
-        </div>
-        <div class="showcase__wide fit">
-          <img src="https://framerusercontent.com/images/73nrkj6DDIg0cNhOWEdbWRTWEg.png?scale-down-to=1024"
-               alt="ContentPlus device, back side, with the koala logo stand" width="3468" height="2431" loading="lazy">
+        <div class="showcase__scene">
+          <img src="../assets/img/content-plus/phones.jpg"
+               alt="Two phones in coral and sky-blue cases: the kids' home screen and the classroom home screen" width="1536" height="1024" loading="lazy">
         </div>
       </div>
     </section>
@@ -810,11 +914,17 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
           <h2 class="t2">Problem Space</h2>
           <p class="body" style="margin-top:var(--space-m)">Screen time, specifically <strong>YouTube</strong>, is a significant part of modern life. But <strong>excessive screen time</strong> comes with consequences</p>
         </div>
-        <div class="split__media problem-img">
-          <img src="https://framerusercontent.com/images/Qcar1ZX3uj22BxIY0diqSJk53P8.jpg"
-               alt="Illustration of a child gaming, listing effects of too much screen time: obesity, irregular sleep, behavioral problems, less time for play, violence"
-               width="591" height="450" loading="lazy">
-        </div>
+        <figure class="split__media harm">
+          <figcaption class="harm__title">Too much screen time can cause</figcaption>
+          <ol class="harm__list">
+            <li>Obesity</li>
+            <li>Irregular sleep</li>
+            <li>Behavioral problems</li>
+            <li>Less time for play</li>
+            <li>Violence</li>
+          </ol>
+          <img class="harm__koko" src="../assets/img/content-plus/koko-sleep.png" alt="" width="400" height="400" loading="lazy">
+        </figure>
       </div>
     </section>
 
@@ -826,19 +936,22 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <p class="body">We sent out cultural probe kits, conducted observational studies, and held interviews with parents, grandparents, and aunts to better understand children’s screen time usage and how parents use technology in their daily lives</p>
       </div>
 
-      <!-- Research counts: live text, tinted by method colour -->
-      <div class="rings">
-        <div class="ring ring--outer m-probe">
-          <span class="ring__num">1</span>
-          <span class="ring__label">Cultural Probe Kit</span>
-          <div class="ring ring--mid m-obs">
-            <span class="ring__num">3</span>
-            <span class="ring__label">Observation Studies</span>
-            <div class="ring ring--inner m-int">
-              <span class="ring__num">7</span>
-              <span class="ring__label">Interviews</span>
-            </div>
-          </div>
+      <!-- Research counts: live text, one token per session, tinted by method colour -->
+      <div class="tally" role="list" aria-label="Research sessions">
+        <div class="tally__row m-int" role="listitem">
+          <span class="tally__num">7</span>
+          <span class="tally__label">Interviews</span>
+          <span class="tally__dots" aria-hidden="true"><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></span>
+        </div>
+        <div class="tally__row m-obs" role="listitem">
+          <span class="tally__num">3</span>
+          <span class="tally__label">Observation Studies</span>
+          <span class="tally__dots" aria-hidden="true"><i class="dot"></i><i class="dot"></i><i class="dot"></i></span>
+        </div>
+        <div class="tally__row m-probe" role="listitem">
+          <span class="tally__num">1</span>
+          <span class="tally__label">Cultural Probe Kit</span>
+          <span class="tally__dots" aria-hidden="true"><i class="dot"></i></span>
         </div>
       </div>
 
@@ -987,9 +1100,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
               </ul>
             </li>
           </ul>
-          <div class="ia__foot">
-            <button class="text-button" type="button" data-full="https://framerusercontent.com/images/epGNPwOP3b2nS54aYIIR8HgSLM.png?scale-down-to=4096" data-alt="Original information architecture diagram"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View the original diagram</button>
-          </div>
         </figure>
       </div>
 
@@ -1046,10 +1156,71 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 
       <div class="block">
         <h3 class="t3">Style Guide</h3>
-        <figure class="card card--media" style="margin-top:var(--space-m)">
-          <img src="https://framerusercontent.com/images/8uikQCWpNOR2ir7kzCR2nNJ7Js.png?scale-down-to=2048"
-               alt="ContentPlus style guide: logo, purple, mint, yellow, and orange palette, illustration style, and type specimens"
-               width="9102" height="4740" loading="lazy">
+        <!-- Rebuilt live from the ContentPlus 2.0 style tile in Figma (Design System 2.0 page). -->
+        <figure class="card sg" style="margin-top:var(--space-m)">
+          <div>
+            <p class="sg__title">Meet Koko</p>
+            <ul class="sg__koko">
+              <li><img src="../assets/img/content-plus/koko-classic.png" alt="" width="400" height="400" loading="lazy"><b>Classic</b><span>Logo · rails · headers</span></li>
+              <li><img src="../assets/img/content-plus/koko-wave.png" alt="" width="400" height="400" loading="lazy"><b>Wave</b><span>Guides · welcome</span></li>
+              <li><img src="../assets/img/content-plus/koko-cheer.png" alt="" width="400" height="400" loading="lazy"><b>Cheer</b><span>Rewards · completions</span></li>
+              <li><img src="../assets/img/content-plus/koko-think.png" alt="" width="400" height="400" loading="lazy"><b>Think</b><span>Loading · questions</span></li>
+              <li><img src="../assets/img/content-plus/koko-sleep.png" alt="" width="400" height="400" loading="lazy"><b>Sleep</b><span>Empty states · screen time up</span></li>
+            </ul>
+          </div>
+
+          <div class="sg__colors">
+            <div>
+              <p class="sg__label">Brand</p>
+              <ul class="sg__chips">
+                <li><i style="--c:#F8ED5D"></i><b>Sunshine</b>#F8ED5D</li>
+                <li><i style="--c:#7437FA"></i><b>Grape</b>#7437FA</li>
+                <li><i style="--c:#E86B45"></i><b>Coral</b>#E86B45</li>
+                <li><i style="--c:#37FABF"></i><b>Mint</b>#37FABF</li>
+                <li><i style="--c:#FFFCE8"></i><b>Cream</b>#FFFCE8</li>
+              </ul>
+            </div>
+            <div>
+              <p class="sg__label">Content categories</p>
+              <ul class="sg__chips">
+                <li><i style="--c:#FF7A57"></i><b>Video</b>#FF7A57</li>
+                <li><i style="--c:#14C495"></i><b>Game</b>#14C495</li>
+                <li><i style="--c:#4DAAFF"></i><b>Activity</b>#4DAAFF</li>
+                <li><i style="--c:#7437FA"></i><b>Classroom</b>#7437FA</li>
+                <li><i style="--c:#FFC21A"></i><b>Reward</b>#FFC21A</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="sg__type">
+            <div>
+              <p class="sg__label">Fredoka</p>
+              <p class="sg__sub">Rounded display, for kid headings and buttons</p>
+              <p class="sg__specimen sg__specimen--display">Hi, Mia!</p>
+            </div>
+            <div>
+              <p class="sg__label">Nunito</p>
+              <p class="sg__sub">Rounded and highly legible, for everything you read</p>
+              <p class="sg__specimen sg__specimen--body">Watch 1 more today to keep your streak.</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="sg__label">Icons</p>
+            <p class="sg__sub">Custom set drawn to match Koko: 2.5px ink outline, one or two cheerful fills</p>
+            <ul class="sg__icons" aria-label="Icon samples">
+              <li><img src="../assets/img/content-plus/icons/home.svg" alt="Home" width="48" height="48" loading="lazy"></li>
+              <li><img src="../assets/img/content-plus/icons/heart.svg" alt="Favorite" width="48" height="48" loading="lazy"></li>
+              <li><img src="../assets/img/content-plus/icons/friends.svg" alt="Friends" width="48" height="48" loading="lazy"></li>
+              <li><img src="../assets/img/content-plus/icons/play.svg" alt="Video" width="48" height="48" loading="lazy"></li>
+              <li><img src="../assets/img/content-plus/icons/game.svg" alt="Game" width="48" height="48" loading="lazy"></li>
+              <li><img src="../assets/img/content-plus/icons/activity.svg" alt="Activity" width="48" height="48" loading="lazy"></li>
+              <li><img src="../assets/img/content-plus/icons/classroom.svg" alt="Classroom" width="48" height="48" loading="lazy"></li>
+              <li><img src="../assets/img/content-plus/icons/star.svg" alt="Star" width="48" height="48" loading="lazy"></li>
+              <li><img src="../assets/img/content-plus/icons/flame.svg" alt="Streak" width="48" height="48" loading="lazy"></li>
+              <li><img src="../assets/img/content-plus/icons/medal.svg" alt="Badge" width="48" height="48" loading="lazy"></li>
+            </ul>
+          </div>
         </figure>
       </div>
     </section>
@@ -1122,7 +1293,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       <div class="block">
         <h3 class="t3">ContentPlus Device</h3>
         <p class="body">Our exclusive ContentPlus device <strong>minimizes eye strain</strong> and runs only our app</p>
-        <div class="card">
+        <div class="card device-card">
           <div class="device-pair">
             <div class="fit">
               <img src="https://framerusercontent.com/images/EMvsZLDm40FiKheuK9PvrbXYYdU.png?scale-down-to=1024"
@@ -1253,6 +1424,61 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     });
   }
 
+  /* ---------------------------------------------------------------- tickers */
+  // Scroll forever. Holds still under reduced motion (OS setting or the footer
+  // toggle), while offscreen, while focused for arrow keys, and briefly after
+  // the visitor scrolls or drags it themselves.
+  var html = document.documentElement;
+  function motionOff() { return reduce.matches || html.classList.contains("motion-off"); }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ticker]"), function (root) {
+    var vp = root.querySelector(".ticker__viewport");
+    var track = root.querySelector(".ticker__track");
+    var SPEED = 32; // px per second
+
+    // Duplicate the set once so the loop is seamless; clones are hidden from AT.
+    Array.prototype.slice.call(track.children).forEach(function (li) {
+      var c = li.cloneNode(true);
+      c.setAttribute("aria-hidden", "true");
+      Array.prototype.forEach.call(c.querySelectorAll("img"), function (i) { i.alt = ""; });
+      track.appendChild(c);
+    });
+
+    var pos = 0, last = null, visible = !hasIO, focused = false, resumeAt = 0;
+    function half() { return track.scrollWidth / 2; }
+    function frame(t) {
+      requestAnimationFrame(frame);
+      var still = motionOff();
+      root.classList.toggle("is-static", still);
+      if (last === null) { last = t; return; }
+      var dt = Math.min((t - last) / 1000, 0.1);
+      last = t;
+      if (still || !visible || focused || performance.now() < resumeAt) return;
+      pos += SPEED * dt;
+      var h = half();
+      if (h > 0 && pos >= h) pos -= h;
+      vp.scrollLeft = pos;
+    }
+    requestAnimationFrame(frame);
+
+    // Any scroll we didn't cause is the visitor's: follow it, wrap, and hold off.
+    vp.addEventListener("scroll", function () {
+      if (Math.abs(vp.scrollLeft - pos) < 2) return;
+      var h = half();
+      if (h > 0 && vp.scrollLeft >= h) vp.scrollLeft -= h;
+      pos = vp.scrollLeft;
+      resumeAt = performance.now() + 1000;
+    }, { passive: true });
+    vp.addEventListener("pointerdown", function () { resumeAt = performance.now() + 1000; });
+    root.addEventListener("focusin", function () { focused = true; });
+    root.addEventListener("focusout", function () { focused = false; });
+
+    if (hasIO) {
+      new IntersectionObserver(function (entries) {
+        visible = entries[0].isIntersecting;
+      }).observe(vp);
+    }
+  });
+
   /* ---------------------------------------------------------- rail scrollspy */
   var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
   var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); })
@@ -1359,7 +1585,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 
   /* press ring on every button that has one */
   document.addEventListener("click", function (e) {
-    var btn = e.target.closest(".evidence__open, .text-button");
+    var btn = e.target.closest(".evidence__open");
     if (!btn) return;
     btn.classList.remove("is-hit");
     void btn.offsetWidth;
@@ -1387,7 +1613,8 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   /* reveals, once each */
   document.documentElement.classList.add("motion-ready");
   var groups = [
-    { sel: ".rings .ring--outer", kind: "scale", stagger: false },
+    { sel: ".tally__row", kind: "row" },
+    { sel: ".harm__list li", kind: "row" },
     { sel: ".method .note", kind: "note" },
     { sel: ".ut__hub, .ut__item", kind: "rise" },
     { sel: ".ia-tree .ia-node", kind: "rise" }
@@ -1420,7 +1647,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   });
 
   /* numbers count up to exactly the value already in the markup */
-  var counters = Array.prototype.slice.call(document.querySelectorAll(".ring__num"));
+  var counters = Array.prototype.slice.call(document.querySelectorAll(".tally__num"));
   counters.forEach(function (el) {
     var text = el.textContent.trim();
     var m = text.match(/^(\d+)(.*)$/);

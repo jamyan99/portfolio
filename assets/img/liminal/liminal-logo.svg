@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Liminal app icon: the white doorway-and-road mark (liminal-mark.svg) on deep lavender. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7C6FD6"/>
+      <stop offset="1" stop-color="#5245A8"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <path fill="#fff" transform="translate(126.8 106) scale(0.3755) translate(-282.5 -263)" d="M283 1048V607A344 344 0 0 1 970.5 607V1048Q970.5 1062 956 1062H910C805 1062 621 1032 621 967C621 940 650 918 700 900C750 882 780 860 780 822V607A153.5 153.5 0 0 0 473 607V752Q473 766 488 769C545 781 645 799 645 828C645 849 592 867 522 889C462 908 364 958 318 1050Q312 1062 300 1062H297Q283 1062 283 1048Z"/>
+</svg>

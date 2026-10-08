@@ -10,6 +10,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@500,700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* Before anything renders: mark script support, and apply the OS Reduce
+   motion setting so no animation or page transition starts first. */
+(function (root) {
+  root.classList.add("js");
+  // Clear the choice the old footer toggle used to save; the OS setting rules now.
+  try { localStorage.removeItem("reduceMotion"); } catch (e) {}
+  try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) root.classList.add("motion-off"); } catch (e) {}
+}(document.documentElement));
+</script>
+<!-- Chromium: start loading a page as soon as its link is hovered, so the click is instant -->
+<script type="speculationrules">
+{ "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+</script>
 <style>
 
 /* ==========================================================================
@@ -95,17 +111,8 @@ strong { font-weight: 500; color: var(--ink); }
 .skip-link:focus { top: 12px; }
 
 /* ==========================================================================
-   Site nav + layout
+   Layout
    ========================================================================== */
-.site-nav { background: var(--surface); border-bottom: 1px solid var(--line); }
-.site-nav__inner {
-  max-width: 1240px; margin: 0 auto; padding: 18px 24px;
-  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
-}
-.site-nav__mark { font-size: 15px; text-decoration: none; color: var(--ink-dim); }
-.site-nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
-.site-nav ul a { font-size: 14px; text-decoration: none; }
-.site-nav ul a:hover { color: var(--ink-dim); }
 
 .layout {
   max-width: 1240px; margin: 0 auto; padding: 40px 24px 0;
@@ -239,47 +246,22 @@ strong { font-weight: 500; color: var(--ink); }
    ========================================================================== */
 .page-head { padding-top: var(--space-xl); }
 .page-head .t2 { font-size: var(--h1); }
-.page-head p { margin-top: var(--space-s); color: var(--ink-dim); font-size: 15px; }
 
-.toolbar {
-  margin-top: var(--space-l); display: flex; flex-wrap: wrap; gap: var(--space-m);
-  align-items: center; justify-content: space-between;
-}
-.toolbar__group { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.toolbar__label { font: 500 12px/1 var(--font-body); color: var(--ink-dim); letter-spacing: .04em; margin-right: 4px; }
-.chipbtn {
-  appearance: none; cursor: pointer; position: relative;
-  padding: 9px 14px; border-radius: 999px;
-  background: var(--surface); color: var(--ink); border: 1px solid var(--line);
-  font: 500 14px/1 var(--font-body);
-}
-.chipbtn:hover { border-color: #C9C9CF; }
-.chipbtn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
-.chipbtn__count { opacity: .6; margin-left: 6px; font-variant-numeric: tabular-nums; }
+/* an even grid of equal 4:5 tiles */
+.gallery { margin-top: var(--space-l); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-m); }
+@media (max-width: 860px)  { .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px)  { .gallery { grid-template-columns: 1fr; } }
 
-/* masonry by columns; grid mode switches to equal tiles */
-.gallery { margin-top: var(--space-l); columns: 3; column-gap: var(--space-m); }
-.gallery--grid { columns: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-m); }
-@media (min-width: 1200px) { .gallery { columns: 4; } }
-@media (max-width: 860px)  { .gallery { columns: 2; } .gallery--grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 520px)  { .gallery { columns: 1; } .gallery--grid { grid-template-columns: 1fr; } }
-
-.piece { break-inside: avoid; margin: 0 0 var(--space-m); }
-.gallery--grid .piece { margin: 0; }
 .piece__open {
   display: block; width: 100%; padding: 0; border: 0; cursor: zoom-in;
   background: var(--surface); border-radius: var(--radius-sm); overflow: hidden;
-  position: relative; line-height: 0;
+  position: relative; line-height: 0; aspect-ratio: 4 / 5;
 }
-.piece__open img { width: 100%; height: auto; display: block; background: #EDEDEF; }
-.gallery--grid .piece__open { aspect-ratio: 4 / 5; }
-.gallery--grid .piece__open img { height: 100%; object-fit: cover; }
+.piece__open img { width: 100%; height: 100%; object-fit: cover; display: block; background: #EDEDEF; }
 .piece__open::after {
   content: ""; position: absolute; inset: 0; border-radius: var(--radius-sm);
   box-shadow: inset 0 0 0 1px rgba(24, 24, 27, .08); pointer-events: none;
 }
-.piece[hidden] { display: none; }
-.gallery__empty { margin-top: var(--space-l); color: var(--ink-dim); }
 
 /* ==========================================================================
    Viewer
@@ -325,9 +307,9 @@ strong { font-weight: 500; color: var(--ink); }
 :root { --mo-fast: 130ms; --mo-mid: 260ms; --mo-ease: cubic-bezier(.34, 1.2, .48, 1); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .chipbtn, .vbtn, .piece__open { transition: transform var(--mo-fast) var(--mo-ease), background-color var(--mo-mid) ease, border-color var(--mo-mid) ease; }
-  .chipbtn:active, .vbtn:active { transform: scale(.96); }
-  .chipbtn::after, .vbtn::after {
+  .vbtn, .piece__open { transition: transform var(--mo-fast) var(--mo-ease), background-color var(--mo-mid) ease, border-color var(--mo-mid) ease; }
+  .vbtn:active { transform: scale(.96); }
+  .vbtn::after {
     content: ""; position: absolute; inset: -3px; border-radius: 999px;
     border: 1.5px solid currentColor; opacity: 0; pointer-events: none;
   }
@@ -386,7 +368,6 @@ strong { font-weight: 500; color: var(--ink); }
 .footer-btn:hover { color: var(--ink); border-color: #C2C2C9; }
 /* beats display:inline-flex, so the script-only buttons stay hidden without JS */
 .footer-btn[hidden] { display: none; }
-.footer-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .footer-btn--plain { border-color: transparent; padding-inline: 0; margin-left: auto; }
 .footer-btn--plain:hover { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; }
 .footer-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -411,105 +392,291 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
+/* ==========================================================================
+   Header fonts: Bricolage Grotesque and Manrope, self-hosted variable files
+   (licences in assets/fonts). On this page only the header uses them.
+   ========================================================================== */
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(assets/fonts/bricolage-grotesque-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(assets/fonts/bricolage-grotesque-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(assets/fonts/manrope-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(assets/fonts/manrope-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ==========================================================================
+   Global header
+   The same on every page. Fixed: transparent over the home hero until the
+   page scrolls, solid from the start everywhere else (site-header--solid).
+   It carries its own colours and type, so no page theme can restyle it.
+   ========================================================================== */
+/* One height for the header, scrolled or not, on every page: nothing in it
+   moves when the page scrolls or changes. Anchors and sticky elements read it. */
+:root { --site-header-h: 84px; }
+html { scroll-padding-top: var(--site-header-h); }
+
+.site-header {
+  --nav-paper: #F8F7F4; --nav-ink: #111216; --nav-muted: #656B7C; --nav-link: #51586C;
+  --nav-line: #DEDFE2; --nav-accent: #F3480B; --nav-accent-text: #C53606;
+  --nav-ease: cubic-bezier(.22, 1, .36, 1);
+  position: fixed; inset: 0 0 auto; z-index: 40;
+  /* content sits in the site's one container, 1192px wide with 24px gutters:
+     the same as the case studies, gallery, 404, footers and home page */
+  height: var(--site-header-h); padding: 0 max(24px, calc((100% - 1192px) / 2));
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  color: var(--nav-ink); font: 400 16px/1.7 "Manrope", "Segoe UI", sans-serif;
+  letter-spacing: normal; text-transform: none; -webkit-font-smoothing: antialiased;
+}
+.site-header--solid, .site-header[data-scrolled="true"], html:not(.js) .site-header {
+  background: var(--nav-paper); border-bottom-color: var(--nav-line);
+}
+/* keeps the page clear of the fixed header where no hero sits under it */
+.site-header__spacer { height: var(--site-header-h); }
+.skip-link:focus { z-index: 100; }
+
+.site-header a { color: inherit; text-decoration: none; }
+.site-header :focus-visible { outline: 2px solid var(--nav-accent); outline-offset: 6px; }
+.wordmark:focus-visible, .main-nav a:not(.nav-contact):focus-visible { border-radius: 0; }
+.site-header svg { display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.wordmark { display: flex; align-items: center; gap: 15px; flex-shrink: 0; font-size: 13px; font-weight: 600; line-height: 1.25; }
+.monogram { font: 700 38px/1 "Bricolage Grotesque", Arial, sans-serif; letter-spacing: -0.1em; padding-right: .1em; }
+.monogram span { color: var(--nav-accent); }
+.wordmark__copy { display: grid; gap: 3px; }
+.wordmark__copy strong { color: var(--nav-ink); font-size: 14px; font-weight: 700; letter-spacing: -0.035em; }
+.wordmark__copy small { color: var(--nav-muted); font-size: 12px; font-weight: 500; }
+
+.main-nav {
+  display: flex; align-items: center; gap: clamp(18px, 3vw, 48px);
+  margin-left: auto;
+  font-size: 14px; font-weight: 500;
+}
+.main-nav a { position: relative; padding: 12px 0; color: var(--nav-link); }
+.main-nav a:hover, .main-nav a[aria-current] { color: var(--nav-ink); }
+/* the current page (on a case study, Work) and the hovered link get a dot */
+.main-nav a::after {
+  content: ""; position: absolute; bottom: 1px; left: 50%;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--nav-accent);
+  transform: translateX(-50%) scale(0);
+}
+.main-nav a:hover::after, .main-nav a[aria-current]::after { transform: translateX(-50%) scale(1); }
+.main-nav .nav-contact {
+  display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 20px;
+  border: 1px solid rgba(17, 18, 22, .12); border-radius: 999px;
+  background: var(--nav-ink); color: #fff;
+}
+.main-nav .nav-contact:hover { background: var(--nav-accent-text); border-color: var(--nav-accent-text); color: #fff; }
+.main-nav .nav-contact::after { content: none; }
+
+.menu-toggle { display: none; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+/* beats the display:grid below, so the script-only button stays hidden without JS */
+.menu-toggle[hidden] { display: none !important; }
+.menu-toggle .icon-close, .menu-toggle[aria-expanded="true"] .icon-open { display: none; }
+.menu-toggle[aria-expanded="true"] .icon-close { display: block; }
+
+@media (max-width: 1100px) {
+  .main-nav { gap: clamp(15px, 2vw, 25px); font-size: 13px; }
+  .main-nav .nav-contact { min-height: 42px; gap: 8px; padding-inline: 14px; }
+}
+@media (max-width: 760px) {
+  .js .menu-toggle {
+    display: grid; place-items: center; width: 44px; height: 44px;
+    border: 1px solid rgba(17, 18, 22, .15); border-radius: 50%; background: rgba(248, 247, 244, .75);
+  }
+  .js .main-nav {
+    position: absolute; top: calc(100% - 1px); right: 12px; left: 12px;
+    display: none; flex-direction: column; align-items: stretch; gap: 0;
+    margin: 0; padding: 10px 22px 18px;
+    border: 1px solid rgba(17, 18, 22, .09); border-radius: 0 0 16px 16px;
+    background: rgba(248, 247, 244, .98); box-shadow: 0 18px 40px rgba(17, 18, 22, .1);
+  }
+  .js .main-nav.open { display: flex; }
+  .js .main-nav a { min-height: 46px; padding: 12px 0; font-size: 15px; }
+  .js .main-nav a::after { bottom: 8px; left: auto; right: 0; }
+  .js .main-nav .nav-contact { justify-content: center; margin-top: 9px; padding-inline: 18px; }
+}
+@media (max-width: 760px) {
+  :root { --site-header-h: 72px; }
+  .wordmark { gap: 11px; font-size: 11px; }
+  .monogram { font-size: 33px; }
+  .wordmark__copy strong { font-size: 12px; }
+  .wordmark__copy small { font-size: 10px; }
+  /* without script the links simply wrap under the wordmark */
+  html:not(.js) .site-header { position: static; height: auto; flex-wrap: wrap; gap: 6px 16px; padding-block: 16px; }
+  html:not(.js) .main-nav { flex-wrap: wrap; width: 100%; margin: 0; gap: 0 18px; }
+  html:not(.js) .site-header__spacer { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-header { transition: background-color 240ms ease, border-color 240ms ease; }
+  .main-nav a { transition: color 180ms ease; }
+  .main-nav a::after { transition: transform 180ms cubic-bezier(.2, .7, .2, 1); }
+  .main-nav .nav-contact { transition: background-color 180ms ease, border-color 180ms ease; }
+  @media (max-width: 760px) {
+    .js .main-nav.open { animation: nav-menu-enter 320ms var(--nav-ease) both; }
+  }
+  @keyframes nav-menu-enter { from { opacity: 0; transform: translateY(-8px); } }
+}
+
+/* Moving between pages. The page cross-fades instead of flashing, and the
+   header is a layer of its own, so it holds still while the page changes
+   under it. Typed (page-nav) so a page's own same-page transitions, like the
+   Vibe Coding simulator's, keep their rules. Reduce motion skips it; browsers
+   without cross-document view transitions simply navigate. */
+@view-transition { navigation: auto; types: page-nav; }
+.site-header { view-transition-name: site-header; }
+html:active-view-transition-type(page-nav)::view-transition-old(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-out; mix-blend-mode: plus-lighter; }
+html:active-view-transition-type(page-nav)::view-transition-new(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-in; mix-blend-mode: plus-lighter; }
+@keyframes page-out { to { opacity: 0; } }
+@keyframes page-in { from { opacity: 0; } }
+html.motion-off::view-transition-group(*),
+html.motion-off::view-transition-old(*),
+html.motion-off::view-transition-new(*) { animation: none !important; }
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-nav">
-  <div class="site-nav__inner">
-    <a class="site-nav__mark" href="index.html#home">Jamiyan Batnyam</a>
-    <nav aria-label="Main">
-      <ul>
-        <li><a href="index.html#home">Home</a></li>
-        <li><a href="index.html#projects">Projects</a></li>
-        <li><a href="visual.html" aria-current="page">Gallery</a></li>
-        <li><a href="index.html#about-me">About</a></li>
-      </ul>
-    </nav>
-  </div>
+<header class="site-header site-header--solid" data-scrolled="false">
+  <a class="wordmark" href="index.html#home" aria-label="Jamiyan Batnyam, home">
+    <span class="monogram" aria-hidden="true">JB<span>·</span></span>
+    <span class="wordmark__copy">
+      <strong>Jamiyan Batnyam</strong>
+      <small>UX / Product Designer</small>
+    </span>
+  </a>
+  <nav class="main-nav" id="main-nav" aria-label="Main">
+    <a href="index.html#home">Home</a>
+    <a href="index.html#projects">Work</a>
+    <a href="index.html#about-me">About</a>
+    <a href="visual.html" aria-current="page">Gallery</a>
+    <a href="index.html#contact">Contact</a>
+    <a class="nav-contact" href="mailto:jamyanart@gmail.com">Let’s connect <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+  </nav>
+  <button class="menu-toggle" type="button" id="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Open menu" hidden>
+    <svg class="icon-open" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+  </button>
 </header>
+<div class="site-header__spacer" aria-hidden="true"></div>
+<script>
+/* Global header, the same on every page: solid once the page leaves the top,
+   and the phone menu. */
+(function () {
+  "use strict";
+  var header = document.querySelector(".site-header");
+  if (!header) return;
+
+  var frame = 0;
+  var paint = function () {
+    frame = 0;
+    header.setAttribute("data-scrolled", window.scrollY > 40 ? "true" : "false");
+  };
+  window.addEventListener("scroll", function () {
+    if (!frame) frame = window.requestAnimationFrame(paint);
+  }, { passive: true });
+  paint();
+
+  var toggle = document.getElementById("menu-toggle");
+  var nav = document.getElementById("main-nav");
+  if (!toggle || !nav) return;
+  toggle.hidden = false;
+  var isOpen = function () { return nav.classList.contains("open"); };
+  var setMenu = function (open, returnFocus) {
+    nav.classList.toggle("open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    if (open) {
+      var first = nav.querySelector("a");
+      if (first) first.focus({ preventScroll: true });
+    } else if (returnFocus) {
+      toggle.focus();
+    }
+  };
+  toggle.addEventListener("click", function () { setMenu(!isOpen()); });
+  nav.addEventListener("click", function (e) { if (isOpen() && e.target.closest("a")) setMenu(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen()) setMenu(false, true); });
+  document.addEventListener("pointerdown", function (e) { if (isOpen() && !header.contains(e.target)) setMenu(false); });
+  header.addEventListener("focusout", function (e) {
+    if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setMenu(false);
+  });
+}());
+</script>
 
 <main id="main" class="layout" style="grid-template-columns:minmax(0,1fr); display:block; max-width:1240px; margin:0 auto; padding:0 24px">
   <div class="page-head">
     <h1 class="t2">Gallery</h1>
-    <p>9 pieces. Open any of them to see it full screen, and zoom in for detail.</p>
   </div>
 
-  <div class="toolbar">
-    <div class="toolbar__group" role="group" aria-label="Filter by orientation">
-      <span class="toolbar__label">Show</span>
-      <button class="chipbtn" type="button" data-filter="all" aria-pressed="true">All<span class="chipbtn__count">9</span></button>
-      <button class="chipbtn" type="button" data-filter="landscape" aria-pressed="false">Landscape<span class="chipbtn__count">6</span></button>
-      <button class="chipbtn" type="button" data-filter="portrait" aria-pressed="false">Portrait<span class="chipbtn__count">2</span></button>
-      <button class="chipbtn" type="button" data-filter="square" aria-pressed="false">Square<span class="chipbtn__count">1</span></button>
-    </div>
-    <div class="toolbar__group" role="group" aria-label="Layout">
-      <span class="toolbar__label">Layout</span>
-      <button class="chipbtn" type="button" data-layout="masonry" aria-pressed="false">Masonry</button>
-      <button class="chipbtn" type="button" data-layout="grid" aria-pressed="true">Grid</button>
-    </div>
-  </div>
-
-  <p class="sr-only" id="gallery-status" role="status" aria-live="polite">Showing all 9 pieces.</p>
-
-  <div class="gallery gallery--grid" id="gallery">
-        <figure class="piece" data-orient="landscape" data-index="0" style="--i:0">
+  <div class="gallery" id="gallery">
+        <figure class="piece" data-index="0" style="--i:0">
           <button class="piece__open" type="button" data-piece="0" aria-label="Open piece 1 of 9 full screen">
             <img src="https://framerusercontent.com/images/pn2Jgi2titY05EUATOa3Y7ea3E.png?scale-down-to=1024" alt="Gallery piece 1"
                  width="2254" height="2000" loading="lazy" decoding="async">
           </button>
         </figure>
-        <figure class="piece" data-orient="portrait" data-index="1" style="--i:1">
+        <figure class="piece" data-index="1" style="--i:1">
           <button class="piece__open" type="button" data-piece="1" aria-label="Open piece 2 of 9 full screen">
             <img src="https://framerusercontent.com/images/3ZDxyTsRmwMAxQRYoGSvxVnF18.png?scale-down-to=1024" alt="Gallery piece 2"
                  width="3912" height="5294" loading="lazy" decoding="async">
           </button>
         </figure>
-        <figure class="piece" data-orient="landscape" data-index="2" style="--i:2">
+        <figure class="piece" data-index="2" style="--i:2">
           <button class="piece__open" type="button" data-piece="2" aria-label="Open piece 3 of 9 full screen">
             <img src="https://framerusercontent.com/images/Ym60n3KDMM98H7c7oJw7LjKmBk.png?scale-down-to=1024" alt="Gallery piece 3"
                  width="4000" height="3000" loading="lazy" decoding="async">
           </button>
         </figure>
-        <figure class="piece" data-orient="landscape" data-index="3" style="--i:3">
+        <figure class="piece" data-index="3" style="--i:3">
           <button class="piece__open" type="button" data-piece="3" aria-label="Open piece 4 of 9 full screen">
             <img src="https://framerusercontent.com/images/dIqZEaIS5jPMlG4JyzL0o6iwMM.png?scale-down-to=1024" alt="Gallery piece 4"
                  width="7000" height="4789" loading="lazy" decoding="async">
           </button>
         </figure>
-        <figure class="piece" data-orient="landscape" data-index="4" style="--i:4">
+        <figure class="piece" data-index="4" style="--i:4">
           <button class="piece__open" type="button" data-piece="4" aria-label="Open piece 5 of 9 full screen">
             <img src="https://framerusercontent.com/images/l3PvLM5cF1ek1T48OFk8yTJlnSk.png?scale-down-to=1024" alt="Gallery piece 5"
                  width="3000" height="2250" loading="lazy" decoding="async">
           </button>
         </figure>
-        <figure class="piece" data-orient="square" data-index="5" style="--i:5">
+        <figure class="piece" data-index="5" style="--i:5">
           <button class="piece__open" type="button" data-piece="5" aria-label="Open piece 6 of 9 full screen">
             <img src="https://framerusercontent.com/images/hGRdwGYtUFRMOd6EblRUjuaOek.png?scale-down-to=1024" alt="Gallery piece 6"
                  width="2400" height="2381" loading="lazy" decoding="async">
           </button>
         </figure>
-        <figure class="piece" data-orient="landscape" data-index="6" style="--i:6">
+        <figure class="piece" data-index="6" style="--i:6">
           <button class="piece__open" type="button" data-piece="6" aria-label="Open piece 7 of 9 full screen">
             <img src="https://framerusercontent.com/images/5bdZuDbIZl2l6yFofZo0DeB3KTQ.jpg?scale-down-to=1024" alt="Gallery piece 7"
                  width="1521" height="919" loading="lazy" decoding="async">
           </button>
         </figure>
-        <figure class="piece" data-orient="portrait" data-index="7" style="--i:7">
+        <figure class="piece" data-index="7" style="--i:7">
           <button class="piece__open" type="button" data-piece="7" aria-label="Open piece 8 of 9 full screen">
             <img src="https://framerusercontent.com/images/wcrI1ADtrEhe3ljXEcKEvZN0QA.jpg?scale-down-to=1024" alt="Gallery piece 8"
                  width="1536" height="2048" loading="lazy" decoding="async">
           </button>
         </figure>
-        <figure class="piece" data-orient="landscape" data-index="8" style="--i:0">
+        <figure class="piece" data-index="8" style="--i:0">
           <button class="piece__open" type="button" data-piece="8" aria-label="Open piece 9 of 9 full screen">
             <img src="https://framerusercontent.com/images/eoLFUf36qx62muV2YFoZgllODE.jpg?scale-down-to=1024" alt="Gallery piece 9"
                  width="2048" height="1500" loading="lazy" decoding="async">
           </button>
         </figure>
   </div>
-  <p class="gallery__empty" id="gallery-empty" hidden>No pieces match that filter.</p>
 </main>
 
 <dialog class="viewer" id="viewer" aria-label="Gallery viewer">
@@ -548,7 +715,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <ul>
           <li><a href="mailto:jamyanart@gmail.com">Email</a></li>
           <li><a href="https://www.linkedin.com/in/jbatnyam" target="_blank" rel="noopener">LinkedIn</a></li>
-          <li><a href="https://drive.google.com/file/d/1n59fu4pS5daSCbGWl0T3oztfOcWMoSbP/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
+          <li><a href="https://drive.google.com/file/d/1pItyx2MR89-dWQJc5hhjjewwKZ3RN7SD/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
         </ul>
       </div>
       <div>
@@ -566,7 +733,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
         <span id="copy-email-label">Copy email</span>
       </button>
-      <button class="footer-btn" type="button" id="motion-toggle" aria-pressed="false" hidden>Reduce motion: off</button>
       <a class="footer-btn footer-btn--plain" href="#top">Back to top &uarr;</a>
       <span class="footer-status" role="status" id="footer-status"></span>
     </div>
@@ -599,47 +765,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   var gallery = document.getElementById("gallery");
   var figures = Array.prototype.slice.call(gallery.querySelectorAll(".piece"));
-  var status = document.getElementById("gallery-status");
-  var empty = document.getElementById("gallery-empty");
-  var visible = figures.map(function (_, i) { return i; });   /* indexes currently shown */
-
-  /* --------------------------------------------------------------- filter */
-  var filter = "all";
-  function applyFilter(next) {
-    filter = next;
-    visible = [];
-    figures.forEach(function (fig, i) {
-      var show = (filter === "all" || fig.getAttribute("data-orient") === filter);
-      fig.hidden = !show;
-      if (show) { fig.style.setProperty("--i", visible.length % 8); visible.push(i); }
-    });
-    empty.hidden = visible.length > 0;
-    status.textContent = filter === "all"
-      ? "Showing all " + visible.length + " pieces."
-      : "Showing " + visible.length + " " + filter + " piece" + (visible.length === 1 ? "" : "s") + ".";
-    Array.prototype.forEach.call(document.querySelectorAll("[data-filter]"), function (b) {
-      b.setAttribute("aria-pressed", b.getAttribute("data-filter") === filter ? "true" : "false");
-    });
-  }
-  Array.prototype.forEach.call(document.querySelectorAll("[data-filter]"), function (b) {
-    b.addEventListener("click", function () { applyFilter(b.getAttribute("data-filter")); });
-  });
-
-  /* --------------------------------------------------------------- layout */
-  function applyLayout(mode) {
-    gallery.classList.toggle("gallery--grid", mode === "grid");
-    Array.prototype.forEach.call(document.querySelectorAll("[data-layout]"), function (b) {
-      b.setAttribute("aria-pressed", b.getAttribute("data-layout") === mode ? "true" : "false");
-    });
-    try { sessionStorage.setItem("galleryLayout", mode); } catch (e) {}
-  }
-  Array.prototype.forEach.call(document.querySelectorAll("[data-layout]"), function (b) {
-    b.addEventListener("click", function () { applyLayout(b.getAttribute("data-layout")); });
-  });
-  try {
-    var saved = sessionStorage.getItem("galleryLayout");
-    if (saved) applyLayout(saved);
-  } catch (e) {}
 
   /* --------------------------------------------------------------- viewer */
   var dlg = document.getElementById("viewer");
@@ -676,13 +801,10 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     setZoom(false);
     vImg.src = src(p, 1600);
     vImg.alt = label(p, i);
-    var pos = visible.indexOf(i);
-    vCount.textContent = (pos + 1) + " / " + visible.length;
+    vCount.textContent = (i + 1) + " / " + PIECES.length;
   }
   function step(dir) {
-    if (!visible.length) return;
-    var pos = visible.indexOf(current);
-    show(visible[(pos + dir + visible.length) % visible.length]);
+    show((current + dir + PIECES.length) % PIECES.length);
   }
   function open(i, from) {
     opener = from || null;
@@ -766,7 +888,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       });
     });
     document.addEventListener("click", function (e) {
-      var b = e.target.closest(".chipbtn, .vbtn");
+      var b = e.target.closest(".vbtn");
       if (!b) return;
       b.classList.remove("is-hit"); void b.offsetWidth; b.classList.add("is-hit");
       b.addEventListener("animationend", function h() {
@@ -777,8 +899,8 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 }());
 </script>
 <script>
-/* Footer utilities. Both buttons are revealed only once this runs, so they are
-   never present as dead controls when JavaScript is off. */
+/* Footer utilities. The copy button is revealed only once this runs, so it is
+   never present as a dead control when JavaScript is off. */
 (function () {
   "use strict";
 
@@ -806,31 +928,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     });
   }
 
-  /* ------------------------------------------------ reduce-motion override */
-  var motionBtn = document.getElementById("motion-toggle");
-  if (motionBtn) {
-    var root = document.documentElement;
-    var osReduce = false;
-    try { osReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
-    var saved = null;
-    try { saved = window.localStorage.getItem("reduceMotion"); } catch (e) {}
-    /* The OS setting is the default; an explicit choice here overrides it. */
-    var reduced = saved === null ? osReduce : saved === "1";
-
-    var apply = function () {
-      root.classList.toggle("motion-off", reduced);
-      motionBtn.setAttribute("aria-pressed", reduced ? "true" : "false");
-      motionBtn.textContent = "Reduce motion: " + (reduced ? "on" : "off");
-    };
-    apply();
-    motionBtn.hidden = false;
-    motionBtn.addEventListener("click", function () {
-      reduced = !reduced;
-      try { window.localStorage.setItem("reduceMotion", reduced ? "1" : "0"); } catch (e) {}
-      apply();
-      if (status) status.textContent = "Motion " + (reduced ? "reduced" : "restored") + ".";
-    });
-  }
 })();
 </script>
 </body>

@@ -10,6 +10,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@500,700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="../assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* Before anything renders: mark script support, and apply the OS Reduce
+   motion setting so no animation or page transition starts first. */
+(function (root) {
+  root.classList.add("js");
+  // Clear the choice the old footer toggle used to save; the OS setting rules now.
+  try { localStorage.removeItem("reduceMotion"); } catch (e) {}
+  try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) root.classList.add("motion-off"); } catch (e) {}
+}(document.documentElement));
+</script>
+<!-- Chromium: start loading a page as soon as its link is hovered, so the click is instant -->
+<script type="speculationrules">
+{ "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+</script>
 <style>
 
 /* ==========================================================================
@@ -100,17 +116,8 @@ strong { font-weight: 500; color: var(--ink); }
 .skip-link:focus { top: 12px; }
 
 /* ==========================================================================
-   Site nav + layout
+   Layout
    ========================================================================== */
-.site-nav { background: var(--surface); border-bottom: 1px solid var(--line); }
-.site-nav__inner {
-  max-width: 1240px; margin: 0 auto; padding: 18px 24px;
-  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
-}
-.site-nav__mark { font-size: 15px; text-decoration: none; color: var(--ink-dim); }
-.site-nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
-.site-nav ul a { font-size: 14px; text-decoration: none; }
-.site-nav ul a:hover { color: var(--ink-dim); }
 
 .layout {
   max-width: 1240px; margin: 0 auto; padding: 40px 24px 0;
@@ -119,7 +126,7 @@ strong { font-weight: 500; color: var(--ink); }
 .content { min-width: 0; max-width: 960px; }
 
 .rail {
-  position: sticky; top: 32px; align-self: start;
+  position: sticky; top: calc(var(--site-header-h) + 32px); align-self: start;
   background: var(--surface); border-radius: var(--radius-sm); padding: 14px 16px 13px;
 }
 .rail__eyebrow {
@@ -158,7 +165,7 @@ strong { font-weight: 500; color: var(--ink); }
 @media (max-width: 1000px) {
   .layout { grid-template-columns: 1fr; gap: 0; padding-top: 0; }
   .rail {
-    position: sticky; top: 0; z-index: 10;
+    position: sticky; top: var(--site-header-h); z-index: 10;
     /* Without this the grid item takes its min-content width from the nav,
        and overflow-x on the nav does not reduce that contribution. */
     min-width: 0;
@@ -174,7 +181,10 @@ strong { font-weight: 500; color: var(--ink); }
   .rail__progress { margin-top: 7px; display: flex; align-items: center; gap: 12px; }
   .rail__bar { flex: 1; }
   .rail__meta { flex: none; margin: 0; }
-  .section, .intro { scroll-margin-top: 104px; }
+  /* clear the taller sticky rail when jumping to an anchor. !important: the
+     plain .section rule further down and the inline 72px on some sections
+     would otherwise win, and the heading would land under the strip. */
+  .section, .intro { scroll-margin-top: 104px !important; }
 }
 
 /* ==========================================================================
@@ -273,56 +283,19 @@ strong { font-weight: 500; color: var(--ink); }
 /* single-phone recording cards (Onboarding, Friends & Co-Play, Parental Controls) */
 .phone-card { aspect-ratio: 4 / 5; background: var(--surface); border-radius: var(--radius); --fit-pad: 24px; }
 
-.evidence__open {
-  position: relative; display: block; width: 100%; aspect-ratio: 4 / 3;
-  padding: 0; border: 0; border-radius: var(--radius-sm); overflow: hidden;
-  background: #F1F1F3; cursor: zoom-in;
+/* evidence images sit in a fixed 4:3 frame so mixed sizes line up; display only */
+.evidence__frame {
+  aspect-ratio: 4 / 3; border-radius: var(--radius-sm); overflow: hidden;
+  background: #F1F1F3;
 }
-.evidence__open img { width: 100%; height: 100%; object-fit: contain; }
-.evidence__chip {
-  position: absolute; right: 10px; bottom: 10px;
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 11px; border-radius: 999px;
-  background: rgba(255, 255, 255, 0.95); color: var(--ink);
-  font: 500 13px/1 var(--font-body);
-  box-shadow: 0 1px 2px rgba(24, 24, 27, 0.18);
-}
-.evidence__chip svg { width: 14px; height: 14px; }
-.evidence__open:hover .evidence__chip { background: #fff; box-shadow: 0 2px 6px rgba(24, 24, 27, 0.22); }
-
-
-.text-button {
-  display: inline-flex; align-items: center; gap: 6px; padding: 6px 0;
-  background: none; border: 0; cursor: pointer;
-  font: 500 14px/1.2 var(--font-body); color: var(--ink-dim);
-  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #C9C9CF;
-}
-.text-button:hover { color: var(--ink); text-decoration-color: currentColor; }
-.text-button svg { width: 14px; height: 14px; flex: none; }
-
-
-/* ==========================================================================
-   Full-size viewer
-   ========================================================================== */
-.lightbox {
-  width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh;
-  margin: 0; padding: 0; border: 0; background: transparent;
-}
-.lightbox::backdrop { background: rgba(24, 24, 27, 0.88); }
-.lightbox__stage { width: 100%; height: 100%; display: grid; place-items: center; padding: 64px 20px 24px; }
-.lightbox__stage img { max-width: min(1600px, 100%); max-height: 100%; object-fit: contain; border-radius: 8px; background: #fff; }
-.lightbox__close {
-  position: fixed; top: 16px; right: 16px;
-  padding: 10px 16px; border: 0; border-radius: 999px; cursor: pointer;
-  background: #fff; color: var(--ink); font: 500 14px/1 var(--font-body);
-}
+.evidence__frame img { width: 100%; height: 100%; object-fit: contain; }
 
 
 /* ==========================================================================
    Motion
    All of it lives behind prefers-reduced-motion, and none of it carries
    meaning on its own — every state change is still stated in text.
-   Timings: press 120ms, screen 260ms, guard 340ms, overlay 300ms.
+   Timings: press 120ms, screen 220ms, guard 340ms, overlay 300ms.
    ========================================================================== */
 @media (prefers-reduced-motion: no-preference) {
 
@@ -341,20 +314,20 @@ strong { font-weight: 500; color: var(--ink); }
     100% { opacity: 0;  transform: scale(1.14); }
   }
 
-  /* 2 — the screen change, via the View Transitions API where available */
+  /* 2 — the screen change, via the View Transitions API where available.
+     A dashboard's bezel does not move, so nothing slides or scales: the new
+     screenshot fades in over the old one, which stays fully opaque under
+     it, and both are clipped to the round screen. The square corners of the
+     screenshots and the dark cluster behind them never show. Browsers
+     without View Transitions swap instantly. */
   .cluster__screen { view-transition-name: cluster-screen; }
-  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
-  ::view-transition-old(cluster-screen) { animation: screen-out 200ms ease both; }
-  ::view-transition-new(cluster-screen) { animation: screen-in 260ms cubic-bezier(.2,.7,.3,1) both; }
-  :root[data-vt="back"] ::view-transition-old(cluster-screen) { animation: screen-out-back 200ms ease both; }
-  :root[data-vt="back"] ::view-transition-new(cluster-screen) { animation: screen-in-back 260ms cubic-bezier(.2,.7,.3,1) both; }
-  @keyframes screen-out      { to { opacity: 0; transform: translateY(-4%) scale(.97); } }
-  @keyframes screen-in       { from { opacity: 0; transform: translateY(5%) scale(.97); } }
-  @keyframes screen-out-back { to { opacity: 0; transform: translateY(4%) scale(.97); } }
-  @keyframes screen-in-back  { from { opacity: 0; transform: translateY(-5%) scale(.97); } }
-
-  /* fallback for browsers without View Transitions */
-  .cluster__screen.is-swap { animation: screen-in 260ms cubic-bezier(.2,.7,.3,1) both; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+  ::view-transition-group(root), ::view-transition-group(cluster-screen) { animation-duration: 220ms; }
+  ::view-transition-image-pair(cluster-screen) { clip-path: circle(50%); }
+  ::view-transition-old(cluster-screen), ::view-transition-new(cluster-screen) { mix-blend-mode: normal; }
+  ::view-transition-old(cluster-screen) { animation: none; }
+  ::view-transition-new(cluster-screen) { animation: screen-in 220ms cubic-bezier(.4,0,.2,1) both; }
+  @keyframes screen-in { from { opacity: 0; } }
 
   /* 3 — a guard rule refusing the transition */
   .cluster.is-guard { animation: guard 340ms cubic-bezier(.36,.07,.19,.97); }
@@ -433,11 +406,7 @@ strong { font-weight: 500; color: var(--ink); }
 .dark .rail__eyebrow, .dark .rail__meta { color: var(--ink-dim); }
 .dark .rail__bar { background: var(--line); }
 .dark .card { border: 1px solid var(--line); }
-.dark .evidence__open { background: #101217; }
-.dark .evidence__chip { background: rgba(23, 25, 30, 0.94); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); }
-.dark .evidence__open:hover .evidence__chip { background: var(--surface-sunk); }
-.dark .text-button { color: var(--ink-dim); text-decoration-color: #4A4F5B; }
-.dark .text-button:hover { color: var(--ink); }
+.dark .evidence__frame { background: #101217; }
 .dark :focus-visible { outline-color: var(--amber-soft); }
 @media (max-width: 1000px) { .dark .rail { border-bottom: 1px solid var(--line); } }
 
@@ -490,10 +459,14 @@ strong { font-weight: 500; color: var(--ink); }
 @media (max-width: 560px) { .concepts { grid-template-columns: 1fr; } }
 
 /* ==========================================================================
-   The simulator: cluster + controls + readout, beside the state machine
+   The simulator: cluster + controls on the left, readout + state machine on
+   the right. Stacked, the readout lands straight under the controls.
    ========================================================================== */
 .sim { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-l); align-items: start; }
-@media (max-width: 900px) { .sim { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .sim { grid-template-columns: 1fr; gap: var(--space-m); }
+  .sim .cluster { width: min(100%, 420px); margin-inline: auto; }
+}
 
 .cluster {
   position: relative; aspect-ratio: 1; border-radius: 50%;
@@ -502,10 +475,13 @@ strong { font-weight: 500; color: var(--ink); }
 }
 .cluster__screen { position: absolute; inset: 0; display: grid; place-items: center; }
 .cluster__screen img { width: 100%; height: 100%; object-fit: contain; }
-.cluster__blank { padding: 12% 14%; text-align: center; color: var(--ink-dim); font-size: 14px; line-height: 1.5; }
-.cluster__blank strong { display: block; color: var(--ink); font: 500 17px/1.3 var(--font-display); margin-bottom: 8px; }
 
-.controls { margin-top: var(--space-m); display: grid; gap: var(--space-s); }
+/* the controls panel uses the same surface as the concept cards */
+.controls {
+  margin-top: var(--space-m); display: grid; gap: var(--space-s);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: var(--space-m);
+}
 .controls__row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .controls__label { flex: 1 0 100%; font: 500 12px/1 var(--font-body); color: var(--ink-dim); letter-spacing: 0.04em; }
 .btn {
@@ -514,23 +490,42 @@ strong { font-weight: 500; color: var(--ink); }
   background: var(--surface-sunk); color: var(--ink); border: 1px solid var(--line);
   font: 500 14px/1 var(--font-body);
 }
-.btn:hover { border-color: #3C4插; }
 .btn:hover { border-color: #3C424E; background: #262A33; }
 .btn[aria-pressed="true"] { background: var(--amber); border-color: var(--amber); color: #12140F; }
 .btn--alert[aria-pressed="true"] { background: var(--alert); border-color: var(--alert); color: #14100E; }
 .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+/* 44px tap targets, and a pressed look that still shows with motion off */
+.controls .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-width: 44px; min-height: 44px;
+}
+.controls .btn svg { width: 14px; height: 14px; flex: none; }
+.controls .btn:active:not([aria-pressed="true"]) { border-color: #3C424E; background: #3C424E; }
 .controls__note { font-size: 13px; line-height: 1.5; color: var(--ink-dim); }
+.controls__row .controls__note { flex: 1 0 100%; }
+.controls__foot {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px var(--space-s);
+  padding-top: var(--space-s); border-top: 1px solid var(--line);
+}
+.controls__foot .controls__note { flex: 1 1 160px; }
 
 .readout {
-  margin-top: var(--space-m); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  border: 1px solid var(--line); border-radius: var(--radius-sm);
   background: #101217; padding: var(--space-m);
 }
+.readout + .machine { margin-top: var(--space-m); }
 .readout dl { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 12px; margin: 0; }
 .readout dt { font: 500 12px/1.5 var(--font-body); color: var(--ink-dim); letter-spacing: 0.03em; }
 .readout dd { margin: 0; font-size: 14px; line-height: 1.5; }
 .readout .val { color: var(--amber-soft); }
 .readout .val--none { color: var(--ink-dim); }
-.readout__msg { margin-top: var(--space-s); padding-top: var(--space-s); border-top: 1px solid var(--line); font-size: 14px; line-height: 1.55; }
+/* what just happened leads the readout; three lines are reserved so the
+   state machine below it does not jump as messages change length */
+.readout__msg {
+  min-height: calc(3 * 1.55em + var(--space-s));
+  margin-bottom: var(--space-s); padding-bottom: var(--space-s); border-bottom: 1px solid var(--line);
+  font-size: 14px; line-height: 1.55;
+}
 .readout__msg[data-kind="guard"] { color: var(--amber-soft); }
 .readout__msg[data-kind="edge"] { color: var(--alert); }
 
@@ -624,7 +619,7 @@ strong { font-weight: 500; color: var(--ink); }
    ========================================================================== */
 .states { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-m); }
 .states figure { margin: 0; }
-.states .evidence__open { aspect-ratio: 1; border-radius: 50%; }
+.states .evidence__frame { aspect-ratio: 1; border-radius: 50%; }
 .states figcaption { margin-top: 10px; text-align: center; font-size: 13px; color: var(--ink-dim); }
 @media (max-width: 900px) { .states { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .states { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -682,7 +677,6 @@ strong { font-weight: 500; color: var(--ink); }
 .footer-btn:hover { color: var(--ink); border-color: #C2C2C9; }
 /* beats display:inline-flex, so the script-only buttons stay hidden without JS */
 .footer-btn[hidden] { display: none; }
-.footer-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .footer-btn--plain { border-color: transparent; padding-inline: 0; margin-left: auto; }
 .footer-btn--plain:hover { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; }
 .footer-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -707,24 +701,229 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
+/* ==========================================================================
+   Header fonts: Bricolage Grotesque and Manrope, self-hosted variable files
+   (licences in assets/fonts). On this page only the header uses them.
+   ========================================================================== */
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/bricolage-grotesque-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/bricolage-grotesque-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/manrope-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/manrope-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ==========================================================================
+   Global header
+   The same on every page. Fixed: transparent over the home hero until the
+   page scrolls, solid from the start everywhere else (site-header--solid).
+   It carries its own colours and type, so no page theme can restyle it.
+   ========================================================================== */
+/* One height for the header, scrolled or not, on every page: nothing in it
+   moves when the page scrolls or changes. Anchors and sticky elements read it. */
+:root { --site-header-h: 84px; }
+html { scroll-padding-top: var(--site-header-h); }
+
+.site-header {
+  --nav-paper: #F8F7F4; --nav-ink: #111216; --nav-muted: #656B7C; --nav-link: #51586C;
+  --nav-line: #DEDFE2; --nav-accent: #F3480B; --nav-accent-text: #C53606;
+  --nav-ease: cubic-bezier(.22, 1, .36, 1);
+  position: fixed; inset: 0 0 auto; z-index: 40;
+  /* content sits in the site's one container, 1192px wide with 24px gutters:
+     the same as the case studies, gallery, 404, footers and home page */
+  height: var(--site-header-h); padding: 0 max(24px, calc((100% - 1192px) / 2));
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  color: var(--nav-ink); font: 400 16px/1.7 "Manrope", "Segoe UI", sans-serif;
+  letter-spacing: normal; text-transform: none; -webkit-font-smoothing: antialiased;
+}
+.site-header--solid, .site-header[data-scrolled="true"], html:not(.js) .site-header {
+  background: var(--nav-paper); border-bottom-color: var(--nav-line);
+}
+/* keeps the page clear of the fixed header where no hero sits under it */
+.site-header__spacer { height: var(--site-header-h); }
+.skip-link:focus { z-index: 100; }
+
+.site-header a { color: inherit; text-decoration: none; }
+.site-header :focus-visible { outline: 2px solid var(--nav-accent); outline-offset: 6px; }
+.wordmark:focus-visible, .main-nav a:not(.nav-contact):focus-visible { border-radius: 0; }
+.site-header svg { display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.wordmark { display: flex; align-items: center; gap: 15px; flex-shrink: 0; font-size: 13px; font-weight: 600; line-height: 1.25; }
+.monogram { font: 700 38px/1 "Bricolage Grotesque", Arial, sans-serif; letter-spacing: -0.1em; padding-right: .1em; }
+.monogram span { color: var(--nav-accent); }
+.wordmark__copy { display: grid; gap: 3px; }
+.wordmark__copy strong { color: var(--nav-ink); font-size: 14px; font-weight: 700; letter-spacing: -0.035em; }
+.wordmark__copy small { color: var(--nav-muted); font-size: 12px; font-weight: 500; }
+
+.main-nav {
+  display: flex; align-items: center; gap: clamp(18px, 3vw, 48px);
+  margin-left: auto;
+  font-size: 14px; font-weight: 500;
+}
+.main-nav a { position: relative; padding: 12px 0; color: var(--nav-link); }
+.main-nav a:hover, .main-nav a[aria-current] { color: var(--nav-ink); }
+/* the current page (on a case study, Work) and the hovered link get a dot */
+.main-nav a::after {
+  content: ""; position: absolute; bottom: 1px; left: 50%;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--nav-accent);
+  transform: translateX(-50%) scale(0);
+}
+.main-nav a:hover::after, .main-nav a[aria-current]::after { transform: translateX(-50%) scale(1); }
+.main-nav .nav-contact {
+  display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 20px;
+  border: 1px solid rgba(17, 18, 22, .12); border-radius: 999px;
+  background: var(--nav-ink); color: #fff;
+}
+.main-nav .nav-contact:hover { background: var(--nav-accent-text); border-color: var(--nav-accent-text); color: #fff; }
+.main-nav .nav-contact::after { content: none; }
+
+.menu-toggle { display: none; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+/* beats the display:grid below, so the script-only button stays hidden without JS */
+.menu-toggle[hidden] { display: none !important; }
+.menu-toggle .icon-close, .menu-toggle[aria-expanded="true"] .icon-open { display: none; }
+.menu-toggle[aria-expanded="true"] .icon-close { display: block; }
+
+@media (max-width: 1100px) {
+  .main-nav { gap: clamp(15px, 2vw, 25px); font-size: 13px; }
+  .main-nav .nav-contact { min-height: 42px; gap: 8px; padding-inline: 14px; }
+}
+@media (max-width: 760px) {
+  .js .menu-toggle {
+    display: grid; place-items: center; width: 44px; height: 44px;
+    border: 1px solid rgba(17, 18, 22, .15); border-radius: 50%; background: rgba(248, 247, 244, .75);
+  }
+  .js .main-nav {
+    position: absolute; top: calc(100% - 1px); right: 12px; left: 12px;
+    display: none; flex-direction: column; align-items: stretch; gap: 0;
+    margin: 0; padding: 10px 22px 18px;
+    border: 1px solid rgba(17, 18, 22, .09); border-radius: 0 0 16px 16px;
+    background: rgba(248, 247, 244, .98); box-shadow: 0 18px 40px rgba(17, 18, 22, .1);
+  }
+  .js .main-nav.open { display: flex; }
+  .js .main-nav a { min-height: 46px; padding: 12px 0; font-size: 15px; }
+  .js .main-nav a::after { bottom: 8px; left: auto; right: 0; }
+  .js .main-nav .nav-contact { justify-content: center; margin-top: 9px; padding-inline: 18px; }
+}
+@media (max-width: 760px) {
+  :root { --site-header-h: 72px; }
+  .wordmark { gap: 11px; font-size: 11px; }
+  .monogram { font-size: 33px; }
+  .wordmark__copy strong { font-size: 12px; }
+  .wordmark__copy small { font-size: 10px; }
+  /* without script the links simply wrap under the wordmark */
+  html:not(.js) .site-header { position: static; height: auto; flex-wrap: wrap; gap: 6px 16px; padding-block: 16px; }
+  html:not(.js) .main-nav { flex-wrap: wrap; width: 100%; margin: 0; gap: 0 18px; }
+  html:not(.js) .site-header__spacer { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-header { transition: background-color 240ms ease, border-color 240ms ease; }
+  .main-nav a { transition: color 180ms ease; }
+  .main-nav a::after { transition: transform 180ms cubic-bezier(.2, .7, .2, 1); }
+  .main-nav .nav-contact { transition: background-color 180ms ease, border-color 180ms ease; }
+  @media (max-width: 760px) {
+    .js .main-nav.open { animation: nav-menu-enter 320ms var(--nav-ease) both; }
+  }
+  @keyframes nav-menu-enter { from { opacity: 0; transform: translateY(-8px); } }
+}
+
+/* Moving between pages. The page cross-fades instead of flashing, and the
+   header is a layer of its own, so it holds still while the page changes
+   under it. Typed (page-nav) so a page's own same-page transitions, like the
+   Vibe Coding simulator's, keep their rules. Reduce motion skips it; browsers
+   without cross-document view transitions simply navigate. */
+@view-transition { navigation: auto; types: page-nav; }
+.site-header { view-transition-name: site-header; }
+html:active-view-transition-type(page-nav)::view-transition-old(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-out; mix-blend-mode: plus-lighter; }
+html:active-view-transition-type(page-nav)::view-transition-new(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-in; mix-blend-mode: plus-lighter; }
+@keyframes page-out { to { opacity: 0; } }
+@keyframes page-in { from { opacity: 0; } }
+html.motion-off::view-transition-group(*),
+html.motion-off::view-transition-old(*),
+html.motion-off::view-transition-new(*) { animation: none !important; }
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-nav">
-  <div class="site-nav__inner">
-    <a class="site-nav__mark" href="../index.html#home">Jamiyan Batnyam</a>
-    <nav aria-label="Main">
-      <ul>
-        <li><a href="../index.html#home">Home</a></li>
-        <li><a href="../index.html#projects">Projects</a></li>
-        <li><a href="../visual.html">Gallery</a></li>
-        <li><a href="../index.html#about-me">About</a></li>
-      </ul>
-    </nav>
-  </div>
+<header class="site-header site-header--solid" data-scrolled="false">
+  <a class="wordmark" href="../index.html#home" aria-label="Jamiyan Batnyam, home">
+    <span class="monogram" aria-hidden="true">JB<span>·</span></span>
+    <span class="wordmark__copy">
+      <strong>Jamiyan Batnyam</strong>
+      <small>UX / Product Designer</small>
+    </span>
+  </a>
+  <nav class="main-nav" id="main-nav" aria-label="Main">
+    <a href="../index.html#home">Home</a>
+    <a href="../index.html#projects" aria-current="true">Work</a>
+    <a href="../index.html#about-me">About</a>
+    <a href="../visual.html">Gallery</a>
+    <a href="../index.html#contact">Contact</a>
+    <a class="nav-contact" href="mailto:jamyanart@gmail.com">Let’s connect <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+  </nav>
+  <button class="menu-toggle" type="button" id="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Open menu" hidden>
+    <svg class="icon-open" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+  </button>
 </header>
+<div class="site-header__spacer" aria-hidden="true"></div>
+<script>
+/* Global header, the same on every page: solid once the page leaves the top,
+   and the phone menu. */
+(function () {
+  "use strict";
+  var header = document.querySelector(".site-header");
+  if (!header) return;
+
+  var frame = 0;
+  var paint = function () {
+    frame = 0;
+    header.setAttribute("data-scrolled", window.scrollY > 40 ? "true" : "false");
+  };
+  window.addEventListener("scroll", function () {
+    if (!frame) frame = window.requestAnimationFrame(paint);
+  }, { passive: true });
+  paint();
+
+  var toggle = document.getElementById("menu-toggle");
+  var nav = document.getElementById("main-nav");
+  if (!toggle || !nav) return;
+  toggle.hidden = false;
+  var isOpen = function () { return nav.classList.contains("open"); };
+  var setMenu = function (open, returnFocus) {
+    nav.classList.toggle("open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    if (open) {
+      var first = nav.querySelector("a");
+      if (first) first.focus({ preventScroll: true });
+    } else if (returnFocus) {
+      toggle.focus();
+    }
+  };
+  toggle.addEventListener("click", function () { setMenu(!isOpen()); });
+  nav.addEventListener("click", function (e) { if (isOpen() && e.target.closest("a")) setMenu(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen()) setMenu(false, true); });
+  document.addEventListener("pointerdown", function (e) { if (isOpen() && !header.contains(e.target)) setMenu(false); });
+  header.addEventListener("focusout", function (e) {
+    if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setMenu(false);
+  });
+}());
+</script>
 
 <div class="dark">
 <div class="layout">
@@ -921,11 +1120,11 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
           <p class="body" style="margin-top:var(--space-m)">For the first iteration, I gave Claude all of my motorcycle dashboard logic documents and asked it to create a prototype. My main mistake was making the prompt too general and expecting the AI to understand the full system at once. Claude understood some of the logic, but the visual design was weak. The result felt more like a logic test than a realistic Harley-Davidson dashboard prototype.</p>
           <div class="iter__shots">
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/pKgCeeavTuVpLTJjlRHfO5AE5G8.png?scale-down-to=2048" data-alt="Iteration 1 prototype screen" aria-label="View the iteration 1 screen full size"><img src="https://framerusercontent.com/images/pKgCeeavTuVpLTJjlRHfO5AE5G8.png?scale-down-to=1024" alt="" width="563" height="435" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/pKgCeeavTuVpLTJjlRHfO5AE5G8.png?scale-down-to=1024" alt="Iteration 1 prototype screen" width="563" height="435" loading="lazy"></div>
               <p class="caption">Iteration 1: useful for testing logic direction, but not visually close enough.</p>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=2048" data-alt="Photo of the real Harley-Davidson dashboard" aria-label="View the reference photo full size"><img src="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=1024" alt="" width="1280" height="720" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=1024" alt="Photo of the real Harley-Davidson dashboard" width="1280" height="720" loading="lazy"></div>
               <p class="caption">Reference: actual Harley-Davidson dashboard home-screen proportions.</p>
             </figure>
           </div>
@@ -961,19 +1160,19 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
           <p class="body" style="margin-top:var(--space-m)">For the second iteration, I tried to make the dashboard look closer to the real Harley-Davidson Sportster S display. At first, I continued from the previous Claude chat, but the chat had become too long, so Claude started losing context and using tokens quickly. I then started a fresh chat with Opus and worked more step by step. The result improved and felt more like a circular motorcycle dashboard, but it still did not fully match the reference.</p>
           <div class="iter__shots">
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/0pqKxf2epsZH2GHxF4iR9RE2BHk.png?scale-down-to=2048" data-alt="Iteration 2 prototype screen" aria-label="View the iteration 2 screen full size"><img src="https://framerusercontent.com/images/0pqKxf2epsZH2GHxF4iR9RE2BHk.png?scale-down-to=1024" alt="" width="1324" height="1188" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/0pqKxf2epsZH2GHxF4iR9RE2BHk.png?scale-down-to=1024" alt="Iteration 2 prototype screen" width="1324" height="1188" loading="lazy"></div>
               <p class="caption">Iteration 2: closer circular structure, but the lower notch and proportions still needed work.</p>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/Ci0Uc7sCcrFZINOPD9y9HeSC6Yc.png?scale-down-to=2048" data-alt="Cleaned-up reference image" aria-label="View the cleaned reference image full size"><img src="https://framerusercontent.com/images/Ci0Uc7sCcrFZINOPD9y9HeSC6Yc.png?scale-down-to=1024" alt="" width="1005" height="738" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/Ci0Uc7sCcrFZINOPD9y9HeSC6Yc.png?scale-down-to=1024" alt="Cleaned-up reference image" width="1005" height="738" loading="lazy"></div>
               <p class="caption">Cleaned reference image used later to guide the final Codex build.</p>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/pEu8rqpmeXya9DLouL8Lz93Z2w.png?scale-down-to=2048" data-alt="A further iteration 2 screen" aria-label="View this iteration 2 screen full size"><img src="https://framerusercontent.com/images/pEu8rqpmeXya9DLouL8Lz93Z2w.png?scale-down-to=1024" alt="" width="645" height="601" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/pEu8rqpmeXya9DLouL8Lz93Z2w.png?scale-down-to=1024" alt="A further iteration 2 screen" width="645" height="601" loading="lazy"></div>
               <p class="caption"><!-- FLAG: on the live page this image repeats the caption above it. Needs its own. --></p>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/ScuZrwHb0pwG4dgiTMexiCRY1IA.png?scale-down-to=2048" data-alt="A further reference image" aria-label="View this reference image full size"><img src="https://framerusercontent.com/images/ScuZrwHb0pwG4dgiTMexiCRY1IA.png?scale-down-to=1024" alt="" width="1365" height="768" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/ScuZrwHb0pwG4dgiTMexiCRY1IA.png?scale-down-to=1024" alt="A further reference image" width="1365" height="768" loading="lazy"></div>
               <p class="caption"><!-- FLAG: on the live page this image repeats the caption above it. Needs its own. --></p>
             </figure>
           </div>
@@ -1013,11 +1212,11 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
           <p class="body" style="margin-top:var(--space-s)">A method that helped a lot was drawing on screenshots to mark problem areas. When I did not know how to describe a shape, I asked AI what to call it, then used that wording to write more specific prompts.</p>
           <div class="iter__shots">
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/5yVjq5M5txb6Pkw3o458a6mjI.png?scale-down-to=2048" data-alt="Iteration 3 home page" aria-label="View the iteration 3 home page full size"><img src="https://framerusercontent.com/images/5yVjq5M5txb6Pkw3o458a6mjI.png?scale-down-to=1024" alt="" width="1022" height="1000" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/5yVjq5M5txb6Pkw3o458a6mjI.png?scale-down-to=1024" alt="Iteration 3 home page" width="1022" height="1000" loading="lazy"></div>
               <p class="caption">Iteration 3: Home page</p>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/58ioPSq9GfaPyLCCr3XzftgSJw.png?scale-down-to=2048" data-alt="Iteration 3 home page" aria-label="View the second iteration 3 home page full size"><img src="https://framerusercontent.com/images/58ioPSq9GfaPyLCCr3XzftgSJw.png?scale-down-to=1024" alt="" width="1082" height="938" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/58ioPSq9GfaPyLCCr3XzftgSJw.png?scale-down-to=1024" alt="Iteration 3 home page" width="1082" height="938" loading="lazy"></div>
               <p class="caption">Iteration 3: Home page</p>
             </figure>
           </div>
@@ -1063,42 +1262,52 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 
       <div class="block">
         <h3 class="t3">Try the logic</h3>
+        <p class="body">Press Page to step through the five sections, then switch between Riding and Parked to see the guard rule lock or unlock Settings. Raise Low Fuel or Incoming Call to interrupt the screen with an overlay, or raise both to find an edge case.</p>
         <div class="sim" style="margin-top:var(--space-m)">
           <div>
             <div class="cluster" id="cluster">
               <div class="cluster__screen" id="cluster-screen">
                 <img id="cluster-img" src="https://framerusercontent.com/images/FA93dZWX2qzBLxaxiBtOEZEhS4.png?scale-down-to=1024" alt="" width="817" height="831">
-                <div class="cluster__blank" id="cluster-blank" hidden>
-                  <strong>Settings</strong>
-                  No screenshot of the unlocked Settings screen exists in the Stage 29 set. Set the bike to Riding to see the guard rule take over.
-                </div>
               </div>
             </div>
 
             <div class="controls">
-              <div class="controls__row">
-                <span class="controls__label">Handlebar controls</span>
+              <div class="controls__row" role="group" aria-labelledby="ctl-handlebar">
+                <span class="controls__label" id="ctl-handlebar">Handlebar buttons</span>
                 <button class="btn" type="button" id="btn-page">Page</button>
                 <button class="btn" type="button" id="btn-home">Home</button>
-                <button class="btn" type="button" disabled>Trip</button>
-                <button class="btn" type="button" disabled>D-pad</button>
+                <p class="controls__note">Trip and the D-pad are not simulated, because their behavior is not documented on this page.</p>
               </div>
-              <div class="controls__row">
-                <span class="controls__label">Vehicle</span>
+              <div class="controls__row" role="group" aria-labelledby="ctl-bike">
+                <span class="controls__label" id="ctl-bike">Bike status</span>
                 <button class="btn" type="button" id="btn-riding" aria-pressed="true">Riding</button>
                 <button class="btn" type="button" id="btn-parked" aria-pressed="false">Parked</button>
               </div>
-              <div class="controls__row">
-                <span class="controls__label">Events</span>
+              <div class="controls__row" role="group" aria-labelledby="ctl-alerts">
+                <span class="controls__label" id="ctl-alerts">Alerts</span>
                 <button class="btn btn--alert" type="button" id="btn-fuel" aria-pressed="false">Low Fuel</button>
                 <button class="btn btn--alert" type="button" id="btn-call" aria-pressed="false">Incoming Call</button>
                 <button class="btn" type="button" id="btn-dismiss">Dismiss</button>
               </div>
-              <p class="controls__note">Trip and the D-pad were part of the real control set, but their in-page behavior is not documented on this page, so they stay inactive here.</p>
+              <div class="controls__foot">
+                <button class="btn" type="button" id="btn-reset" aria-describedby="ctl-reset-note"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.58 3.33v3.5h3.5M3.05 9.75a5.25 5.25 0 1 0 1.24-5.46L1.58 6.83"/></svg>Reset</button>
+                <p class="controls__note" id="ctl-reset-note">Back to Home, riding, no alerts.</p>
+              </div>
             </div>
           </div>
 
           <div>
+            <div class="readout">
+              <p class="readout__msg" id="out-msg" data-kind="" aria-live="polite">Riding. Press Page to move through the sections.</p>
+              <dl>
+                <dt>State</dt><dd><span class="val" id="out-state">Home</span></dd>
+                <dt>Bike</dt><dd><span class="val" id="out-bike">Riding</span></dd>
+                <dt>Guard rule</dt><dd><span class="val val--none" id="out-guard">none active</span></dd>
+                <dt>Overlay</dt><dd><span class="val val--none" id="out-overlay">none</span></dd>
+                <dt>Last trigger</dt><dd><span class="val val--none" id="out-trigger">&mdash;</span></dd>
+              </dl>
+            </div>
+
             <div class="machine">
               <h4>The state machine underneath</h4>
               <p class="machine__hint">Page steps through the sections. The diagram follows whatever you press.</p>
@@ -1121,16 +1330,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
                 <span class="chip" data-chip="call">Incoming Call overlay</span>
               </div>
             </div>
-
-            <div class="readout">
-              <dl>
-                <dt>State</dt><dd><span class="val" id="out-state">Home</span></dd>
-                <dt>Guard</dt><dd><span class="val val--none" id="out-guard">none active</span></dd>
-                <dt>Overlay</dt><dd><span class="val val--none" id="out-overlay">none</span></dd>
-                <dt>Last trigger</dt><dd><span class="val val--none" id="out-trigger">&mdash;</span></dd>
-              </dl>
-              <p class="readout__msg" id="out-msg" data-kind="" aria-live="polite">Riding. Press Page to move through the sections.</p>
-            </div>
           </div>
         </div>
         <p class="sim__caption">This replays the prototype's documented logic using screenshots from the Stage 29 build; it is not the running prototype. The overlay stills were captured over the Home screen, so they show Home underneath whichever section you raise them from.</p>
@@ -1140,31 +1339,31 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <h3 class="t3">The states I checked</h3>
         <div class="states" style="margin-top:var(--space-m)">
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/FA93dZWX2qzBLxaxiBtOEZEhS4.png?scale-down-to=2048" data-alt="Stage 29 prototype, Home state" aria-label="View the Home state full size"><img src="https://framerusercontent.com/images/FA93dZWX2qzBLxaxiBtOEZEhS4.png?scale-down-to=1024" alt="" width="817" height="831" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/FA93dZWX2qzBLxaxiBtOEZEhS4.png?scale-down-to=1024" alt="Stage 29 prototype, Home state" width="817" height="831" loading="lazy"></div>
               <figcaption>Home</figcaption>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/v7w46X3zvLmSbXIkf7olDMDJ9ZI.png?scale-down-to=2048" data-alt="Stage 29 prototype, Navigation state" aria-label="View the Navigation state full size"><img src="https://framerusercontent.com/images/v7w46X3zvLmSbXIkf7olDMDJ9ZI.png?scale-down-to=1024" alt="" width="834" height="835" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/v7w46X3zvLmSbXIkf7olDMDJ9ZI.png?scale-down-to=1024" alt="Stage 29 prototype, Navigation state" width="834" height="835" loading="lazy"></div>
               <figcaption>Navigation</figcaption>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/0xyovrNo0JXYCMg7gqkwvpLJkxw.png?scale-down-to=2048" data-alt="Stage 29 prototype, Media state" aria-label="View the Media state full size"><img src="https://framerusercontent.com/images/0xyovrNo0JXYCMg7gqkwvpLJkxw.png?scale-down-to=1024" alt="" width="834" height="832" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/0xyovrNo0JXYCMg7gqkwvpLJkxw.png?scale-down-to=1024" alt="Stage 29 prototype, Media state" width="834" height="832" loading="lazy"></div>
               <figcaption>Media</figcaption>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/YsxhpexWaHX4O6D4DRppW5bKik.png?scale-down-to=2048" data-alt="Stage 29 prototype, Vehicle state" aria-label="View the Vehicle state full size"><img src="https://framerusercontent.com/images/YsxhpexWaHX4O6D4DRppW5bKik.png?scale-down-to=1024" alt="" width="835" height="833" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/YsxhpexWaHX4O6D4DRppW5bKik.png?scale-down-to=1024" alt="Stage 29 prototype, Vehicle state" width="835" height="833" loading="lazy"></div>
               <figcaption>Vehicle</figcaption>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/Ax1azBDK0017Gsw5LHANDDfM7w.png?scale-down-to=2048" data-alt="Stage 29 prototype, Settings locked state" aria-label="View the Settings locked state full size"><img src="https://framerusercontent.com/images/Ax1azBDK0017Gsw5LHANDDfM7w.png?scale-down-to=1024" alt="" width="822" height="822" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/Ax1azBDK0017Gsw5LHANDDfM7w.png?scale-down-to=1024" alt="Stage 29 prototype, Settings locked state" width="822" height="822" loading="lazy"></div>
               <figcaption>Settings locked</figcaption>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/bmkRzhiyMa233e0QFomXPp6yCkw.png?scale-down-to=2048" data-alt="Stage 29 prototype, Low Fuel overlay state" aria-label="View the Low Fuel overlay state full size"><img src="https://framerusercontent.com/images/bmkRzhiyMa233e0QFomXPp6yCkw.png?scale-down-to=1024" alt="" width="822" height="822" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/bmkRzhiyMa233e0QFomXPp6yCkw.png?scale-down-to=1024" alt="Stage 29 prototype, Low Fuel overlay state" width="822" height="822" loading="lazy"></div>
               <figcaption>Low Fuel overlay</figcaption>
             </figure>
             <figure>
-              <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/Ch4MS7jPQoCOVy160kMcF7n6LHQ.png?scale-down-to=2048" data-alt="Stage 29 prototype, Incoming Call overlay state" aria-label="View the Incoming Call overlay state full size"><img src="https://framerusercontent.com/images/Ch4MS7jPQoCOVy160kMcF7n6LHQ.png?scale-down-to=1024" alt="" width="822" height="822" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+              <div class="evidence__frame"><img src="https://framerusercontent.com/images/Ch4MS7jPQoCOVy160kMcF7n6LHQ.png?scale-down-to=1024" alt="Stage 29 prototype, Incoming Call overlay state" width="822" height="822" loading="lazy"></div>
               <figcaption>Incoming Call overlay</figcaption>
             </figure>
         </div>
@@ -1220,7 +1419,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
           <p class="body" style="margin-top:var(--space-s)">Figma can hide that complexity, because static screens never have to answer "what happens next." HTML has to. That forced me to think like an engineer as much as a designer.</p>
         </div>
         <div class="split__media">
-          <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=2048" data-alt="Photo of the real Harley-Davidson dashboard" aria-label="View the Sportster S reference photo full size"><img src="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=1024" alt="" width="1280" height="720" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+          <div class="evidence__frame"><img src="https://framerusercontent.com/images/D8lnO25Pv5egG1p5e3wVPiQpt2M.jpg?scale-down-to=1024" alt="Photo of the real Harley-Davidson dashboard" width="1280" height="720" loading="lazy"></div>
           <p class="caption">Actual Sportster S reference image used to judge shape, hierarchy, and visual accuracy.</p>
         </div>
       </div>
@@ -1246,11 +1445,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 </div>
 </div>
 
-<dialog class="lightbox" aria-label="Full-size image">
-  <button class="lightbox__close" type="button">Close</button>
-  <div class="lightbox__stage"><img alt=""></div>
-</dialog>
-
 <footer class="site-footer">
   <div class="site-footer__inner">
     <div>
@@ -1263,7 +1457,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <ul>
           <li><a href="mailto:jamyanart@gmail.com">Email</a></li>
           <li><a href="https://www.linkedin.com/in/jbatnyam" target="_blank" rel="noopener">LinkedIn</a></li>
-          <li><a href="https://drive.google.com/file/d/1n59fu4pS5daSCbGWl0T3oztfOcWMoSbP/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
+          <li><a href="https://drive.google.com/file/d/1pItyx2MR89-dWQJc5hhjjewwKZ3RN7SD/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
         </ul>
       </div>
       <div>
@@ -1281,7 +1475,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
         <span id="copy-email-label">Copy email</span>
       </button>
-      <button class="footer-btn" type="button" id="motion-toggle" aria-pressed="false" hidden>Reduce motion: off</button>
       <a class="footer-btn footer-btn--plain" href="#top">Back to top &uarr;</a>
       <span class="footer-status" role="status" id="footer-status"></span>
     </div>
@@ -1294,40 +1487,20 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
   var hasIO = "IntersectionObserver" in window;
 
-  /* ------------------------------------------------------- full-size viewer */
-  var box = document.querySelector(".lightbox");
-  if (box && typeof box.showModal === "function") {
-    var boxImg = box.querySelector("img"), opener = null;
-    Array.prototype.forEach.call(document.querySelectorAll("[data-full]"), function (btn) {
-      btn.addEventListener("click", function () {
-        opener = btn;
-        boxImg.src = btn.getAttribute("data-full");
-        boxImg.alt = btn.getAttribute("data-alt") || "";
-        box.showModal();
-        box.querySelector(".lightbox__close").focus();
-      });
-    });
-    box.querySelector(".lightbox__close").addEventListener("click", function () { box.close(); });
-    box.addEventListener("click", function (e) { if (e.target !== boxImg) box.close(); });
-    box.addEventListener("close", function () { boxImg.removeAttribute("src"); if (opener) opener.focus(); });
-  } else {
-    Array.prototype.forEach.call(document.querySelectorAll("[data-full]"), function (btn) {
-      btn.addEventListener("click", function () { window.open(btn.getAttribute("data-full"), "_blank", "noopener"); });
-    });
-  }
-
   /* ----------------------------------------------------------- the simulator
      States, transitions, guards and overlays all come from the case study's
      own text; nothing here is invented. */
   var CDN = "https://framerusercontent.com/images/";
+  function framer(id) { return CDN + id + ".png?scale-down-to=1024"; }
   var SHOT = {
-    home: "FA93dZWX2qzBLxaxiBtOEZEhS4",
-    navigation: "v7w46X3zvLmSbXIkf7olDMDJ9ZI",
-    media: "0xyovrNo0JXYCMg7gqkwvpLJkxw",
-    vehicle: "YsxhpexWaHX4O6D4DRppW5bKik",
-    locked: "Ax1azBDK0017Gsw5LHANDDfM7w",
-    lowfuel: "bmkRzhiyMa233e0QFomXPp6yCkw",
-    call: "Ch4MS7jPQoCOVy160kMcF7n6LHQ"
+    home: framer("FA93dZWX2qzBLxaxiBtOEZEhS4"),
+    navigation: framer("v7w46X3zvLmSbXIkf7olDMDJ9ZI"),
+    media: framer("0xyovrNo0JXYCMg7gqkwvpLJkxw"),
+    vehicle: framer("YsxhpexWaHX4O6D4DRppW5bKik"),
+    settings: "../assets/img/vibe-coding/screens/settings.png",
+    locked: framer("Ax1azBDK0017Gsw5LHANDDfM7w"),
+    lowfuel: framer("bmkRzhiyMa233e0QFomXPp6yCkw"),
+    call: framer("Ch4MS7jPQoCOVy160kMcF7n6LHQ")
   };
   var LABEL = { home: "Home", navigation: "Navigation", media: "Media",
                 vehicle: "Vehicle", settings: "Settings",
@@ -1336,12 +1509,11 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 
   var img = document.getElementById("cluster-img");
   if (img) {
-    var blank = document.getElementById("cluster-blank");
     var state = "home", riding = true, overlay = null, lastEdge = null;
 
     function shotFor() {
       if (overlay) return SHOT[overlay];
-      if (state === "settings") return riding ? SHOT.locked : null;
+      if (state === "settings") return riding ? SHOT.locked : SHOT.settings;
       return SHOT[state];
     }
     function altFor() {
@@ -1362,15 +1534,10 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       if (changed) flash(el, "is-updated");
     }
     function render() {
-      var shot = shotFor();
-      if (shot) {
-        img.hidden = false; blank.hidden = true;
-        img.src = CDN + shot + ".png?scale-down-to=1024";
-        img.alt = altFor();
-      } else {
-        img.hidden = true; blank.hidden = false;
-      }
+      img.src = shotFor();
+      img.alt = altFor();
       setVal("out-state", state === "settings" && riding ? "Settings (locked)" : LABEL[state], false);
+      setVal("out-bike", riding ? "Riding" : "Parked", false);
       setVal("out-guard", state === "settings" && riding ? "Settings locked while riding" : "none active",
              !(state === "settings" && riding));
       setVal("out-overlay", overlay ? LABEL[overlay] : "none", !overlay);
@@ -1394,8 +1561,9 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     }
     function trigger(name) { setVal("out-trigger", name, false); }
 
-    /* ---- motion helpers (all no-ops when reduced motion is requested) ---- */
-    function motionOK() { return !reduce.matches; }
+    /* ---- motion helpers (all no-ops when reduced motion is requested,
+       by the OS setting) ---- */
+    function motionOK() { return !reduce.matches && !document.documentElement.classList.contains("motion-off"); }
     function flash(el, cls) {
       if (!el || !motionOK()) return;
       el.classList.remove(cls);
@@ -1409,26 +1577,35 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     Array.prototype.forEach.call(document.querySelectorAll(".sim .btn"), function (btn) {
       btn.addEventListener("click", function () { if (!btn.disabled) flash(btn, "is-hit"); });
     });
-    var screenEl = document.getElementById("cluster-screen");
     var clusterEl = document.getElementById("cluster");
     var vtBusy = false;
-    function swap(direction, fn) {
+    function swap(fn) {
       /* correctness first: the DOM must always end up matching the state,
          even if someone mashes the buttons mid-transition. */
-      if (!motionOK() || !document.startViewTransition || vtBusy) {
-        fn();
-        if (motionOK() && !document.startViewTransition) flash(screenEl, "is-swap");
-        return;
-      }
+      if (!motionOK() || !document.startViewTransition || vtBusy) { fn(); return; }
       vtBusy = true;
-      document.documentElement.setAttribute("data-vt", direction || "fwd");
       var t = document.startViewTransition(fn);
       t.finished.then(done, done);
       function done() {
         vtBusy = false;
-        document.documentElement.removeAttribute("data-vt");
         fn();                              /* re-sync in case an update was skipped */
       }
+    }
+
+    /* Fetch every screenshot as the simulator comes near, so a switch never
+       waits on the network and the screen cannot change late. */
+    var warmed = [];
+    function warm() {
+      if (warmed.length) return;
+      Object.keys(SHOT).forEach(function (k) { var im = new Image(); im.src = SHOT[k]; warmed.push(im); });
+    }
+    if (hasIO) {
+      var wio = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) { wio.disconnect(); warm(); }
+      }, { rootMargin: "600px 0px" });
+      wio.observe(clusterEl);
+    } else {
+      warm();
     }
 
     document.getElementById("btn-page").addEventListener("click", function () {
@@ -1440,18 +1617,18 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       if (guarded) {
         say("Guard rule: Settings is locked while the motorcycle is moving, so the transition lands on Settings Locked.", "guard");
       } else if (state === "settings") {
-        say("Parked, so Settings is allowed. The Stage 29 set has no screenshot of this screen.", "");
+        say("Parked, so Settings is allowed.", "");
       } else {
         say("Transition: Page moved the system to " + LABEL[state] + ".", "");
       }
-      swap("fwd", render);
+      swap(render);
       flash(document.querySelector('[data-edge="' + state + '"]'), "is-travel");
       if (guarded) flash(clusterEl, "is-guard");
     });
     document.getElementById("btn-home").addEventListener("click", function () {
       state = "home"; lastEdge = null; trigger("Home");
       say("Transition: Home returns to the Home state from anywhere.", "");
-      swap("back", render);
+      swap(render);
     });
     function setRiding(v) {
       riding = v; trigger(v ? "Riding" : "Parked");
@@ -1462,7 +1639,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         say(v ? "Riding. Settings will lock if you reach it." : "Parked. Settings is unlocked.", "");
       }
       var guarding = (state === "settings");
-      swap(v ? "fwd" : "back", render);
+      swap(render);
       if (guarding) flash(clusterEl, "is-guard");
     }
     document.getElementById("btn-riding").addEventListener("click", function () { setRiding(true); });
@@ -1477,7 +1654,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       } else {
         say("Overlay: " + LABEL[name] + " interrupts " + LABEL[state] + ".", "");
       }
-      swap("fwd", render);
+      swap(render);
       flash(clusterEl, "is-overlay");
     }
     document.getElementById("btn-fuel").addEventListener("click", function () { raise("lowfuel"); });
@@ -1486,7 +1663,17 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       if (!overlay) { say("No overlay is active.", ""); return; }
       var was = overlay; overlay = null; trigger("Dismiss");
       say(LABEL[was] + " dismissed. Back to " + LABEL[state] + ".", "");
-      swap("back", render);
+      swap(render);
+    });
+
+    /* Reset belongs to this page, not to the bike, so it is not reported as
+       a trigger: it puts back exactly what loaded. */
+    var startMsg = document.getElementById("out-msg").textContent;
+    document.getElementById("btn-reset").addEventListener("click", function () {
+      state = "home"; riding = true; overlay = null; lastEdge = null;
+      setVal("out-trigger", "\u2014", true);
+      say(startMsg, "");
+      swap(render);
     });
     render();
   }
@@ -1635,8 +1822,8 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 })();
 </script>
 <script>
-/* Footer utilities. Both buttons are revealed only once this runs, so they are
-   never present as dead controls when JavaScript is off. */
+/* Footer utilities. The copy button is revealed only once this runs, so it is
+   never present as a dead control when JavaScript is off. */
 (function () {
   "use strict";
 
@@ -1664,31 +1851,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     });
   }
 
-  /* ------------------------------------------------ reduce-motion override */
-  var motionBtn = document.getElementById("motion-toggle");
-  if (motionBtn) {
-    var root = document.documentElement;
-    var osReduce = false;
-    try { osReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
-    var saved = null;
-    try { saved = window.localStorage.getItem("reduceMotion"); } catch (e) {}
-    /* The OS setting is the default; an explicit choice here overrides it. */
-    var reduced = saved === null ? osReduce : saved === "1";
-
-    var apply = function () {
-      root.classList.toggle("motion-off", reduced);
-      motionBtn.setAttribute("aria-pressed", reduced ? "true" : "false");
-      motionBtn.textContent = "Reduce motion: " + (reduced ? "on" : "off");
-    };
-    apply();
-    motionBtn.hidden = false;
-    motionBtn.addEventListener("click", function () {
-      reduced = !reduced;
-      try { window.localStorage.setItem("reduceMotion", reduced ? "1" : "0"); } catch (e) {}
-      apply();
-      if (status) status.textContent = "Motion " + (reduced ? "reduced" : "restored") + ".";
-    });
-  }
 })();
 </script>
 </body>

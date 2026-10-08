@@ -4,40 +4,59 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Liminal — Jamiyan Batnyam</title>
-<meta name="description" content="Liminal: a wellness app for reprogramming subconscious thought patterns. UX case study, student team project, 2025.">
+<meta name="description" content="Liminal: a wellness app that helps people with anxiety and depression get unstuck. UX case study, student team project, 2025.">
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@500,700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="../assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* Before anything renders: mark script support, and apply the OS Reduce
+   motion setting so no animation or page transition starts first. */
+(function (root) {
+  root.classList.add("js");
+  // Clear the choice the old footer toggle used to save; the OS setting rules now.
+  try { localStorage.removeItem("reduceMotion"); } catch (e) {}
+  try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) root.classList.add("motion-off"); } catch (e) {}
+}(document.documentElement));
+</script>
+<!-- Chromium: start loading a page as soon as its link is hovered, so the click is instant -->
+<script type="speculationrules">
+{ "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+</script>
 <style>
 
 /* ==========================================================================
    Tokens
-   Site chrome: identical to content-plus.html (zinc neutrals, Satoshi +
-   Inter, 20px card radius). Only the brand palette differs. Liminal's hexes
-   are sampled from its own style guide board.
+   Themed with Liminal v3 (Figma "00 — Design System", 3592:1912): soft,
+   warm, slightly whimsical; light lavender canvas, never clinical. Figtree
+   throughout the case study; site chrome (top nav, footer) keeps Satoshi +
+   Inter to match the rest of the portfolio. Media frames float on the
+   lavender-tinted elevation instead of an outline.
    ========================================================================== */
 :root {
-  --bg: #F4F4F5;
-  --surface: #FFFFFF;
-  --surface-sunk: #FAFAFA;
-  --ink: #18181B;
-  --ink-dim: #5F5F63;
-  --line: #E4E4E7;
+  --bg: #F5F3FA;            /* bg/canvas */
+  --surface: #FFFFFF;       /* bg/card */
+  --surface-sunk: #EDE9F7;  /* bg/sunken */
+  --ink: #241B4A;           /* text/primary, 14.3:1 on canvas */
+  --ink-dim: #5B5387;       /* text/muted, 6.3:1 on canvas */
+  --line: #E3DEF3;          /* border/default */
 
-  /* Liminal brand palette (sampled from the style guide board) */
-  --periwinkle: #B5BBED;
-  --violet: #7768CF;
-  --indigo: #645FA2;
-  --slate-lav: #898DB3;
-  --blush: #F5EAF0;
-  --pink: #C990B8;
-  /* Periwinkle is 1.7:1 on --bg, far under AA, so section labels use a
-     darkened relative of it. #4F4A8F is 7.05:1. */
-  --brand-purple: #4F4A8F;
+  /* Liminal v3 palette. Old names kept so every rule below re-themes. */
+  --periwinkle: #CEBCFC;    /* accent/primary-soft */
+  --violet: #6256BA;        /* accent/primary, 5.4:1 on canvas */
+  --indigo: #4A3F94;        /* accent/primary-strong */
+  --slate-lav: #8F87B3;
+  --blush: #EDE9F7;         /* bg/sunken */
+  --tile: #F3EFFE;          /* bg/tile */
+  --accent-soft: #E5DDFC;
+  --sky: #3D92D6;  --sky-soft: #D2E9FC;
+  --mint: #32A37B; --mint-soft: #CDF3E5;
+  --brand-purple: #6256BA;
 
-  /* Test-result semantics — kept close to the source images, darkened
+  /* Test-result semantics: kept as data colours, not brand, and darkened
      enough that the text beside each dot passes AA. */
   --res-pass: #2E7D32;
   --res-pass-fill: #43A047;
@@ -46,11 +65,22 @@
   --res-fail: #C62828;
   --res-fail-fill: #E03B3B;
 
-  --font-display: "Satoshi", "Inter", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* v3 elevation scale: lavender-tinted, never neutral grey */
+  --elev-card: 0 2px 8px rgba(74, 56, 135, 0.06);
+  --elev-raised: 0 6px 18px rgba(74, 56, 135, 0.08);
+  --elev-floating: 0 12px 32px rgba(74, 56, 135, 0.12);
+  --frame: var(--elev-floating);
 
-  --radius: 20px;
-  --radius-sm: 12px;
+  /* the soft lavender wash behind the hero and the screens */
+  --wash: radial-gradient(120% 90% at 50% 20%, #F5F1FF 0%, var(--accent-soft) 55%, var(--periwinkle) 100%);
+
+  --font-display: "Figtree", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-chrome-display: "Satoshi", "Inter", system-ui, sans-serif;
+  --font-chrome-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius: 24px;
+  --radius-sm: 16px;
 
   /* spacing scale */
   --space-2xs: 8px;
@@ -100,7 +130,10 @@ img, video { display: block; max-width: 100%; }
 h1, h2, h3, h4, p, figure, dl, dd { margin: 0; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--brand-purple); outline-offset: 3px; border-radius: 4px; }
-strong { font-weight: 500; color: var(--ink); }
+strong { font-weight: 600; color: var(--ink); }
+
+/* site chrome stays in the portfolio's own type */
+.skip-link, .site-footer { font-family: var(--font-chrome-body); }
 
 .skip-link {
   position: absolute; left: 16px; top: -48px;
@@ -110,17 +143,8 @@ strong { font-weight: 500; color: var(--ink); }
 .skip-link:focus { top: 12px; }
 
 /* ==========================================================================
-   Site nav + layout
+   Layout
    ========================================================================== */
-.site-nav { background: var(--surface); border-bottom: 1px solid var(--line); }
-.site-nav__inner {
-  max-width: 1240px; margin: 0 auto; padding: 18px 24px;
-  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
-}
-.site-nav__mark { font-size: 15px; text-decoration: none; color: var(--ink-dim); }
-.site-nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
-.site-nav ul a { font-size: 14px; text-decoration: none; }
-.site-nav ul a:hover { color: var(--ink-dim); }
 
 .layout {
   max-width: 1240px; margin: 0 auto; padding: 40px 24px 0;
@@ -129,7 +153,7 @@ strong { font-weight: 500; color: var(--ink); }
 .content { min-width: 0; max-width: 960px; }
 
 .rail {
-  position: sticky; top: 32px; align-self: start;
+  position: sticky; top: calc(var(--site-header-h) + 32px); align-self: start;
   background: var(--surface); border-radius: var(--radius-sm); padding: 14px 16px 13px;
 }
 .rail__eyebrow {
@@ -168,7 +192,7 @@ strong { font-weight: 500; color: var(--ink); }
 @media (max-width: 1000px) {
   .layout { grid-template-columns: 1fr; gap: 0; padding-top: 0; }
   .rail {
-    position: sticky; top: 0; z-index: 10;
+    position: sticky; top: var(--site-header-h); z-index: 10;
     /* Without this the grid item takes its min-content width from the nav,
        and overflow-x on the nav does not reduce that contribution. */
     min-width: 0;
@@ -184,17 +208,20 @@ strong { font-weight: 500; color: var(--ink); }
   .rail__progress { margin-top: 7px; display: flex; align-items: center; gap: 12px; }
   .rail__bar { flex: 1; }
   .rail__meta { flex: none; margin: 0; }
-  /* clear the taller sticky rail when jumping to an anchor */
-  .section, .intro { scroll-margin-top: 104px; }
+  /* clear the taller sticky rail when jumping to an anchor. !important: the
+     plain .section rule further down and the inline 72px on some sections
+     would otherwise win, and the heading would land under the strip. */
+  .section, .intro { scroll-margin-top: 104px !important; }
 }
 
 /* ==========================================================================
    Type tiers
    Tier 1 eyebrow · Tier 2 section heading · Tier 3 subheading
    ========================================================================== */
-.eyebrow { font: 500 var(--t1)/1.4 var(--font-body); color: var(--brand-purple); margin-bottom: var(--space-2xs); }
-.t2 { font: 700 var(--t2)/1.15 var(--font-display); letter-spacing: -0.02em; }
-.t3 { font: 500 var(--t3)/1.3 var(--font-display); letter-spacing: -0.005em; }
+/* Tier 1 wears v3/Section: the uppercase label every group in the app opens with */
+.eyebrow { font: 600 var(--t1)/1.4 var(--font-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--brand-purple); margin-bottom: var(--space-2xs); }
+.t2 { font: 700 var(--t2)/1.15 var(--font-display); letter-spacing: -0.015em; }
+.t3 { font: 600 var(--t3)/1.3 var(--font-display); letter-spacing: -0.005em; }
 .body { color: var(--ink-dim); max-width: 64ch; }
 .t3 + .body, .t3 + .body-group { margin-top: var(--space-xs); }
 .body + .body { margin-top: var(--space-s); }
@@ -230,8 +257,23 @@ strong { font-weight: 500; color: var(--ink); }
 /* ==========================================================================
    Hero + header
    ========================================================================== */
-.hero-media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 7 / 4; background: #E7E7EA; }
+.hero-media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 7 / 4; background: var(--surface-sunk); }
 .hero-media img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Hero: the v3 splash lockup (icon, wordmark, tagline), built live */
+.hero-brand {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(16px, 2.6vw, 28px); padding: var(--space-m); text-align: center;
+  background: var(--wash);
+}
+.hero-brand .hero-brand__icon {
+  width: clamp(72px, 13%, 128px); height: auto; aspect-ratio: 1;
+  border-radius: 23%; box-shadow: var(--elev-floating);
+}
+/* v3/Display, with the splash screen's open tracking on the lowercase wordmark */
+.hero-brand__name { font: 700 clamp(32px, 4.6vw, 48px)/1 var(--font-display); letter-spacing: 0.03em; color: var(--ink); }
+.hero-brand__tag { margin-top: 10px; font: 400 clamp(15px, 1.7vw, 18px)/1.45 var(--font-body); color: var(--ink-dim); }
+@media (max-width: 560px) { .hero-brand { aspect-ratio: 4 / 3; } }
 
 .case-head {
   display: flex; justify-content: space-between; align-items: flex-start; gap: 32px;
@@ -240,7 +282,7 @@ strong { font-weight: 500; color: var(--ink); }
 .case-title { font: 700 var(--h1)/1.1 var(--font-display); letter-spacing: -0.02em; }
 .case-sub { margin-top: 6px; color: var(--ink-dim); font-size: 14px; }
 .facts { display: flex; gap: 56px; }
-.facts dt { font: 500 16px/1.3 var(--font-display); }
+.facts dt { font: 600 16px/1.3 var(--font-display); }
 .facts dd { margin-top: 4px; color: var(--ink-dim); font-size: 14px; }
 @media (max-width: 560px) {
   .case-head { flex-direction: column; gap: 20px; }
@@ -249,17 +291,22 @@ strong { font-weight: 500; color: var(--ink); }
 
 .intro { margin-top: var(--space-xl); }
 
-/* My Roles showcase: one tall card, two stacked wide cards */
-.showcase {
-  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr); gap: var(--space-s);
+/* v3 screens are Figma exports at 2x (804 x 1748). The frame's 36px corner
+   radius is set as a percentage of each axis, so it scales with the image. */
+.shot {
+  display: block; width: 100%; height: auto; aspect-ratio: 402 / 874;
+  border-radius: 8.955% / 4.119%; background: var(--bg);
+}
+
+/* My Roles showcase: the v3 screens in three phone renders. The trio runs
+   full width; the floating pair and the flat lay share the row below. */
+.mockups {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-s);
   margin-top: var(--space-xl);
 }
-.showcase__tall { grid-row: span 2; background: var(--surface); border-radius: var(--radius); }
-.showcase__wide { aspect-ratio: 2 / 1; background: var(--surface); border-radius: var(--radius); }
-@media (max-width: 760px) {
-  .showcase { grid-template-columns: 1fr; }
-  .showcase__tall { grid-row: auto; aspect-ratio: 4 / 5; }
-}
+.mockups img { width: 100%; height: auto; border-radius: var(--radius); background: var(--surface-sunk); }
+.mockups__wide { grid-column: 1 / -1; }
+@media (max-width: 560px) { .mockups { grid-template-columns: 1fr; } }
 
 /* ==========================================================================
    Two-column text + media
@@ -271,23 +318,57 @@ strong { font-weight: 500; color: var(--ink); }
   gap: var(--space-xl); align-items: center;
 }
 .split--media-left { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
-.split--phone { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .split--media-left .split__media { order: -1; }
 @media (max-width: 760px) {
-  .split, .split--media-left, .split--phone { grid-template-columns: 1fr; gap: var(--space-m); }
+  .split, .split--media-left { grid-template-columns: 1fr; gap: var(--space-m); }
   .split--media-left .split__media { order: 0; }
 }
 
-.problem-img { border-radius: var(--radius-sm); overflow: hidden; }
-.problem-img img { width: 100%; height: auto; }
+/* the v3 floating elevation on every media frame, nowhere else */
+.hero-media, .mockups img, .statement { box-shadow: var(--frame); }
 
-/* single-phone recording cards (Onboarding, Friends & Co-Play, Parental Controls) */
-.phone-card { aspect-ratio: 4 / 5; background: var(--surface); border-radius: var(--radius); --fit-pad: 24px; }
+/* Problem Space: the old poster's line, set live on the accent-soft panel */
+.statement {
+  margin: 0; padding: var(--space-l); border-radius: var(--radius);
+  background: var(--accent-soft);
+}
+.statement img { width: 64px; height: 64px; }
+.statement p {
+  margin-top: var(--space-m);
+  font: 700 30px/1.22 var(--font-display); letter-spacing: -0.015em; color: var(--ink);
+}
+@media (max-width: 760px) {
+  .statement { padding: var(--space-m); }
+  .statement img { width: 52px; height: 52px; }
+  .statement p { font-size: 24px; }
+}
+
+/* Final Delivery: each feature as its v3 flow, four screens in order.
+   Every screen opens full size in the viewer. */
+.flow {
+  list-style: none; margin: 0;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-m);
+}
+.flow__open {
+  display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in;
+  border-radius: 8.955% / 4.119%;   /* the focus ring follows the screen's corners */
+}
+.flow__open .shot { box-shadow: 0 0 0 1px var(--line), var(--elev-raised); }
+.flow__cap { margin-top: var(--space-s); font: 600 15px/1.3 var(--font-display); color: var(--ink); }
+.flow__n {
+  display: block; margin-bottom: 6px;
+  font: 700 12px/1 var(--font-body); letter-spacing: 0.06em; color: var(--violet);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 760px) {
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-l) var(--space-s); }
+  .flow__cap { margin-top: var(--space-xs); font-size: 14px; }
+}
 
 .evidence__open {
   position: relative; display: block; width: 100%; aspect-ratio: 4 / 3;
   padding: 0; border: 0; border-radius: var(--radius-sm); overflow: hidden;
-  background: #F1F1F3; cursor: zoom-in;
+  background: var(--tile); cursor: zoom-in;
 }
 .evidence__open img { width: 100%; height: 100%; object-fit: contain; }
 .evidence__chip {
@@ -296,17 +377,17 @@ strong { font-weight: 500; color: var(--ink); }
   padding: 7px 11px; border-radius: 999px;
   background: rgba(255, 255, 255, 0.95); color: var(--ink);
   font: 500 13px/1 var(--font-body);
-  box-shadow: 0 1px 2px rgba(24, 24, 27, 0.18);
+  box-shadow: 0 2px 8px rgba(74, 56, 135, 0.14);
 }
 .evidence__chip svg { width: 14px; height: 14px; }
-.evidence__open:hover .evidence__chip { background: #fff; box-shadow: 0 2px 6px rgba(24, 24, 27, 0.22); }
+.evidence__open:hover .evidence__chip { background: #fff; box-shadow: 0 4px 12px rgba(74, 56, 135, 0.18); }
 
 
 .text-button {
   display: inline-flex; align-items: center; gap: 6px; padding: 6px 0;
   background: none; border: 0; cursor: pointer;
   font: 500 14px/1.2 var(--font-body); color: var(--ink-dim);
-  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #C9C9CF;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #CFC9E2;
 }
 .text-button:hover { color: var(--ink); text-decoration-color: currentColor; }
 .text-button svg { width: 14px; height: 14px; flex: none; }
@@ -319,9 +400,15 @@ strong { font-weight: 500; color: var(--ink); }
   width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh;
   margin: 0; padding: 0; border: 0; background: transparent;
 }
-.lightbox::backdrop { background: rgba(24, 24, 27, 0.88); }
-.lightbox__stage { width: 100%; height: 100%; display: grid; place-items: center; padding: 64px 20px 24px; }
+.lightbox::backdrop { background: rgba(36, 27, 74, 0.9); }
+.lightbox__stage {
+  width: 100%; height: 100%; display: grid; place-items: center; padding: 64px 20px 24px;
+  /* a definite cell, so the image's max-height: 100% resolves and tall screens fit */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+}
 .lightbox__stage img { max-width: min(1600px, 100%); max-height: 100%; object-fit: contain; border-radius: 8px; background: #fff; }
+/* a v3 screen keeps its own corner radius in the viewer */
+.lightbox__stage img.is-shot { border-radius: 8.955% / 4.119%; background: var(--bg); }
 .lightbox__close {
   position: fixed; top: 16px; right: 16px;
   padding: 10px 16px; border: 0; border-radius: 999px; cursor: pointer;
@@ -337,9 +424,9 @@ strong { font-weight: 500; color: var(--ink); }
 .stats { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: var(--space-l); align-items: center; }
 @media (max-width: 760px) { .stats { grid-template-columns: 1fr; gap: var(--space-m); } }
 
-.stats__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #E7E5EF; border-radius: var(--radius-sm); overflow: hidden; }
+.stats__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border-radius: var(--radius-sm); overflow: hidden; }
 .stat { background: var(--blush); padding: var(--space-m) var(--space-s); text-align: center; }
-.stat:nth-child(2), .stat:nth-child(3) { background: #FBF5F8; }
+.stat:nth-child(2), .stat:nth-child(3) { background: var(--tile); }
 .stat__num { font: 700 40px/1 var(--font-display); letter-spacing: -0.02em; color: var(--indigo); }
 .stat__label { margin-top: 6px; font: 500 14px/1.3 var(--font-body); color: var(--ink-dim); }
 @media (max-width: 760px) { .stat__num { font-size: 32px; } .stat__label { font-size: 13px; } }
@@ -361,9 +448,10 @@ strong { font-weight: 500; color: var(--ink); }
   background: rgba(255, 255, 255, 0.94);
   font: 700 clamp(16px, 4.2vw, 40px)/1 var(--font-display); letter-spacing: -0.02em; color: var(--ink);
   white-space: nowrap;
-  box-shadow: 0 2px 10px rgba(24, 24, 27, 0.12);
+  box-shadow: 0 4px 16px rgba(74, 56, 135, 0.14);
 }
-.datapoints__foot { margin-top: var(--space-m); display: flex; justify-content: flex-end; }
+.datapoints__foot { margin-top: var(--space-m); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; }
+.datapoints__foot .caption { margin: 0; }
 @media (max-width: 760px) {
   .datapoints__grid { grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 3px; }
   .datapoints__count { padding: 10px 16px; }
@@ -371,22 +459,30 @@ strong { font-weight: 500; color: var(--ink); }
 
 /* ==========================================================================
    Liminal: interview findings
-   The four illustrations live inside one flattened image and can't be
-   separated cleanly, so the findings carry the section as live text and the
-   original artwork sits below as one artifact.
+   Each finding pairs its own illustration with the statement. The art is a
+   full 3D scene with its own backdrop, so it fills the tile edge to edge.
    ========================================================================== */
-.findings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-s); }
-@media (max-width: 760px) { .findings { grid-template-columns: 1fr; } }
-.finding {
-  padding: var(--space-m); border-radius: var(--radius-sm);
-  background: var(--blush); border-left: 3px solid var(--violet);
+.findings {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-m);
+  margin-top: var(--space-l); padding: 0; list-style: none;
 }
-.finding__n { font: 700 13px/1 var(--font-body); color: var(--violet); }
-.finding p { margin-top: 8px; font: 500 17px/1.35 var(--font-display); letter-spacing: -0.005em; }
-@media (max-width: 760px) { .finding p { font-size: 15px; } }
-
-.artifact { margin-top: var(--space-m); }
-.artifact .evidence__open { aspect-ratio: 1690 / 462; }
+.finding__art {
+  position: relative; aspect-ratio: 1; border-radius: var(--radius-sm);
+  background: var(--tile); overflow: hidden;   /* shows while the image loads */
+}
+.finding__art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.finding__text { margin-top: var(--space-s); padding-top: var(--space-s); border-top: 1px solid var(--line); }
+.finding__n { font: 700 13px/1 var(--font-body); color: var(--violet); letter-spacing: 0.02em; }
+.finding__text p { margin-top: 10px; font: 600 19px/1.3 var(--font-display); letter-spacing: -0.01em; text-wrap: balance; }
+@media (max-width: 960px) {
+  .findings { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--space-l); }
+}
+@media (max-width: 520px) {
+  .findings { gap: var(--space-l) var(--space-s); margin-top: var(--space-m); }
+  .finding__art { border-radius: 12px; }
+  .finding__text { margin-top: var(--space-xs); padding-top: var(--space-xs); }
+  .finding__text p { margin-top: 6px; font-size: 15px; }
+}
 
 /* ==========================================================================
    Liminal: feature cards (SubLab, Meditation, Journal, Community)
@@ -396,15 +492,16 @@ strong { font-weight: 500; color: var(--ink); }
 .feature { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: var(--space-l); align-items: start; }
 .feature + .feature { margin-top: var(--space-m); }
 .feature__art {
-  aspect-ratio: 1; border-radius: var(--radius-sm); background: var(--blush);
-  display: grid; place-items: center; padding: 18px;
+  aspect-ratio: 1; border-radius: var(--radius-sm); background: var(--tile);
+  display: grid; place-items: center; padding: 14px; overflow: hidden;   /* keeps it square: tall art must not stretch the box */
 }
-.feature__art img { width: 100%; height: 100%; object-fit: contain; }
+.feature__art { position: relative; }
+.feature__art img { position: absolute; inset: 14px; width: calc(100% - 28px); height: calc(100% - 28px); object-fit: contain; }
 .feature__name { font: 700 22px/1.2 var(--font-display); letter-spacing: -0.015em; }
 .def { margin-top: var(--space-m); }
 .def dt {
   font: 500 12px/1 var(--font-body); color: var(--indigo);
-  padding-bottom: 6px; border-bottom: 1px solid #E4E1EE;
+  padding-bottom: 6px; border-bottom: 1px solid var(--line);
 }
 .def dd { margin: 10px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-dim); }
 .def + .def { margin-top: var(--space-m); }
@@ -445,7 +542,7 @@ strong { font-weight: 500; color: var(--ink); }
 .results th, .results td { padding: 8px 4px; text-align: center; font: 500 13px/1.2 var(--font-body); }
 .results thead th { color: var(--ink-dim); font-weight: 500; border-bottom: 1px solid var(--line); }
 .results tbody th { text-align: left; font-weight: 500; white-space: nowrap; padding-right: 12px; }
-.results tbody tr + tr td, .results tbody tr + tr th { border-top: 1px solid #F0F0F2; }
+.results tbody tr + tr td, .results tbody tr + tr th { border-top: 1px solid #F2F0F8; }
 .dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; }
 .dot--S { background: var(--res-pass-fill); }
 .dot--C { background: var(--res-confuse-fill); }
@@ -483,15 +580,12 @@ strong { font-weight: 500; color: var(--ink); }
 
 /* ==========================================================================
    Liminal: testing session photos
+   The photo board sits in a card like the Interviews box. It carries its own
+   "we conducted ... user interviews" line, so there is no sentence beside it.
    ========================================================================== */
-.session { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: var(--space-l); align-items: center; }
-.session p { font: 500 19px/1.4 var(--font-display); letter-spacing: -0.01em; }
-.session .count { color: var(--violet); }
-.session .evidence__open { aspect-ratio: 16 / 9; background: transparent; }
-@media (max-width: 760px) {
-  .session { grid-template-columns: 1fr; gap: var(--space-m); }
-  .session p { font-size: 16px; }
-}
+.testing__photo { margin-top: var(--space-m); }
+.testing__photo.evidence__open { aspect-ratio: auto; background: transparent; }
+.testing__photo img { height: auto; }
 
 /* ==========================================================================
    Ideation pair
@@ -500,12 +594,14 @@ strong { font-weight: 500; color: var(--ink); }
 @media (max-width: 760px) { .pair { grid-template-columns: 1fr; gap: var(--space-m); } }
 
 /* ==========================================================================
-   Ticker carousels (Sketches, Mid-Fi Wireframes)
-   A plain horizontal scroll container: touch, trackpad, drag, and arrow keys
-   all work. Nothing moves on its own, so there is no pause control to give.
+   Ticker carousels (Low-Fi and Mid-Fi Wireframes)
+   With script they loop endlessly (is-looping): the screens are cloned once,
+   so the track slides by exactly half its width and starts over without a
+   seam. The loop pauses under the pointer. Reduce motion (the OS setting) turns a strip back into a plain horizontal scroller
+   (touch, trackpad, drag, arrow keys), which is also what shows without
+   script.
    ========================================================================== */
 .ticker__viewport {
-  /* scrolled by hand now, so the bar is the affordance and the edge fade goes */
   overflow-x: auto; overflow-y: hidden;
   scrollbar-width: thin; padding-bottom: 8px;
 }
@@ -519,11 +615,67 @@ strong { font-weight: 500; color: var(--ink); }
 @media (max-width: 760px) {
   .ticker--wireframes { --ticker-h: 300px; }
 }
+.ticker [data-clone] { display: none; }
+.ticker.is-looping [data-clone] { display: block; }
+.ticker.is-looping .ticker__viewport {
+  overflow: hidden; padding-bottom: 0;   /* no scrollbar to make room for */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+/* the spacing rides on each item instead of the gap, so half the track is
+   exactly one whole set and the jump back to the start is invisible. The
+   duration is set by script from the strip's width, for a steady speed. */
+.ticker.is-looping .ticker__track { gap: 0; animation: ticker-loop 55s linear infinite; }
+.ticker.is-looping .ticker__track > li { padding-right: var(--space-s); }
+.ticker.is-looping:hover .ticker__track { animation-play-state: paused; }
+@keyframes ticker-loop { to { transform: translateX(-50%); } }
 
 /* ==========================================================================
    Full-width media
    ========================================================================== */
 .card--media img { width: 100%; height: auto; border-radius: 8px; }
+
+/* ==========================================================================
+   Style Guide (live, from the Liminal v3 design system in Figma)
+   ========================================================================== */
+.sg > * + * { margin-top: var(--space-l); padding-top: var(--space-l); border-top: 1px solid var(--line); }
+.sg__title { font: 700 30px/1.15 var(--font-display); letter-spacing: -0.015em; }
+.sg__label { font: 600 var(--t1)/1.4 var(--font-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--brand-purple); }
+.sg__sub { margin-top: 4px; font-size: 14px; color: var(--ink-dim); }
+
+.sg__art { list-style: none; margin: var(--space-m) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-m); }
+.sg__art li { text-align: center; }
+.sg__art img { width: auto; max-width: 100%; height: 150px; object-fit: contain; margin: 0 auto; }
+.sg__art b { display: block; margin-top: 8px; font: 600 16px/1.3 var(--font-display); }
+
+.sg__colors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-l); }
+.sg__chips { list-style: none; margin: var(--space-s) 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.sg__chips li { font-size: 12px; line-height: 1.3; color: var(--ink-dim); }
+.sg__chips i {
+  display: block; aspect-ratio: 1; margin-bottom: 10px; border-radius: 16px; background: var(--c);
+  box-shadow: inset 0 0 0 1px rgba(36, 27, 74, 0.06), 0 3px 6px rgba(74, 56, 135, 0.07);
+}
+.sg__chips b { display: block; font: 600 14px/1.3 var(--font-display); color: var(--ink); }
+
+.sg__type { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-l); }
+.sg__specimen { margin-top: var(--space-s); color: var(--ink); }
+.sg__specimen--display { font: 700 52px/1.05 var(--font-display); letter-spacing: -0.02em; }
+.sg__specimen--body { font: 400 20px/1.5 var(--font-body); }
+
+.sg__icons { list-style: none; margin: var(--space-m) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; }
+.sg__icons img { width: 44px; height: 44px; }
+.sg__icons .sg__gap { width: 1px; height: 32px; background: var(--line); }
+
+@media (max-width: 760px) {
+  .sg__art { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sg__art img { height: 120px; }
+  .sg__colors, .sg__type { grid-template-columns: 1fr; }
+  .sg__specimen--display { font-size: 42px; }
+  .sg__title { font-size: 26px; }
+}
+@media (max-width: 560px) {
+  .sg__chips { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 14px; }
+}
 .strip-card { --fit-pad: 0px; }
 .strip-card .fit { aspect-ratio: 8 / 3; }   /* Videos + Activities strips share 2.66:1 */
 .device-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-m); }
@@ -538,10 +690,10 @@ strong { font-weight: 500; color: var(--ink); }
   max-width: 1240px; margin: 0 auto; padding: 56px 24px 72px;
   display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;
 }
-.site-footer__display { font: 700 32px/1.1 var(--font-display); letter-spacing: -0.01em; }
+.site-footer__display { font: 700 32px/1.1 var(--font-chrome-display); letter-spacing: -0.01em; }
 .site-footer__sub { margin-top: 8px; font-size: 14px; }
 .site-footer__cols { display: flex; gap: 72px; }
-.site-footer h2 { font: 500 15px/1.3 var(--font-display); margin-bottom: 12px; }
+.site-footer h2 { font: 500 15px/1.3 var(--font-chrome-display); margin-bottom: 12px; }
 .site-footer ul { list-style: none; margin: 0; padding: 0; }
 .site-footer li + li { margin-top: 8px; }
 .site-footer ul a { font-size: 14px; color: var(--ink-dim); text-decoration: none; }
@@ -557,13 +709,12 @@ strong { font-weight: 500; color: var(--ink); }
 .footer-btn {
   appearance: none; background: transparent; cursor: pointer;
   border: 1px solid var(--line); border-radius: 999px; padding: 8px 15px;
-  font: 500 13px/1 var(--font-body); color: var(--ink-dim); text-decoration: none;
+  font: 500 13px/1 var(--font-chrome-body); color: var(--ink-dim); text-decoration: none;
   display: inline-flex; align-items: center; gap: 7px;
 }
-.footer-btn:hover { color: var(--ink); border-color: #C2C2C9; }
+.footer-btn:hover { color: var(--ink); border-color: #CFC9E2; }
 /* beats display:inline-flex, so the script-only buttons stay hidden without JS */
 .footer-btn[hidden] { display: none; }
-.footer-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .footer-btn--plain { border-color: transparent; padding-inline: 0; margin-left: auto; }
 .footer-btn--plain:hover { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; }
 .footer-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -632,6 +783,14 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     .evidence__open:hover .evidence__chip { transform: translateY(-1px); }
   }
 
+  /* --- flow screens lift like a tappable v3 card, and press in ------------ */
+  .flow__open { transition: transform var(--mo-fast) var(--mo-ease); }
+  .flow__open:active { transform: scale(0.98); }
+  @media (hover: hover) {
+    .flow__open .shot { transition: transform var(--mo-mid) var(--mo-ease), box-shadow var(--mo-mid) var(--mo-ease); }
+    .flow__open:hover .shot { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--line), var(--elev-floating); }
+  }
+
   /* --- full-size viewer opens and closes --------------------------------- */
   .lightbox[open] { animation: mo-fade var(--mo-mid) var(--mo-ease); }
   .lightbox[open]::backdrop { animation: mo-fade var(--mo-mid) var(--mo-ease); }
@@ -666,24 +825,229 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   .motion-ready [data-reveal="row"].is-in .dot { transform: none; opacity: 1; }
 }
 
+/* ==========================================================================
+   Header fonts: Bricolage Grotesque and Manrope, self-hosted variable files
+   (licences in assets/fonts). On this page only the header uses them.
+   ========================================================================== */
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/bricolage-grotesque-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/bricolage-grotesque-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/manrope-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/manrope-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ==========================================================================
+   Global header
+   The same on every page. Fixed: transparent over the home hero until the
+   page scrolls, solid from the start everywhere else (site-header--solid).
+   It carries its own colours and type, so no page theme can restyle it.
+   ========================================================================== */
+/* One height for the header, scrolled or not, on every page: nothing in it
+   moves when the page scrolls or changes. Anchors and sticky elements read it. */
+:root { --site-header-h: 84px; }
+html { scroll-padding-top: var(--site-header-h); }
+
+.site-header {
+  --nav-paper: #F8F7F4; --nav-ink: #111216; --nav-muted: #656B7C; --nav-link: #51586C;
+  --nav-line: #DEDFE2; --nav-accent: #F3480B; --nav-accent-text: #C53606;
+  --nav-ease: cubic-bezier(.22, 1, .36, 1);
+  position: fixed; inset: 0 0 auto; z-index: 40;
+  /* content sits in the site's one container, 1192px wide with 24px gutters:
+     the same as the case studies, gallery, 404, footers and home page */
+  height: var(--site-header-h); padding: 0 max(24px, calc((100% - 1192px) / 2));
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  color: var(--nav-ink); font: 400 16px/1.7 "Manrope", "Segoe UI", sans-serif;
+  letter-spacing: normal; text-transform: none; -webkit-font-smoothing: antialiased;
+}
+.site-header--solid, .site-header[data-scrolled="true"], html:not(.js) .site-header {
+  background: var(--nav-paper); border-bottom-color: var(--nav-line);
+}
+/* keeps the page clear of the fixed header where no hero sits under it */
+.site-header__spacer { height: var(--site-header-h); }
+.skip-link:focus { z-index: 100; }
+
+.site-header a { color: inherit; text-decoration: none; }
+.site-header :focus-visible { outline: 2px solid var(--nav-accent); outline-offset: 6px; }
+.wordmark:focus-visible, .main-nav a:not(.nav-contact):focus-visible { border-radius: 0; }
+.site-header svg { display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.wordmark { display: flex; align-items: center; gap: 15px; flex-shrink: 0; font-size: 13px; font-weight: 600; line-height: 1.25; }
+.monogram { font: 700 38px/1 "Bricolage Grotesque", Arial, sans-serif; letter-spacing: -0.1em; padding-right: .1em; }
+.monogram span { color: var(--nav-accent); }
+.wordmark__copy { display: grid; gap: 3px; }
+.wordmark__copy strong { color: var(--nav-ink); font-size: 14px; font-weight: 700; letter-spacing: -0.035em; }
+.wordmark__copy small { color: var(--nav-muted); font-size: 12px; font-weight: 500; }
+
+.main-nav {
+  display: flex; align-items: center; gap: clamp(18px, 3vw, 48px);
+  margin-left: auto;
+  font-size: 14px; font-weight: 500;
+}
+.main-nav a { position: relative; padding: 12px 0; color: var(--nav-link); }
+.main-nav a:hover, .main-nav a[aria-current] { color: var(--nav-ink); }
+/* the current page (on a case study, Work) and the hovered link get a dot */
+.main-nav a::after {
+  content: ""; position: absolute; bottom: 1px; left: 50%;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--nav-accent);
+  transform: translateX(-50%) scale(0);
+}
+.main-nav a:hover::after, .main-nav a[aria-current]::after { transform: translateX(-50%) scale(1); }
+.main-nav .nav-contact {
+  display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 20px;
+  border: 1px solid rgba(17, 18, 22, .12); border-radius: 999px;
+  background: var(--nav-ink); color: #fff;
+}
+.main-nav .nav-contact:hover { background: var(--nav-accent-text); border-color: var(--nav-accent-text); color: #fff; }
+.main-nav .nav-contact::after { content: none; }
+
+.menu-toggle { display: none; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+/* beats the display:grid below, so the script-only button stays hidden without JS */
+.menu-toggle[hidden] { display: none !important; }
+.menu-toggle .icon-close, .menu-toggle[aria-expanded="true"] .icon-open { display: none; }
+.menu-toggle[aria-expanded="true"] .icon-close { display: block; }
+
+@media (max-width: 1100px) {
+  .main-nav { gap: clamp(15px, 2vw, 25px); font-size: 13px; }
+  .main-nav .nav-contact { min-height: 42px; gap: 8px; padding-inline: 14px; }
+}
+@media (max-width: 760px) {
+  .js .menu-toggle {
+    display: grid; place-items: center; width: 44px; height: 44px;
+    border: 1px solid rgba(17, 18, 22, .15); border-radius: 50%; background: rgba(248, 247, 244, .75);
+  }
+  .js .main-nav {
+    position: absolute; top: calc(100% - 1px); right: 12px; left: 12px;
+    display: none; flex-direction: column; align-items: stretch; gap: 0;
+    margin: 0; padding: 10px 22px 18px;
+    border: 1px solid rgba(17, 18, 22, .09); border-radius: 0 0 16px 16px;
+    background: rgba(248, 247, 244, .98); box-shadow: 0 18px 40px rgba(17, 18, 22, .1);
+  }
+  .js .main-nav.open { display: flex; }
+  .js .main-nav a { min-height: 46px; padding: 12px 0; font-size: 15px; }
+  .js .main-nav a::after { bottom: 8px; left: auto; right: 0; }
+  .js .main-nav .nav-contact { justify-content: center; margin-top: 9px; padding-inline: 18px; }
+}
+@media (max-width: 760px) {
+  :root { --site-header-h: 72px; }
+  .wordmark { gap: 11px; font-size: 11px; }
+  .monogram { font-size: 33px; }
+  .wordmark__copy strong { font-size: 12px; }
+  .wordmark__copy small { font-size: 10px; }
+  /* without script the links simply wrap under the wordmark */
+  html:not(.js) .site-header { position: static; height: auto; flex-wrap: wrap; gap: 6px 16px; padding-block: 16px; }
+  html:not(.js) .main-nav { flex-wrap: wrap; width: 100%; margin: 0; gap: 0 18px; }
+  html:not(.js) .site-header__spacer { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-header { transition: background-color 240ms ease, border-color 240ms ease; }
+  .main-nav a { transition: color 180ms ease; }
+  .main-nav a::after { transition: transform 180ms cubic-bezier(.2, .7, .2, 1); }
+  .main-nav .nav-contact { transition: background-color 180ms ease, border-color 180ms ease; }
+  @media (max-width: 760px) {
+    .js .main-nav.open { animation: nav-menu-enter 320ms var(--nav-ease) both; }
+  }
+  @keyframes nav-menu-enter { from { opacity: 0; transform: translateY(-8px); } }
+}
+
+/* Moving between pages. The page cross-fades instead of flashing, and the
+   header is a layer of its own, so it holds still while the page changes
+   under it. Typed (page-nav) so a page's own same-page transitions, like the
+   Vibe Coding simulator's, keep their rules. Reduce motion skips it; browsers
+   without cross-document view transitions simply navigate. */
+@view-transition { navigation: auto; types: page-nav; }
+.site-header { view-transition-name: site-header; }
+html:active-view-transition-type(page-nav)::view-transition-old(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-out; mix-blend-mode: plus-lighter; }
+html:active-view-transition-type(page-nav)::view-transition-new(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-in; mix-blend-mode: plus-lighter; }
+@keyframes page-out { to { opacity: 0; } }
+@keyframes page-in { from { opacity: 0; } }
+html.motion-off::view-transition-group(*),
+html.motion-off::view-transition-old(*),
+html.motion-off::view-transition-new(*) { animation: none !important; }
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-nav">
-  <div class="site-nav__inner">
-    <a class="site-nav__mark" href="../index.html#home">Jamiyan Batnyam</a>
-    <nav aria-label="Main">
-      <ul>
-        <li><a href="../index.html#home">Home</a></li>
-        <li><a href="../index.html#projects">Projects</a></li>
-        <li><a href="../visual.html">Gallery</a></li>
-        <li><a href="../index.html#about-me">About</a></li>
-      </ul>
-    </nav>
-  </div>
+<header class="site-header site-header--solid" data-scrolled="false">
+  <a class="wordmark" href="../index.html#home" aria-label="Jamiyan Batnyam, home">
+    <span class="monogram" aria-hidden="true">JB<span>·</span></span>
+    <span class="wordmark__copy">
+      <strong>Jamiyan Batnyam</strong>
+      <small>UX / Product Designer</small>
+    </span>
+  </a>
+  <nav class="main-nav" id="main-nav" aria-label="Main">
+    <a href="../index.html#home">Home</a>
+    <a href="../index.html#projects" aria-current="true">Work</a>
+    <a href="../index.html#about-me">About</a>
+    <a href="../visual.html">Gallery</a>
+    <a href="../index.html#contact">Contact</a>
+    <a class="nav-contact" href="mailto:jamyanart@gmail.com">Let’s connect <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+  </nav>
+  <button class="menu-toggle" type="button" id="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Open menu" hidden>
+    <svg class="icon-open" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+  </button>
 </header>
+<div class="site-header__spacer" aria-hidden="true"></div>
+<script>
+/* Global header, the same on every page: solid once the page leaves the top,
+   and the phone menu. */
+(function () {
+  "use strict";
+  var header = document.querySelector(".site-header");
+  if (!header) return;
+
+  var frame = 0;
+  var paint = function () {
+    frame = 0;
+    header.setAttribute("data-scrolled", window.scrollY > 40 ? "true" : "false");
+  };
+  window.addEventListener("scroll", function () {
+    if (!frame) frame = window.requestAnimationFrame(paint);
+  }, { passive: true });
+  paint();
+
+  var toggle = document.getElementById("menu-toggle");
+  var nav = document.getElementById("main-nav");
+  if (!toggle || !nav) return;
+  toggle.hidden = false;
+  var isOpen = function () { return nav.classList.contains("open"); };
+  var setMenu = function (open, returnFocus) {
+    nav.classList.toggle("open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    if (open) {
+      var first = nav.querySelector("a");
+      if (first) first.focus({ preventScroll: true });
+    } else if (returnFocus) {
+      toggle.focus();
+    }
+  };
+  toggle.addEventListener("click", function () { setMenu(!isOpen()); });
+  nav.addEventListener("click", function (e) { if (isOpen() && e.target.closest("a")) setMenu(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen()) setMenu(false, true); });
+  document.addEventListener("pointerdown", function (e) { if (isOpen() && !header.contains(e.target)) setMenu(false); });
+  header.addEventListener("focusout", function (e) {
+    if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setMenu(false);
+  });
+}());
+</script>
 
 <div class="layout">
   <aside class="rail">
@@ -694,6 +1058,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       <a href="#research"><span class="rail__num" aria-hidden="true">03</span>Research</a>
       <a href="#solution"><span class="rail__num" aria-hidden="true">04</span>Solution</a>
       <a href="#final-delivery"><span class="rail__num" aria-hidden="true">05</span>Final Delivery</a>
+      <a href="#reflection"><span class="rail__num" aria-hidden="true">06</span>Reflection</a>
     </nav>
     <div class="rail__progress" id="rail-progress" hidden>
       <div class="rail__bar" id="rail-bar" role="progressbar" aria-label="Reading progress"
@@ -706,9 +1071,13 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 
     <!-- ================================================================ HERO -->
     <section id="hero">
-      <div class="hero-media" style="aspect-ratio:2909/1581">
-        <img src="https://framerusercontent.com/images/nZACbKRsUi9wy80llCBwkkI3H00.png?scale-down-to=2048"
-             alt="The Liminal app icon on a lavender gradient" width="2909" height="1581">
+      <!-- The v3 splash lockup. App icon: liminal-logo.svg (mark alone: liminal-mark.svg) -->
+      <div class="hero-media hero-brand">
+        <img class="hero-brand__icon" src="../assets/img/liminal/liminal-logo.svg" alt="" width="512" height="512">
+        <div>
+          <p class="hero-brand__name">liminal</p>
+          <p class="hero-brand__tag">your space to breathe, reflect, and grow</p>
+        </div>
       </div>
 
       <div class="case-head">
@@ -719,6 +1088,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <dl class="facts">
           <div><dt>Year</dt><dd>2025</dd></div>
           <div><dt>Duration</dt><dd>10 Weeks</dd></div>
+          <div><dt>Team</dt><dd>3 people</dd></div>
         </dl>
       </div>
     </section>
@@ -727,25 +1097,19 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     <section id="overview" class="intro" style="scroll-margin-top:72px">
       <div class="block">
         <h2 class="t3">Overview</h2>
-        <p class="body">Many people with anxiety and depression get stuck in inaction—trapped in cycles of overthinking and emotional paralysis. What they don't realize is that this stuckness spreads, shaping their environment into one that mirrors their inner hopelessness. It's not just an internal struggle—it becomes a shared atmosphere of disconnection and heaviness. Liminal is a wellness app designed to help users gently reprogram their subconscious mind and shift inner thought patterns through personalized, immersive tool.</p>
+        <p class="body">Liminal is a wellness app for people with anxiety and depression who feel stuck, caught in overthinking and pulling away from others. It offers four tools to help shift those patterns. SubLab lets you make personal affirmation tracks, Meditation offers guided and solo sessions, the Journal tracks habits and mood, and Community is a place to share support.</p>
+        <p class="body" style="margin-top:var(--space-s)">The name means an in-between space. The app is meant to be a bridge that helps people work through their anxiety and depression.</p>
       </div>
       <div class="block">
         <h2 class="t3">My Roles</h2>
-        <p class="body">UI Design, UI Research, Visual Design</p>
+        <p class="body">UI Design, UX Research, Visual Design</p>
       </div>
 
-      <div class="showcase">
-        <div class="showcase__tall fit" style="--fit-pad:28px">
-          <video data-autoplay controls muted loop playsinline preload="metadata" aria-label="Screen recording of the Liminal home screen" src="https://framerusercontent.com/assets/8pTSL2jlVEZ4DQSQIpaw67mjdbw.mp4"></video>
-        </div>
-        <div class="showcase__wide fit">
-          <img src="https://framerusercontent.com/images/DYih5YMK5A7fzFrN2oO64u35U.png?scale-down-to=1024"
-               alt="Two phones showing Liminal screens" width="1320" height="2346" loading="lazy">
-        </div>
-        <div class="showcase__wide fit" style="--fit-pad:0px">
-          <img src="https://framerusercontent.com/images/hnsfvP2W6uJBQHHnMgOA65csbQ.png?scale-down-to=2048"
-               alt="A spread of Liminal screens on lavender" width="4768" height="2688" loading="lazy">
-        </div>
+      <!-- v3 screens composited into phone renders in Photoshop (layered PSDs kept outside the site) -->
+      <div class="mockups">
+        <img class="mockups__wide" src="../assets/img/liminal/mockup-trio.jpg" alt="Three lavender phones on a pastel set, showing the Sublab, Home and Journal screens" width="1536" height="1024" loading="lazy">
+        <img src="../assets/img/liminal/mockup-duo.jpg" alt="Two floating phones showing the Meditate screen and Now playing" width="1254" height="1254" loading="lazy">
+        <img src="../assets/img/liminal/mockup-flatlay.jpg" alt="Three phones lying among pastel pebbles, showing Statistics, Community and Profile" width="1254" height="1254" loading="lazy">
       </div>
     </section>
 
@@ -755,12 +1119,12 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <div>
           <p class="eyebrow">Discovery</p>
           <h2 class="t2">Problem Space</h2>
-          <p class="body" style="margin-top:var(--space-m)">Many young adults crave <strong>genuine connection</strong>, yet <strong>anxiety and depression</strong> make reaching out feel <strong>impossible</strong>—trapping them in <strong>cycles of isolation</strong>, where they seek temporary escape in digital distractions, ultimately reinforcing the very isolation they wish to overcome</p>
+          <p class="body" style="margin-top:var(--space-m)">Many young adults want real connection, but anxiety and depression make reaching out feel impossible. So they escape into digital distractions, which leaves them <strong>more isolated</strong> than before.</p>
         </div>
-        <div class="split__media problem-img">
-          <img src="https://framerusercontent.com/images/gwdO82V4BPiEiH7f8jcfqnAI.jpg"
-               alt="Illustration of a person behind bars, captioned: anxiety and depression have become a deeper, more complex" width="590" height="597" loading="lazy">
-        </div>
+        <figure class="split__media statement">
+          <img src="../assets/img/liminal/mood-1-very-low.png" alt="" width="160" height="160" loading="lazy">
+          <p>Anxiety and depression have become a deeper, more complex crisis since the pandemic.</p>
+        </figure>
       </div>
     </section>
 
@@ -772,16 +1136,16 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <!-- DRAFT: J to rewrite. The live page carries ContentPlus's research paragraph
              (cultural probe kits, children's screen time). Replaced with a sentence
              describing the methods this page actually shows. -->
-        <p class="body">We ran a survey and held user interviews with young adults to understand how anxiety and depression shape their daily habits, their relationships, and the ways they seek relief</p>
+        <p class="body">We surveyed and interviewed young adults to learn how anxiety and depression affect their daily habits, their relationships, and how they look for relief.</p>
       </div>
 
       <div class="block">
         <div class="stats">
           <div class="stats__grid">
-            <div class="stat"><p class="stat__num">23</p><p class="stat__label">Questions</p></div>
-            <div class="stat"><p class="stat__num">32</p><p class="stat__label">Submissions</p></div>
-            <div class="stat"><p class="stat__num">3</p><p class="stat__label">Forms of Questions</p></div>
-            <div class="stat"><p class="stat__num">7</p><p class="stat__label">User Interviews</p></div>
+            <div class="stat"><p class="stat__num">23</p><p class="stat__label">Survey questions</p></div>
+            <div class="stat"><p class="stat__num">32</p><p class="stat__label">Survey responses</p></div>
+            <div class="stat"><p class="stat__num">3</p><p class="stat__label">Question types</p></div>
+            <div class="stat"><p class="stat__num">7</p><p class="stat__label">Interviews</p></div>
           </div>
           <div>
             <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/EUTZn6DIrn9dW6z9QlTaL4ystQw.png?scale-down-to=2048" data-alt="The user research summary board, with the survey form" aria-label="View the user research board full size"><img src="https://framerusercontent.com/images/EUTZn6DIrn9dW6z9QlTaL4ystQw.png?scale-down-to=1024" alt="" width="1672" height="983" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
@@ -797,6 +1161,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
           </div>
           <p class="datapoints__count">189 DATA POINTS</p>
           <div class="datapoints__foot">
+            <p class="caption">Collected from the survey and the interviews</p>
             <button class="text-button" type="button" data-full="https://framerusercontent.com/images/hFTIXnrChKs6jzXh5hMKtZp7tQ4.png?scale-down-to=4096" data-alt="The original affinity board of 189 data points"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View the original board</button>
           </div>
         </figure>
@@ -804,19 +1169,28 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 
       <div class="block">
         <article class="card">
-          <header class="insight__head" style="text-align:center">
+          <header class="insight__head">
             <h3 class="t3">Interviews</h3>
             <p class="method__kicker">Key Insights</p>
           </header>
-          <ul class="findings" style="margin-top:var(--space-l); list-style:none; padding:0">
-            <li class="finding"><span class="finding__n">01</span><p>Anxiety is persistent, and Emotionally normalized</p></li>
-            <li class="finding"><span class="finding__n">02</span><p>Connection Is Craved, Yet Avoided</p></li>
-            <li class="finding"><span class="finding__n">03</span><p>Stress Quietly Erodes Relationships</p></li>
-            <li class="finding"><span class="finding__n">04</span><p>Reflective Practices Are Overlooked, Despite Need</p></li>
+          <ul class="findings">
+            <li class="finding">
+              <div class="finding__art"><img src="../assets/img/liminal/insight-1-anxiety.jpg" alt="" width="800" height="800" loading="lazy"></div>
+              <div class="finding__text"><span class="finding__n">01</span><p>Anxiety is constant, so people treat it as normal</p></div>
+            </li>
+            <li class="finding">
+              <div class="finding__art"><img src="../assets/img/liminal/insight-2-connection.jpg" alt="" width="800" height="800" loading="lazy"></div>
+              <div class="finding__text"><span class="finding__n">02</span><p>People crave connection, then pull away from it</p></div>
+            </li>
+            <li class="finding">
+              <div class="finding__art"><img src="../assets/img/liminal/insight-3-relationships.jpg" alt="" width="800" height="800" loading="lazy"></div>
+              <div class="finding__text"><span class="finding__n">03</span><p>Stress slowly wears relationships down</p></div>
+            </li>
+            <li class="finding">
+              <div class="finding__art"><img src="../assets/img/liminal/insight-4-reflection.jpg" alt="" width="800" height="800" loading="lazy"></div>
+              <div class="finding__text"><span class="finding__n">04</span><p>People need reflection, but rarely make time for it</p></div>
+            </li>
           </ul>
-          <div class="artifact">
-            <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/g9e9st0f3Ob72IsApyT9Cr4cV4.png?scale-down-to=2048" data-alt="The four interview findings with their illustrations" aria-label="View the interview findings artwork full size"><img src="https://framerusercontent.com/images/g9e9st0f3Ob72IsApyT9Cr4cV4.png?scale-down-to=1024" alt="" width="1690" height="462" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
-          </div>
         </article>
       </div>
     </section>
@@ -830,42 +1204,42 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 
       <div class="block">
         <h3 class="t3">The Proposal</h3>
-        <p class="body">A digital self-help tool for individuals experiencing anxiety and depression, helping them break free from cycles of overthinking and inaction</p>
+        <p class="body">A self-help app for people with anxiety and depression that helps them break out of overthinking and start acting again. Based on what we heard in the survey and interviews, we chose four tools.</p>
       </div>
 
       <div class="block">
         <h3 class="t3">Features</h3>
         <div style="margin-top:var(--space-m)">
         <article class="card feature">
-          <div class="feature__art"><img src="https://framerusercontent.com/images/3D5su25FQ177BW6UqXieMDhV6PU.png?scale-down-to=512" alt="" width="443" height="496" loading="lazy"></div>
+          <div class="feature__art"><img src="../assets/img/liminal/hero-sublab.png" alt="" width="124" height="360" loading="lazy"></div>
           <div>
             <h4 class="feature__name">SubLab</h4>
-            <dl class="def"><dt>Definition</dt><dd>is a tool that lets users create their own subliminal audio tracks—designed to reprogram their subconscious mind using personalized affirmations layered under music or ambient sounds</dd></dl>
-            <dl class="def"><dt>How It Works</dt><dd>Type your affirmations, choose your background sound, and let the Composer automatically lower the volume of your voice just below conscious hearing. Then listen during sleep, work, or meditation</dd></dl>
+            <dl class="def"><dt>What it is</dt><dd>Make your own subliminal track: your affirmations, mixed quietly under music or ambient sound.</dd></dl>
+            <dl class="def"><dt>How It Works</dt><dd>Type your affirmations and pick a background sound. The Composer lowers your voice to just below what you consciously hear. Play it while you sleep, work or meditate.</dd></dl>
           </div>
         </article>
         <article class="card feature">
-          <div class="feature__art"><img src="https://framerusercontent.com/images/0cyouyhqIOzOqB3dFDXUFwiBUs.png?scale-down-to=512" alt="" width="400" height="496" loading="lazy"></div>
+          <div class="feature__art"><img src="../assets/img/liminal/hero-meditation-orb.png" alt="" width="301" height="360" loading="lazy"></div>
           <div>
             <h4 class="feature__name">Meditation</h4>
-            <dl class="def"><dt>Definition</dt><dd>it's a space for mental rewiring. It combines guided prompts, ambient sounds, and intentional silence to help users tap into deeper brain states and reprogram thought patterns from the inside out</dd></dl>
-            <dl class="def"><dt>How It Works</dt><dd>Choose your style, guided or solo meditation, personalize the vibe, and end your session with depth</dd></dl>
+            <dl class="def"><dt>What it is</dt><dd>Guided or solo sessions that mix prompts, ambient sound and silence to help you settle your thoughts.</dd></dl>
+            <dl class="def"><dt>How It Works</dt><dd>Choose guided (follow a voice) or solo (just sound), set the mood, and end with a moment to notice how you feel.</dd></dl>
           </div>
         </article>
         <article class="card feature">
-          <div class="feature__art"><img src="https://framerusercontent.com/images/Wif2KdHq8t0zDEtqBmcorxMIjzs.png?scale-down-to=512" alt="" width="343" height="511" loading="lazy"></div>
+          <div class="feature__art"><img src="../assets/img/liminal/nav-journal.png" alt="" width="320" height="320" loading="lazy"></div>
           <div>
             <h4 class="feature__name">Journal</h4>
-            <dl class="def"><dt>Definition</dt><dd>Journaling isn't just about writing—it's about pattern recognition and self-clarity. It's a tool to observe your internal dialogue, track emotional loops, and reprogram your story over time</dd></dl>
-            <dl class="def"><dt>How It Works</dt><dd>Choose your entry type, set your intention, unlock deeper layers, and close the loop</dd></dl>
+            <dl class="def"><dt>What it is</dt><dd>A place to notice your patterns: what you think, which feelings repeat, and how your story changes over time.</dd></dl>
+            <dl class="def"><dt>How It Works</dt><dd>Pick an entry type, set an intention, go deeper, then close the entry.</dd></dl>
           </div>
         </article>
         <article class="card feature">
-          <div class="feature__art"><img src="https://framerusercontent.com/images/agYkJOug7RUk9JEI07b5YBub66Q.png?scale-down-to=512" alt="" width="379" height="468" loading="lazy"></div>
+          <div class="feature__art"><img src="../assets/img/liminal/hero-community.png" alt="" width="360" height="342" loading="lazy"></div>
           <div>
             <h4 class="feature__name">Community</h4>
-            <dl class="def"><dt>Definition</dt><dd>Community is a space where users can connect, share, and support one another through personal affirmations, reflections, and healing thoughts</dd></dl>
-            <dl class="def"><dt>How It Works</dt><dd>Post affirmations or reflections, engage with others, choose private or anonymous posting, and filter by topic</dd></dl>
+            <dl class="def"><dt>What it is</dt><dd>A space to share affirmations and reflections, and support each other.</dd></dl>
+            <dl class="def"><dt>How It Works</dt><dd>Post an affirmation or reflection, respond to others, post privately or anonymously, and filter by topic.</dd></dl>
           </div>
         </article>
         </div>
@@ -876,7 +1250,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
           <figure class="quote">
             <blockquote>It's not often an immediate effect. Rather, it's like watering a plant.</blockquote>
             <figcaption>Huma Malak, psychotherapist</figcaption>
-            <p class="body" style="margin-top:var(--space-m)">There's real science showing that the sleeping brain can absorb simple suggestions especially through repetition</p>
+            <p class="body" style="margin-top:var(--space-m)">Research shows the sleeping brain can take in simple suggestions, especially when they're repeated.</p>
           </figure>
           <div class="split__media">
             <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/gGjumpUQ8H26bbzNh1LKeaVo.png?scale-down-to=2048" data-alt="A collage of research papers on subliminal suggestion and sleep learning" aria-label="View the research paper collage full size"><img src="https://framerusercontent.com/images/gGjumpUQ8H26bbzNh1LKeaVo.png?scale-down-to=1024" alt="" width="1955" height="1150" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
@@ -907,13 +1281,12 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       </div>
 
       <div class="block">
-        <h3 class="t3">User Testing Low-Fi</h3>
-        <div class="session" style="margin-top:var(--space-m)">
-          <p>We conducted <span class="count">five</span> user interviews and asked them to navigate through our app.</p>
-          <div>
-            <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/CsCnCGMqNa0W1skxGuxZhVjf4k.png?scale-down-to=2048" data-alt="Photos of the first round of testing sessions" aria-label="View the first-round session photos full size"><img src="https://framerusercontent.com/images/CsCnCGMqNa0W1skxGuxZhVjf4k.png?scale-down-to=1024" alt="" width="1687" height="855" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
-          </div>
-        </div>
+        <article class="card">
+          <header class="insight__head">
+            <h3 class="t3">User Testing Low-Fi</h3>
+          </header>
+          <button class="evidence__open testing__photo" type="button" data-full="https://framerusercontent.com/images/CsCnCGMqNa0W1skxGuxZhVjf4k.png?scale-down-to=2048" data-alt="Photos of the first round of testing sessions" aria-label="View the first-round session photos full size"><img src="https://framerusercontent.com/images/CsCnCGMqNa0W1skxGuxZhVjf4k.png?scale-down-to=1024" alt="" width="1687" height="855" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+        </article>
       </div>
 
       <div class="block">
@@ -931,41 +1304,32 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
             <caption>Each cell is one participant's result on one task.</caption>
             <thead><tr><th scope="col"><span class="sr-only">Participant</span></th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th></tr></thead>
             <tbody>
-            <tr><th scope="row">User 1</th><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td></tr>
-            <tr><th scope="row">User 2</th><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td></tr>
-            <tr><th scope="row">User 3</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td></tr>
-            <tr><th scope="row">User 4</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td></tr>
-            <tr><th scope="row">User 5</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccesful</span></td><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td></tr>
+            <tr><th scope="row">User 1</th><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td></tr>
+            <tr><th scope="row">User 2</th><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td></tr>
+            <tr><th scope="row">User 3</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccessful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td></tr>
+            <tr><th scope="row">User 4</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccessful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccessful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td></tr>
+            <tr><th scope="row">User 5</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccessful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccessful</span></td><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccessful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td></tr>
             </tbody>
           </table>
           <p class="legend">
-            <span><span class="dot dot--S" aria-hidden="true"></span><i>Succesful</i></span>
-            <span><span class="dot dot--U" aria-hidden="true"></span><i>Unsuccesful</i></span>
+            <span><span class="dot dot--S" aria-hidden="true"></span><i>Successful</i></span>
+            <span><span class="dot dot--U" aria-hidden="true"></span><i>Unsuccessful</i></span>
             <span><span class="dot dot--C" aria-hidden="true"></span><i>Confusion</i></span>
           </p>
           <div class="tasks">
             <h4>Tasks</h4>
             <ol>
-              <li>Create subliminal messaging</li>
+              <li>Create a subliminal track</li>
               <li>Start a solo meditation</li>
-              <li>Go to the self mastery and choose an audiobook</li>
-              <li>Check the calendar in the home page</li>
-              <li>Go to the community section and copy the affirmations</li>
-              <li>In the community section post your affirmations.</li>
+              <li>Pick an audiobook in Self Mastery</li>
+              <li>Check the calendar on the home screen</li>
+              <li>Copy an affirmation in Community</li>
+              <li>Post your own affirmation</li>
             </ol>
           </div>
         </section>
         </div>
-        <p class="body" style="margin-top:var(--space-m)">User testing showed some big <strong>usability problems</strong>, especially in the <strong>first task</strong>, which confused many participants. The navigation, community, and audiobook sections felt <strong>overwhelming</strong>, highlighting the need for <strong>clearer guidance</strong>. Based on this feedback, we decided to redesign and improve the app's layout.</p>
-      </div>
-
-      <div class="block">
-        <h3 class="t3">Style Guide</h3>
-        <figure class="card card--media" style="margin-top:var(--space-m)">
-          <img src="https://framerusercontent.com/images/gvwMvjoxydB5EggUz1k7hESjHWI.png?scale-down-to=2048"
-               alt="Liminal style guide: logo, purple palette, typography, icons, and components"
-               width="1476" height="799" loading="lazy">
-        </figure>
+        <p class="body" style="margin-top:var(--space-m)">Testing showed real usability problems. Creating a subliminal track was the hardest: 3 of 5 people couldn't finish it and the other 2 got confused. Navigation, Community and the audiobook section felt overwhelming and needed clearer guidance. So we redesigned the visuals and interface to make each step clearer, especially creating a track in SubLab.</p>
       </div>
 
       <div class="block">
@@ -989,13 +1353,12 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       </div>
 
       <div class="block">
-        <h3 class="t3">User Testing Mid-Fi</h3>
-        <div class="session" style="margin-top:var(--space-m)">
-          <p>We conducted another <span class="count">six</span> user interviews and asked them to navigate through our app.</p>
-          <div>
-            <button class="evidence__open" type="button" data-full="https://framerusercontent.com/images/BUIEwtKfgEC3KgKhpCn1A2e8FA.png?scale-down-to=2048" data-alt="Photos of the second round of testing sessions" aria-label="View the second-round session photos full size"><img src="https://framerusercontent.com/images/BUIEwtKfgEC3KgKhpCn1A2e8FA.png?scale-down-to=1024" alt="" width="1682" height="817" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
-          </div>
-        </div>
+        <article class="card">
+          <header class="insight__head">
+            <h3 class="t3">User Testing Mid-Fi</h3>
+          </header>
+          <button class="evidence__open testing__photo" type="button" data-full="https://framerusercontent.com/images/BUIEwtKfgEC3KgKhpCn1A2e8FA.png?scale-down-to=2048" data-alt="Photos of the second round of testing sessions" aria-label="View the second-round session photos full size"><img src="https://framerusercontent.com/images/BUIEwtKfgEC3KgKhpCn1A2e8FA.png?scale-down-to=1024" alt="" width="1682" height="817" loading="lazy"><span class="evidence__chip" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9"/></svg>View full size</span></button>
+        </article>
       </div>
 
       <div class="block">
@@ -1005,7 +1368,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
             <p class="delta__side"><span class="delta__num delta__num--before">30%</span><span class="delta__cap">round 1, low-fidelity</span></p>
             <span class="delta__arrow" aria-hidden="true">&rarr;</span>
             <p class="delta__side"><span class="delta__num delta__num--after">78%</span><span class="delta__cap">round 2, mid-fidelity</span></p>
-            <p class="delta__cap">Share of attempts completed without trouble, after the redesign.</p>
+            <p class="delta__cap">Tasks finished with no trouble. Round 2 used a revised task list; creating a track and starting a solo meditation were tested in both rounds.</p>
           </div>
         <section class="card round" aria-labelledby="round2">
           <header class="round__head">
@@ -1019,33 +1382,105 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
             <caption>Each cell is one participant's result on one task.</caption>
             <thead><tr><th scope="col"><span class="sr-only">Participant</span></th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">5</th><th scope="col">6</th></tr></thead>
             <tbody>
-            <tr><th scope="row">User 1</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td></tr>
-            <tr><th scope="row">User 2</th><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td></tr>
-            <tr><th scope="row">User 3</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td></tr>
-            <tr><th scope="row">User 4</th><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td></tr>
-            <tr><th scope="row">User 5</th><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td></tr>
-            <tr><th scope="row">User 6</th><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Succesful</span></td></tr>
+            <tr><th scope="row">User 1</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccessful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td></tr>
+            <tr><th scope="row">User 2</th><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td></tr>
+            <tr><th scope="row">User 3</th><td><span class="dot dot--U" aria-hidden="true"></span><span class="sr-only">Unsuccessful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td></tr>
+            <tr><th scope="row">User 4</th><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td></tr>
+            <tr><th scope="row">User 5</th><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td></tr>
+            <tr><th scope="row">User 6</th><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--C" aria-hidden="true"></span><span class="sr-only">Confusion</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td><td><span class="dot dot--S" aria-hidden="true"></span><span class="sr-only">Successful</span></td></tr>
             </tbody>
           </table>
           <p class="legend">
-            <span><span class="dot dot--S" aria-hidden="true"></span><i>Succesful</i></span>
-            <span><span class="dot dot--U" aria-hidden="true"></span><i>Unsuccesful</i></span>
+            <span><span class="dot dot--S" aria-hidden="true"></span><i>Successful</i></span>
+            <span><span class="dot dot--U" aria-hidden="true"></span><i>Unsuccessful</i></span>
             <span><span class="dot dot--C" aria-hidden="true"></span><i>Confusion</i></span>
           </p>
           <div class="tasks">
             <h4>Tasks</h4>
             <ol>
-              <li>Create subliminal messaging</li>
-              <li>Pick a habit, add goal, Check</li>
+              <li>Create a subliminal track</li>
+              <li>Pick a habit, add a goal and check it off</li>
               <li>Start a solo meditation</li>
-              <li>Journaling; Pick 2 habits, Track emotions and view statistics</li>
-              <li>View personal information and achievements.</li>
-              <li>Select a community topic, view posts, search, and create posts</li>
+              <li>Journal: pick two habits, track your mood, view statistics</li>
+              <li>View your profile and achievements</li>
+              <li>Choose a community topic, browse, search and post</li>
             </ol>
           </div>
         </section>
         </div>
-        <p class="body" style="margin-top:var(--space-m)">We tested six tasks and the results were mostly <strong>positive</strong>. There were a few issues in the first task and some small areas to improve, but the overall experience was smooth and intuitive</p>
+        <p class="body" style="margin-top:var(--space-m)">Most tasks went smoothly. Creating a track was still the weak spot (2 of 6 couldn't finish it and 2 got confused), which is why the final onboarding teaches SubLab step by step.</p>
+      </div>
+
+      <div class="block">
+        <h3 class="t3">Style Guide</h3>
+        <!-- Rebuilt live from the Liminal v3 design system in Figma (00 — Design System, 02 — Illustrations, 01 — Icon Library). -->
+        <figure class="card sg" style="margin-top:var(--space-m)">
+          <div>
+            <p class="sg__title">Illustrations</p>
+            <ul class="sg__art">
+              <li><img src="../assets/img/liminal/hero-sublab.png" alt="" width="124" height="360" loading="lazy"><b>SubLab</b></li>
+              <li><img src="../assets/img/liminal/hero-meditation-orb.png" alt="" width="301" height="360" loading="lazy"><b>Meditation orb</b></li>
+              <li><img src="../assets/img/liminal/hero-mandala.png" alt="" width="360" height="358" loading="lazy"><b>Mandala</b></li>
+              <li><img src="../assets/img/liminal/hero-community.png" alt="" width="360" height="342" loading="lazy"><b>Community</b></li>
+            </ul>
+          </div>
+
+          <div class="sg__colors">
+            <div>
+              <p class="sg__label">Lavender</p>
+              <ul class="sg__chips">
+                <li><i style="--c:#F5F3FA"></i><b>Canvas</b>#F5F3FA</li>
+                <li><i style="--c:#E5DDFC"></i><b>Accent soft</b>#E5DDFC</li>
+                <li><i style="--c:#CEBCFC"></i><b>Lavender</b>#CEBCFC</li>
+                <li><i style="--c:#6256BA"></i><b>Accent</b>#6256BA</li>
+                <li><i style="--c:#4A3F94"></i><b>Accent strong</b>#4A3F94</li>
+              </ul>
+            </div>
+            <div>
+              <p class="sg__label">Supporting</p>
+              <ul class="sg__chips">
+                <li><i style="--c:#D2E9FC"></i><b>Sky soft</b>#D2E9FC</li>
+                <li><i style="--c:#3D92D6"></i><b>Sky</b>#3D92D6</li>
+                <li><i style="--c:#CDF3E5"></i><b>Mint soft</b>#CDF3E5</li>
+                <li><i style="--c:#32A37B"></i><b>Mint</b>#32A37B</li>
+                <li><i style="--c:#241B4A"></i><b>Ink</b>#241B4A</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="sg__type">
+            <div>
+              <p class="sg__label">Figtree Bold</p>
+              <p class="sg__sub">Display and headings</p>
+              <p class="sg__specimen sg__specimen--display">Breathe out</p>
+            </div>
+            <div>
+              <p class="sg__label">Figtree Regular</p>
+              <p class="sg__sub">Everything you read</p>
+              <p class="sg__specimen sg__specimen--body">A quiet place to put the noise down.</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="sg__label">Icons</p>
+            <p class="sg__sub">Navigation, and the mood scale used for check-ins</p>
+            <ul class="sg__icons" aria-label="Icon samples">
+              <li><img src="../assets/img/liminal/nav-home.png" alt="Home" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/nav-sublab.png" alt="SubLab" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/nav-meditation.png" alt="Meditate" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/nav-journal.png" alt="Journal" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/nav-library.png" alt="Library" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/nav-community.png" alt="Community" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/nav-profile.png" alt="Profile" width="160" height="160" loading="lazy"></li>
+              <li class="sg__gap" aria-hidden="true"></li>
+              <li><img src="../assets/img/liminal/mood-1-very-low.png" alt="Mood: very low" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/mood-2-low.png" alt="Mood: low" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/mood-3-neutral.png" alt="Mood: neutral" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/mood-4-good.png" alt="Mood: good" width="160" height="160" loading="lazy"></li>
+              <li><img src="../assets/img/liminal/mood-5-great.png" alt="Mood: great" width="160" height="160" loading="lazy"></li>
+            </ul>
+          </div>
+        </figure>
       </div>
     </section>
 
@@ -1056,52 +1491,128 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <h2 class="t2">Introducing Liminal</h2>
       </div>
 
-      <div class="block split split--phone">
-        <div>
-          <h3 class="t3">Onboarding</h3>
-          <p class="body">The onboarding starts by introducing the home screen and how to add habits that fit your life, but most importantly it highlights SubLab, since many users were confused about creating subliminal messages, and clearly explains how it works</p>
-        </div>
-        <div class="split__media phone-card fit">
-          <video data-autoplay controls muted loop playsinline preload="metadata" aria-label="Screen recording of the Onboarding screens" src="https://framerusercontent.com/assets/kInG3XjJ0puzIuoMypC4lM28mE.mp4"></video>
-        </div>
+      <!-- Each flow is four v3 screens in order, exported at 2x from the Figma page "Liminal — v3" -->
+      <div class="block">
+        <h3 class="t3">Onboarding</h3>
+        <p class="body">Onboarding introduces the home screen and habit setup, then focuses on SubLab, the feature testers found most confusing, with a step-by-step tutorial.</p>
+        <ol class="flow card" aria-label="Onboarding flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/onboarding-welcome.jpg" data-alt="Onboarding, Welcome to Liminal: a figure walks through an arched doorway. Your space to breathe, reflect, and grow." aria-label="View the Welcome screen full size"><img class="shot" src="../assets/img/liminal/screens/onboarding-welcome.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Welcome</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/onboarding-habits.jpg" data-alt="Onboarding, Lets create a habit: add the habits you care about and shape a plan that fits your rhythm." aria-label="View the Habits screen full size"><img class="shot" src="../assets/img/liminal/screens/onboarding-habits.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Habits</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/onboarding-sublab.jpg" data-alt="Onboarding, The Sublab: let's explore the Sublab together." aria-label="View The Sublab screen full size"><img class="shot" src="../assets/img/liminal/screens/onboarding-sublab.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>SubLab</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/onboarding-tutorial.jpg" data-alt="Onboarding, Sublab tutorial in three parts: choose a frequency base, write or record affirmations over background sound, then find the track in your Library." aria-label="View the Tutorial screen full size"><img class="shot" src="../assets/img/liminal/screens/onboarding-tutorial.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">04</span>Tutorial</p>
+          </li>
+        </ol>
       </div>
-      <div class="block split split--phone split--media-left">
-        <div>
-          <h3 class="t3">SubLab</h3>
-          <p class="body">Choose your frequencies, enter your affirmations, pick a background sound, and let the Composer lower your voice just below conscious hearing, then listen while you sleep, work, or meditate</p>
-        </div>
-        <div class="split__media phone-card fit">
-          <video data-autoplay controls muted loop playsinline preload="metadata" aria-label="Screen recording of the SubLab screens" src="https://framerusercontent.com/assets/Qpix1I4Ak1BTBAIykcgvtwjbucU.mp4"></video>
-        </div>
+      <div class="block">
+        <h3 class="t3">SubLab</h3>
+        <p class="body">Pick a brainwave frequency (Delta to Gamma), write your affirmations, choose a background sound, and let the Composer set your voice just below conscious hearing.</p>
+        <ol class="flow card" aria-label="SubLab flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/sublab-frequencies.jpg" data-alt="Select Frequencies: Delta, Theta, Alpha, Beta and Gamma brainwave bases, each with what it is for." aria-label="View the Frequencies screen full size"><img class="shot" src="../assets/img/liminal/screens/sublab-frequencies.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Frequencies</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/sublab-composer.jpg" data-alt="Composer: the track title, Pathway to Success, and three affirmations, with Write, Record and Iteration tabs." aria-label="View the Composer screen full size"><img class="shot" src="../assets/img/liminal/screens/sublab-composer.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Composer</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/sublab-background-sound.jpg" data-alt="Background Sound: nature sounds, white noise and instrumental tracks, with Gentle Rainfall selected." aria-label="View the Background sound screen full size"><img class="shot" src="../assets/img/liminal/screens/sublab-background-sound.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>Background sound</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/sublab-confirm.jpg" data-alt="Final touch: confirm the Pathway to Success subliminal, with the option to convert it to ultrasound, then generate it." aria-label="View the Final touch screen full size"><img class="shot" src="../assets/img/liminal/screens/sublab-confirm.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">04</span>Final touch</p>
+          </li>
+        </ol>
       </div>
-      <div class="block split split--phone">
-        <div>
-          <h3 class="t3">Meditation</h3>
-          <p class="body">Choose between solo or guided meditation. If you select solo, you can create your own track, while guided meditation lets you pick from the audio we've prepared for you</p>
-        </div>
-        <div class="split__media phone-card fit">
-          <video data-autoplay controls muted loop playsinline preload="metadata" aria-label="Screen recording of the Meditation screens" src="https://framerusercontent.com/assets/AFIfUtl1IMnnfQpOaI6rCZPUwVs.mp4"></video>
-        </div>
+      <div class="block">
+        <h3 class="t3">Meditation</h3>
+        <p class="body">Choose guided, to follow a voice, or solo, to build your own session from sound, a base frequency, affirmations and a timer.</p>
+        <ol class="flow card" aria-label="Meditation flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/meditation.jpg" data-alt="Lets Meditate: choose Guided, to follow a voice, or Solo, for just the sound, with a featured evening session." aria-label="View the Guided or solo screen full size"><img class="shot" src="../assets/img/liminal/screens/meditation.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Guided or solo</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/meditation-solo.jpg" data-alt="Solo setup: a checklist of audio, ambiance, base frequency, affirmations and a 20 minute timer, then Begin session." aria-label="View the Solo setup screen full size"><img class="shot" src="../assets/img/liminal/screens/meditation-solo.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Solo setup</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/meditation-player.jpg" data-alt="Now playing: Pathway to Success on an Alpha base, with Gentle Rainfall on loop." aria-label="View the Now playing screen full size"><img class="shot" src="../assets/img/liminal/screens/meditation-player.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>Now playing</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/meditation-finished.jpg" data-alt="Session complete: That's twelve minutes. Nothing to do now, just notice how you feel. Shows a 7 day streak and 3.2 hours this week." aria-label="View the Session complete screen full size"><img class="shot" src="../assets/img/liminal/screens/meditation-finished.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">04</span>Session complete</p>
+          </li>
+        </ol>
       </div>
-      <div class="block split split--phone split--media-left">
-        <div>
-          <h3 class="t3">Journal</h3>
-          <p class="body">Learn how to build habits, track your mood and performance, and write your daily journal</p>
-        </div>
-        <div class="split__media phone-card fit">
-          <video data-autoplay controls muted loop playsinline preload="metadata" aria-label="Screen recording of the Journal screens" src="https://framerusercontent.com/assets/H8ifFwt5Kszvmt9EiJjIzXSlE0I.mp4"></video>
-        </div>
+      <div class="block">
+        <h3 class="t3">Journal</h3>
+        <p class="body">Pick habits from templates, log your mood, see your streaks and progress, and write your daily diary.</p>
+        <ol class="flow card" aria-label="Journal flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/habit-templates.jpg" data-alt="Habit Templates: recommended, most popular and high-outcome habits, filtered by category, then Plant your seeds." aria-label="View the Habit templates screen full size"><img class="shot" src="../assets/img/liminal/screens/habit-templates.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Habit templates</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/journal-mood.jpg" data-alt="Mood: how did today feel, on a five-step scale from very low to great, with the week so far." aria-label="View the Mood screen full size"><img class="shot" src="../assets/img/liminal/screens/journal-mood.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Mood</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/habit-statistics.jpg" data-alt="Statistics: day streak, sessions, hours this week and minutes calm, a weekly completion chart, and achievement badges." aria-label="View the Statistics screen full size"><img class="shot" src="../assets/img/liminal/screens/habit-statistics.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>Statistics</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/journal-write.jpg" data-alt="Diary: today's entry, tagged Calm, Focus and Grateful." aria-label="View the Diary screen full size"><img class="shot" src="../assets/img/liminal/screens/journal-write.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">04</span>Diary</p>
+          </li>
+        </ol>
       </div>
-      <div class="block split split--phone">
-        <div>
-          <h3 class="t3">Profile &amp; Community</h3>
-          <p class="body">Check your achievements and streaks, post your own affirmations or save others', engage with the community, and filter content by topic</p>
-        </div>
-        <div class="split__media phone-card fit">
-          <video data-autoplay controls muted loop playsinline preload="metadata" aria-label="Screen recording of the Profile and Community screens" src="https://framerusercontent.com/assets/oYTMP4CabSeAH0G3IGTUwhRo.mp4"></video>
-        </div>
+      <div class="block">
+        <h3 class="t3">Profile &amp; Community</h3>
+        <p class="body">See your streaks and achievements, post your own affirmations or save others', and search posts by topic.</p>
+        <ol class="flow card" aria-label="Profile and Community flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/profile.jpg" data-alt="Profile: day streak and best streak, achievement badges, and recent posts." aria-label="View the Profile screen full size"><img class="shot" src="../assets/img/liminal/screens/profile.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Profile</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/community.jpg" data-alt="Community: a feed of posts that share affirmation recordings, with likes, comments and sharing." aria-label="View the Community screen full size"><img class="shot" src="../assets/img/liminal/screens/community.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Community</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/community-post.jpg" data-alt="New post: write what's going on, then attach an affirmation, a voice note or a mood." aria-label="View the New post screen full size"><img class="shot" src="../assets/img/liminal/screens/community-post.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>New post</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/liminal/screens/community-search.jpg" data-alt="Community search, with recent searches." aria-label="View the Search screen full size"><img class="shot" src="../assets/img/liminal/screens/community-search.jpg" alt="" width="804" height="1748" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">04</span>Search</p>
+          </li>
+        </ol>
       </div>
     </section>
+
+    <!-- ========================================================== REFLECTION -->
+    <!-- DRAFT: J to review. Drafted only from this page's testing results and onboarding notes. -->
+    <section id="reflection" class="section">
+      <div class="section-head">
+        <h2 class="t2">Reflection</h2>
+        <p class="body">Testing early showed us where people got lost. In both rounds, creating a track in SubLab was the hardest task. Redesigning the visuals and interface raised the share of tasks finished with no trouble from 30% to 78%, and the remaining confusion around SubLab shaped the final onboarding, which now walks people through it step by step. The biggest lesson for me: when a feature is unfamiliar, the design has to explain it, not just display it.</p>
+      </div>
+    </section>
+    <!-- /DRAFT -->
 
   </main>
 </div>
@@ -1123,7 +1634,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <ul>
           <li><a href="mailto:jamyanart@gmail.com">Email</a></li>
           <li><a href="https://www.linkedin.com/in/jbatnyam" target="_blank" rel="noopener">LinkedIn</a></li>
-          <li><a href="https://drive.google.com/file/d/1n59fu4pS5daSCbGWl0T3oztfOcWMoSbP/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
+          <li><a href="https://drive.google.com/file/d/1pItyx2MR89-dWQJc5hhjjewwKZ3RN7SD/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
         </ul>
       </div>
       <div>
@@ -1141,7 +1652,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
         <span id="copy-email-label">Copy email</span>
       </button>
-      <button class="footer-btn" type="button" id="motion-toggle" aria-pressed="false" hidden>Reduce motion: off</button>
       <a class="footer-btn footer-btn--plain" href="#top">Back to top &uarr;</a>
       <span class="footer-status" role="status" id="footer-status"></span>
     </div>
@@ -1192,6 +1702,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         opener = btn;
         boxImg.src = btn.getAttribute("data-full");
         boxImg.alt = btn.getAttribute("data-alt") || "";
+        boxImg.classList.toggle("is-shot", btn.classList.contains("flow__open"));
         box.showModal();
         box.querySelector(".lightbox__close").focus();
       });
@@ -1343,17 +1854,21 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   /* reveals, once each */
   document.documentElement.classList.add("motion-ready");
   var groups = [
+    { sel: ".mockups img", kind: "rise" },
     { sel: ".stats__grid .stat", kind: "scale" },
     { sel: ".finding", kind: "rise" },
     { sel: ".results tbody tr", kind: "row" },
-    { sel: ".delta__side", kind: "rise" }
+    { sel: ".delta__side", kind: "rise" },
+    /* each flow steps in on its own count, so step 1 always leads */
+    { sel: ".flow > li", kind: "rise", local: true }
   ];
   var marked = [];
   groups.forEach(function (g) {
     var els = Array.prototype.slice.call(document.querySelectorAll(g.sel));
     els.forEach(function (el, i) {
+      var n = g.local ? Array.prototype.indexOf.call(el.parentNode.children, el) : i;
       el.setAttribute("data-reveal", g.kind);
-      el.style.setProperty("--i", g.stagger === false ? 0 : i % 8);
+      el.style.setProperty("--i", g.stagger === false ? 0 : n % 8);
       marked.push(el);
     });
   });
@@ -1401,8 +1916,8 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 </script>
 
 <script>
-/* Footer utilities. Both buttons are revealed only once this runs, so they are
-   never present as dead controls when JavaScript is off. */
+/* Footer utilities. The copy button is revealed only once this runs, so it is
+   never present as a dead control when JavaScript is off. */
 (function () {
   "use strict";
 
@@ -1430,32 +1945,54 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     });
   }
 
-  /* ------------------------------------------------ reduce-motion override */
-  var motionBtn = document.getElementById("motion-toggle");
-  if (motionBtn) {
-    var root = document.documentElement;
-    var osReduce = false;
-    try { osReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
-    var saved = null;
-    try { saved = window.localStorage.getItem("reduceMotion"); } catch (e) {}
-    /* The OS setting is the default; an explicit choice here overrides it. */
-    var reduced = saved === null ? osReduce : saved === "1";
-
-    var apply = function () {
-      root.classList.toggle("motion-off", reduced);
-      motionBtn.setAttribute("aria-pressed", reduced ? "true" : "false");
-      motionBtn.textContent = "Reduce motion: " + (reduced ? "on" : "off");
-    };
-    apply();
-    motionBtn.hidden = false;
-    motionBtn.addEventListener("click", function () {
-      reduced = !reduced;
-      try { window.localStorage.setItem("reduceMotion", reduced ? "1" : "0"); } catch (e) {}
-      apply();
-      if (status) status.textContent = "Motion " + (reduced ? "reduced" : "restored") + ".";
-    });
-  }
 })();
+</script>
+<script>
+/* Wireframe strips: an endless loop. Each strip's screens are cloned once
+   (hidden from assistive tech), so half the track is one whole set. Runs
+   after the footer script, and follows its motion-off class from then on:
+   while motion is reduced the strips are plain scrollers again. */
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var SPEED = 40;   /* px per second, whatever the screen size */
+  var strips = Array.prototype.slice.call(document.querySelectorAll(".ticker--wireframes"));
+  if (!strips.length) return;
+
+  strips.forEach(function (strip) {
+    var track = strip.querySelector(".ticker__track");
+    Array.prototype.slice.call(track.children).forEach(function (li) {
+      var copy = li.cloneNode(true);
+      copy.setAttribute("aria-hidden", "true");
+      copy.setAttribute("data-clone", "");
+      track.appendChild(copy);
+    });
+  });
+
+  var sync = function () {
+    var loop = !root.classList.contains("motion-off");
+    strips.forEach(function (strip) {
+      var track = strip.querySelector(".ticker__track");
+      var view = strip.querySelector(".ticker__viewport");
+      var label = view.getAttribute("data-label") || view.getAttribute("aria-label");
+      view.setAttribute("data-label", label);
+      strip.classList.toggle("is-looping", loop);
+      if (loop) {
+        /* nothing to scroll by hand while it loops, so no tab stop */
+        view.removeAttribute("tabindex");
+        view.setAttribute("aria-label", label.replace(/, scrollable$/, ""));
+        track.style.animationDuration = (track.scrollWidth / 2 / SPEED).toFixed(1) + "s";
+      } else {
+        view.setAttribute("tabindex", "0");
+        view.setAttribute("aria-label", label);
+      }
+    });
+  };
+  new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["class"] });
+  var phone = window.matchMedia("(max-width: 760px)");
+  if (phone.addEventListener) phone.addEventListener("change", sync);
+  sync();
+}());
 </script>
 </body>
 </html>

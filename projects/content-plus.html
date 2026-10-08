@@ -10,6 +10,22 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@500,700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preload" href="../assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* Before anything renders: mark script support, and apply the OS Reduce
+   motion setting so no animation or page transition starts first. */
+(function (root) {
+  root.classList.add("js");
+  // Clear the choice the old footer toggle used to save; the OS setting rules now.
+  try { localStorage.removeItem("reduceMotion"); } catch (e) {}
+  try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) root.classList.add("motion-off"); } catch (e) {}
+}(document.documentElement));
+</script>
+<!-- Chromium: start loading a page as soon as its link is hovered, so the click is instant -->
+<script type="speculationrules">
+{ "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+</script>
 <style>
 /* ==========================================================================
    Tokens
@@ -100,7 +116,7 @@ a { color: inherit; }
 strong { font-weight: 700; color: var(--ink); }
 
 /* site chrome stays in the portfolio's own type */
-.skip-link, .site-nav, .site-footer { font-family: var(--font-chrome-body); }
+.skip-link, .site-footer { font-family: var(--font-chrome-body); }
 
 .skip-link {
   position: absolute; left: 16px; top: -48px;
@@ -110,17 +126,8 @@ strong { font-weight: 700; color: var(--ink); }
 .skip-link:focus { top: 12px; }
 
 /* ==========================================================================
-   Site nav + layout
+   Layout
    ========================================================================== */
-.site-nav { background: var(--surface); border-bottom: 1px solid var(--line); }
-.site-nav__inner {
-  max-width: 1240px; margin: 0 auto; padding: 18px 24px;
-  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
-}
-.site-nav__mark { font-size: 15px; text-decoration: none; color: var(--ink-dim); }
-.site-nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
-.site-nav ul a { font-size: 14px; text-decoration: none; }
-.site-nav ul a:hover { color: var(--ink-dim); }
 
 .layout {
   max-width: 1240px; margin: 0 auto; padding: 40px 24px 0;
@@ -129,7 +136,7 @@ strong { font-weight: 700; color: var(--ink); }
 .content { min-width: 0; max-width: 960px; }
 
 .rail {
-  position: sticky; top: 32px; align-self: start;
+  position: sticky; top: calc(var(--site-header-h) + 32px); align-self: start;
   background: var(--surface); border-radius: var(--radius-sm); padding: 14px 16px 13px;
 }
 .rail__eyebrow {
@@ -168,7 +175,7 @@ strong { font-weight: 700; color: var(--ink); }
 @media (max-width: 1000px) {
   .layout { grid-template-columns: 1fr; gap: 0; padding-top: 0; }
   .rail {
-    position: sticky; top: 0; z-index: 10;
+    position: sticky; top: var(--site-header-h); z-index: 10;
     /* Without this the grid item takes its min-content width from the nav,
        and overflow-x on the nav does not reduce that contribution. */
     min-width: 0;
@@ -184,8 +191,10 @@ strong { font-weight: 700; color: var(--ink); }
   .rail__progress { margin-top: 7px; display: flex; align-items: center; gap: 12px; }
   .rail__bar { flex: 1; }
   .rail__meta { flex: none; margin: 0; }
-  /* clear the taller sticky rail when jumping to an anchor */
-  .section, .intro { scroll-margin-top: 104px; }
+  /* clear the taller sticky rail when jumping to an anchor. !important: the
+     plain .section rule further down and the inline 72px on some sections
+     would otherwise win, and the heading would land under the strip. */
+  .section, .intro { scroll-margin-top: 104px !important; }
 }
 
 /* ==========================================================================
@@ -249,29 +258,30 @@ strong { font-weight: 700; color: var(--ink); }
 
 .intro { margin-top: var(--space-xl); }
 
-/* My Roles showcase: the tablet on its own, full width, then the recording
-   and the phones. Row 2 columns are proportional to each item's aspect ratio
-   (9:16, 3:2), so both come out exactly the same height. */
+/* My Roles showcase: the tablet on its own, full width, then the single phone
+   and the pair of phones. Row 2 columns are proportional to each item's aspect
+   ratio (9:16, 3:2), so both come out exactly the same height. */
 .showcase {
   display: grid; grid-template-columns: 56.25fr 150fr; gap: var(--space-s);
   margin-top: var(--space-xl);
 }
-.showcase__tablet, .showcase__scene { border-radius: var(--radius); overflow: hidden; background: var(--surface-sunk); }
+.showcase__tablet, .showcase__scene, .showcase__phone { border-radius: var(--radius); overflow: hidden; background: var(--surface-sunk); }
 /* square render centred in a wide frame; #FFFBF0 is the render's own edge colour, so the join is invisible */
 .showcase__tablet { grid-column: 1 / -1; aspect-ratio: 16 / 9; background: #FFFBF0; }
 .showcase__tablet img { width: 100%; height: 100%; object-fit: contain; }
 .showcase__scene { aspect-ratio: 3 / 2; }
 .showcase__scene img { width: 100%; height: 100%; object-fit: cover; }
-.showcase__video { aspect-ratio: 9 / 16; background: var(--surface); border-radius: var(--radius); }
+.showcase__phone { aspect-ratio: 9 / 16; }
+.showcase__phone img { width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 760px) {
-  /* one column; the recording stays phone-sized instead of stretching full width */
+  /* one column; the single phone stays phone-sized instead of stretching full width */
   .showcase { grid-template-columns: 1fr; }
   .showcase__tablet { aspect-ratio: 1; }
-  .showcase__video { justify-self: center; width: 62%; }
+  .showcase__phone { justify-self: center; width: 62%; }
 }
 
 /* the 2.0 lip on every media frame, nowhere else */
-.hero-media, .showcase > *, .phone-card, .strip-card, .device-card, .evidence__open, .harm {
+.hero-media, .showcase > *, .device-card, .evidence__open, .harm {
   box-shadow: var(--frame);
 }
 
@@ -285,10 +295,9 @@ strong { font-weight: 700; color: var(--ink); }
   gap: var(--space-xl); align-items: center;
 }
 .split--media-left { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
-.split--phone { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .split--media-left .split__media { order: -1; }
 @media (max-width: 760px) {
-  .split, .split--media-left, .split--phone { grid-template-columns: 1fr; gap: var(--space-m); }
+  .split, .split--media-left { grid-template-columns: 1fr; gap: var(--space-m); }
   .split--media-left .split__media { order: 0; }
 }
 
@@ -323,8 +332,42 @@ strong { font-weight: 700; color: var(--ink); }
   .harm__koko { width: 96px; right: 8px; bottom: 8px; }
 }
 
-/* single-phone recording cards (Onboarding, Friends & Co-Play, Parental Controls) */
-.phone-card { aspect-ratio: 4 / 5; background: var(--surface); border-radius: var(--radius); --fit-pad: 24px; }
+/* Final Delivery: each feature as its 2026 flow, screens in order (the
+   Liminal case study's flow, themed for ContentPlus). Screens are Figma
+   exports at 2x (780 x 1688). The frames are square, so Liminal's 36px corner
+   is set as a percentage of each axis and scales with the image. Every screen
+   opens full size in the viewer; a step that only exists in landscape spans
+   two columns. */
+.flow {
+  list-style: none; margin: 0;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-m);
+  /* ContentPlus 2.0 Elevation/Card and Elevation/Float */
+  --elev-card: 0 6px 20px rgba(30, 21, 55, 0.10);
+  --elev-float: 0 12px 32px rgba(30, 21, 55, 0.14);
+}
+.shot {
+  display: block; width: 100%; height: auto; aspect-ratio: 390 / 844;
+  border-radius: 9.231% / 4.265%; background: var(--bg);
+}
+.shot--land { aspect-ratio: 844 / 390; border-radius: 4.265% / 9.231%; }
+.flow__open {
+  display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in;
+  border-radius: 9.231% / 4.265%;   /* the focus ring follows the screen's corners */
+}
+.flow__open .shot { box-shadow: 0 0 0 1px var(--line), var(--elev-card); }
+/* landscape: centred in the space above its caption, so captions stay in line */
+.flow__wide { grid-column: span 2; display: grid; grid-template-rows: 1fr auto; }
+.flow__wide .flow__open { align-self: center; border-radius: 4.265% / 9.231%; }
+.flow__cap { margin-top: var(--space-s); font: 600 15px/1.3 var(--font-display); color: var(--ink); }
+.flow__n {
+  display: block; margin-bottom: 6px;
+  font: 800 12px/1 var(--font-body); letter-spacing: 0.06em; color: var(--brand-purple);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 760px) {
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-l) var(--space-s); }
+  .flow__cap { margin-top: var(--space-xs); font-size: 14px; }
+}
 
 /* ==========================================================================
    Research method colour system
@@ -610,21 +653,17 @@ strong { font-weight: 700; color: var(--ink); }
 
 /* ==========================================================================
    Ticker carousels (Sketches, Mid-Fi Wireframes)
-   Loop sideways forever by scrolling a real overflow container, so touch,
-   trackpad, drag, and arrow keys still work. No pause button by design; the
-   loop holds still under prefers-reduced-motion and the footer's
-   "Reduce motion" toggle, where the strip falls back to a manual scroller.
+   With script they loop endlessly (is-looping): the images are cloned once,
+   so the track slides by exactly half its width and starts over without a
+   seam. The loop pauses under the pointer. Reduce motion (the OS setting) turns a strip back into a plain horizontal scroller
+   (touch, trackpad, drag, arrow keys), which is also what shows without
+   script.
    ========================================================================== */
 .ticker__viewport {
-  overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
-}
-.ticker__viewport:focus-visible { outline-offset: 4px; }
-.ticker.is-static .ticker__viewport {
-  -webkit-mask-image: none; mask-image: none;
+  overflow-x: auto; overflow-y: hidden;
   scrollbar-width: thin; padding-bottom: 8px;
 }
+.ticker__viewport:focus-visible { outline-offset: 4px; }
 .ticker__track { display: flex; gap: var(--space-s); list-style: none; margin: 0; padding: 0; width: max-content; }
 .ticker__track img {
   height: var(--ticker-h); width: auto; max-width: none;
@@ -636,6 +675,28 @@ strong { font-weight: 700; color: var(--ink); }
   .ticker--sketches { --ticker-h: 200px; }
   .ticker--wireframes { --ticker-h: 300px; }
 }
+/* mouse drag scrolls the plain scroller; touch and trackpads already scroll natively */
+@media (hover: hover) and (pointer: fine) {
+  .ticker:not(.is-looping) .ticker__viewport { cursor: grab; }
+  .ticker.is-dragging .ticker__viewport,
+  .ticker.is-dragging .ticker__viewport * { cursor: grabbing; }
+}
+.ticker__track img { -webkit-user-drag: none; }
+.ticker.is-dragging .ticker__track { -webkit-user-select: none; user-select: none; }
+.ticker [data-clone] { display: none; }
+.ticker.is-looping [data-clone] { display: block; }
+.ticker.is-looping .ticker__viewport {
+  overflow: hidden; padding-bottom: 0;   /* no scrollbar to make room for */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+/* the spacing rides on each item instead of the gap, so half the track is
+   exactly one whole set and the jump back to the start is invisible. The
+   duration is set by script from the strip's width, for a steady speed. */
+.ticker.is-looping .ticker__track { gap: 0; animation: ticker-loop 55s linear infinite; }
+.ticker.is-looping .ticker__track > li { padding-right: var(--space-s); }
+.ticker.is-looping:hover .ticker__track { animation-play-state: paused; }
+@keyframes ticker-loop { to { transform: translateX(-50%); } }
 
 /* ==========================================================================
    Full-width media
@@ -682,11 +743,8 @@ strong { font-weight: 700; color: var(--ink); }
 @media (max-width: 560px) {
   .sg__chips { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 14px; }
 }
-.strip-card { --fit-pad: 0px; }
-.strip-card .fit { aspect-ratio: 8 / 3; }   /* Videos + Activities strips share 2.66:1 */
-.device-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-m); }
-.device-pair .fit { aspect-ratio: 4 / 3; --fit-pad: 0px; }
-@media (max-width: 560px) { .device-pair { grid-template-columns: 1fr; } }
+.device-card { padding: 0; overflow: hidden; }
+.device-card img { display: block; width: 100%; height: auto; }
 
 /* ==========================================================================
    Footer
@@ -721,7 +779,6 @@ strong { font-weight: 700; color: var(--ink); }
 .footer-btn:hover { color: var(--ink); border-color: #C2C2C9; }
 /* beats display:inline-flex, so the script-only buttons stay hidden without JS */
 .footer-btn[hidden] { display: none; }
-.footer-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
 .footer-btn--plain { border-color: transparent; padding-inline: 0; margin-left: auto; }
 .footer-btn--plain:hover { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; }
 .footer-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -785,6 +842,14 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     .evidence__open:hover .evidence__chip { transform: translateY(-1px); }
   }
 
+  /* --- flow screens lift like a tappable card, and press in -------------- */
+  .flow__open { transition: transform var(--mo-fast) var(--mo-ease); }
+  .flow__open:active { transform: scale(0.98); }
+  @media (hover: hover) {
+    .flow__open .shot { transition: transform var(--mo-mid) var(--mo-ease), box-shadow var(--mo-mid) var(--mo-ease); }
+    .flow__open:hover .shot { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--line), var(--elev-float); }
+  }
+
   /* --- full-size viewer opens and closes --------------------------------- */
   .lightbox[open] { animation: mo-fade var(--mo-mid) var(--mo-ease); }
   .lightbox[open]::backdrop { animation: mo-fade var(--mo-mid) var(--mo-ease); }
@@ -819,24 +884,229 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   .motion-ready [data-reveal="row"].is-in .dot { transform: none; opacity: 1; }
 }
 
+/* ==========================================================================
+   Header fonts: Bricolage Grotesque and Manrope, self-hosted variable files
+   (licences in assets/fonts). On this page only the header uses them.
+   ========================================================================== */
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/bricolage-grotesque-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/bricolage-grotesque-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/manrope-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(../assets/fonts/manrope-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ==========================================================================
+   Global header
+   The same on every page. Fixed: transparent over the home hero until the
+   page scrolls, solid from the start everywhere else (site-header--solid).
+   It carries its own colours and type, so no page theme can restyle it.
+   ========================================================================== */
+/* One height for the header, scrolled or not, on every page: nothing in it
+   moves when the page scrolls or changes. Anchors and sticky elements read it. */
+:root { --site-header-h: 84px; }
+html { scroll-padding-top: var(--site-header-h); }
+
+.site-header {
+  --nav-paper: #F8F7F4; --nav-ink: #111216; --nav-muted: #656B7C; --nav-link: #51586C;
+  --nav-line: #DEDFE2; --nav-accent: #F3480B; --nav-accent-text: #C53606;
+  --nav-ease: cubic-bezier(.22, 1, .36, 1);
+  position: fixed; inset: 0 0 auto; z-index: 40;
+  /* content sits in the site's one container, 1192px wide with 24px gutters:
+     the same as the case studies, gallery, 404, footers and home page */
+  height: var(--site-header-h); padding: 0 max(24px, calc((100% - 1192px) / 2));
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  color: var(--nav-ink); font: 400 16px/1.7 "Manrope", "Segoe UI", sans-serif;
+  letter-spacing: normal; text-transform: none; -webkit-font-smoothing: antialiased;
+}
+.site-header--solid, .site-header[data-scrolled="true"], html:not(.js) .site-header {
+  background: var(--nav-paper); border-bottom-color: var(--nav-line);
+}
+/* keeps the page clear of the fixed header where no hero sits under it */
+.site-header__spacer { height: var(--site-header-h); }
+.skip-link:focus { z-index: 100; }
+
+.site-header a { color: inherit; text-decoration: none; }
+.site-header :focus-visible { outline: 2px solid var(--nav-accent); outline-offset: 6px; }
+.wordmark:focus-visible, .main-nav a:not(.nav-contact):focus-visible { border-radius: 0; }
+.site-header svg { display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.wordmark { display: flex; align-items: center; gap: 15px; flex-shrink: 0; font-size: 13px; font-weight: 600; line-height: 1.25; }
+.monogram { font: 700 38px/1 "Bricolage Grotesque", Arial, sans-serif; letter-spacing: -0.1em; padding-right: .1em; }
+.monogram span { color: var(--nav-accent); }
+.wordmark__copy { display: grid; gap: 3px; }
+.wordmark__copy strong { color: var(--nav-ink); font-size: 14px; font-weight: 700; letter-spacing: -0.035em; }
+.wordmark__copy small { color: var(--nav-muted); font-size: 12px; font-weight: 500; }
+
+.main-nav {
+  display: flex; align-items: center; gap: clamp(18px, 3vw, 48px);
+  margin-left: auto;
+  font-size: 14px; font-weight: 500;
+}
+.main-nav a { position: relative; padding: 12px 0; color: var(--nav-link); }
+.main-nav a:hover, .main-nav a[aria-current] { color: var(--nav-ink); }
+/* the current page (on a case study, Work) and the hovered link get a dot */
+.main-nav a::after {
+  content: ""; position: absolute; bottom: 1px; left: 50%;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--nav-accent);
+  transform: translateX(-50%) scale(0);
+}
+.main-nav a:hover::after, .main-nav a[aria-current]::after { transform: translateX(-50%) scale(1); }
+.main-nav .nav-contact {
+  display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 20px;
+  border: 1px solid rgba(17, 18, 22, .12); border-radius: 999px;
+  background: var(--nav-ink); color: #fff;
+}
+.main-nav .nav-contact:hover { background: var(--nav-accent-text); border-color: var(--nav-accent-text); color: #fff; }
+.main-nav .nav-contact::after { content: none; }
+
+.menu-toggle { display: none; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+/* beats the display:grid below, so the script-only button stays hidden without JS */
+.menu-toggle[hidden] { display: none !important; }
+.menu-toggle .icon-close, .menu-toggle[aria-expanded="true"] .icon-open { display: none; }
+.menu-toggle[aria-expanded="true"] .icon-close { display: block; }
+
+@media (max-width: 1100px) {
+  .main-nav { gap: clamp(15px, 2vw, 25px); font-size: 13px; }
+  .main-nav .nav-contact { min-height: 42px; gap: 8px; padding-inline: 14px; }
+}
+@media (max-width: 760px) {
+  .js .menu-toggle {
+    display: grid; place-items: center; width: 44px; height: 44px;
+    border: 1px solid rgba(17, 18, 22, .15); border-radius: 50%; background: rgba(248, 247, 244, .75);
+  }
+  .js .main-nav {
+    position: absolute; top: calc(100% - 1px); right: 12px; left: 12px;
+    display: none; flex-direction: column; align-items: stretch; gap: 0;
+    margin: 0; padding: 10px 22px 18px;
+    border: 1px solid rgba(17, 18, 22, .09); border-radius: 0 0 16px 16px;
+    background: rgba(248, 247, 244, .98); box-shadow: 0 18px 40px rgba(17, 18, 22, .1);
+  }
+  .js .main-nav.open { display: flex; }
+  .js .main-nav a { min-height: 46px; padding: 12px 0; font-size: 15px; }
+  .js .main-nav a::after { bottom: 8px; left: auto; right: 0; }
+  .js .main-nav .nav-contact { justify-content: center; margin-top: 9px; padding-inline: 18px; }
+}
+@media (max-width: 760px) {
+  :root { --site-header-h: 72px; }
+  .wordmark { gap: 11px; font-size: 11px; }
+  .monogram { font-size: 33px; }
+  .wordmark__copy strong { font-size: 12px; }
+  .wordmark__copy small { font-size: 10px; }
+  /* without script the links simply wrap under the wordmark */
+  html:not(.js) .site-header { position: static; height: auto; flex-wrap: wrap; gap: 6px 16px; padding-block: 16px; }
+  html:not(.js) .main-nav { flex-wrap: wrap; width: 100%; margin: 0; gap: 0 18px; }
+  html:not(.js) .site-header__spacer { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-header { transition: background-color 240ms ease, border-color 240ms ease; }
+  .main-nav a { transition: color 180ms ease; }
+  .main-nav a::after { transition: transform 180ms cubic-bezier(.2, .7, .2, 1); }
+  .main-nav .nav-contact { transition: background-color 180ms ease, border-color 180ms ease; }
+  @media (max-width: 760px) {
+    .js .main-nav.open { animation: nav-menu-enter 320ms var(--nav-ease) both; }
+  }
+  @keyframes nav-menu-enter { from { opacity: 0; transform: translateY(-8px); } }
+}
+
+/* Moving between pages. The page cross-fades instead of flashing, and the
+   header is a layer of its own, so it holds still while the page changes
+   under it. Typed (page-nav) so a page's own same-page transitions, like the
+   Vibe Coding simulator's, keep their rules. Reduce motion skips it; browsers
+   without cross-document view transitions simply navigate. */
+@view-transition { navigation: auto; types: page-nav; }
+.site-header { view-transition-name: site-header; }
+html:active-view-transition-type(page-nav)::view-transition-old(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-out; mix-blend-mode: plus-lighter; }
+html:active-view-transition-type(page-nav)::view-transition-new(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-in; mix-blend-mode: plus-lighter; }
+@keyframes page-out { to { opacity: 0; } }
+@keyframes page-in { from { opacity: 0; } }
+html.motion-off::view-transition-group(*),
+html.motion-off::view-transition-old(*),
+html.motion-off::view-transition-new(*) { animation: none !important; }
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-nav">
-  <div class="site-nav__inner">
-    <a class="site-nav__mark" href="../index.html#home">Jamiyan Batnyam</a>
-    <nav aria-label="Main">
-      <ul>
-        <li><a href="../index.html#home">Home</a></li>
-        <li><a href="../index.html#projects">Projects</a></li>
-        <li><a href="../visual.html">Gallery</a></li>
-        <li><a href="../index.html#about-me">About</a></li>
-      </ul>
-    </nav>
-  </div>
+<header class="site-header site-header--solid" data-scrolled="false">
+  <a class="wordmark" href="../index.html#home" aria-label="Jamiyan Batnyam, home">
+    <span class="monogram" aria-hidden="true">JB<span>·</span></span>
+    <span class="wordmark__copy">
+      <strong>Jamiyan Batnyam</strong>
+      <small>UX / Product Designer</small>
+    </span>
+  </a>
+  <nav class="main-nav" id="main-nav" aria-label="Main">
+    <a href="../index.html#home">Home</a>
+    <a href="../index.html#projects" aria-current="true">Work</a>
+    <a href="../index.html#about-me">About</a>
+    <a href="../visual.html">Gallery</a>
+    <a href="../index.html#contact">Contact</a>
+    <a class="nav-contact" href="mailto:jamyanart@gmail.com">Let’s connect <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+  </nav>
+  <button class="menu-toggle" type="button" id="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Open menu" hidden>
+    <svg class="icon-open" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+  </button>
 </header>
+<div class="site-header__spacer" aria-hidden="true"></div>
+<script>
+/* Global header, the same on every page: solid once the page leaves the top,
+   and the phone menu. */
+(function () {
+  "use strict";
+  var header = document.querySelector(".site-header");
+  if (!header) return;
+
+  var frame = 0;
+  var paint = function () {
+    frame = 0;
+    header.setAttribute("data-scrolled", window.scrollY > 40 ? "true" : "false");
+  };
+  window.addEventListener("scroll", function () {
+    if (!frame) frame = window.requestAnimationFrame(paint);
+  }, { passive: true });
+  paint();
+
+  var toggle = document.getElementById("menu-toggle");
+  var nav = document.getElementById("main-nav");
+  if (!toggle || !nav) return;
+  toggle.hidden = false;
+  var isOpen = function () { return nav.classList.contains("open"); };
+  var setMenu = function (open, returnFocus) {
+    nav.classList.toggle("open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    if (open) {
+      var first = nav.querySelector("a");
+      if (first) first.focus({ preventScroll: true });
+    } else if (returnFocus) {
+      toggle.focus();
+    }
+  };
+  toggle.addEventListener("click", function () { setMenu(!isOpen()); });
+  nav.addEventListener("click", function (e) { if (isOpen() && e.target.closest("a")) setMenu(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen()) setMenu(false, true); });
+  document.addEventListener("pointerdown", function (e) { if (isOpen() && !header.contains(e.target)) setMenu(false); });
+  header.addEventListener("focusout", function (e) {
+    if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setMenu(false);
+  });
+}());
+</script>
 
 <div class="layout">
   <aside class="rail">
@@ -894,10 +1164,9 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
           <img src="../assets/img/content-plus/thumb.jpg"
                alt="ContentPlus 2.0 home screen on a tablet in a yellow stand" width="1254" height="1254" loading="lazy">
         </div>
-        <div class="showcase__video fit" style="--fit-pad:12px">
-          <video data-autoplay controls muted loop playsinline preload="metadata"
-                 aria-label="Screen recording of the ContentPlus home screen on a phone"
-                 src="https://framerusercontent.com/assets/F79BwC1yKMatA8SjZl9bvlSiwkQ.mp4"></video>
+        <div class="showcase__phone">
+          <img src="../assets/img/content-plus/phone-player.jpg"
+               alt="The ContentPlus video player showing How T. Rex’s Hunt, on a phone in a grape-purple case" width="720" height="1280" loading="lazy">
         </div>
         <div class="showcase__scene">
           <img src="../assets/img/content-plus/phones.jpg"
@@ -1232,78 +1501,120 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <h2 class="t2">Introducing ContentPlus</h2>
       </div>
 
-      <div class="block split split--phone">
-        <div>
-          <h3 class="t3">Onboarding</h3>
-          <p class="body">New users choose whether they’re using ContentPlus at home or with school. School users enter a class code, while home users sign up with a parent’s email and password. Then, they select their favorite content categories, like music, games, and sports.</p>
-        </div>
-        <div class="split__media phone-card fit">
-          <video data-autoplay controls muted loop playsinline preload="metadata"
-                 aria-label="Screen recording of the onboarding flow"
-                 src="https://framerusercontent.com/assets/2bKdLZjRsPdyZxPvVFPELJ1s0.mp4"></video>
-        </div>
+      <!-- Each flow is the 2026 screens in order, exported at 2x from the ContentPlus Figma file ("ContentPlus 2.0 — Redesign (phone)") -->
+      <div class="block">
+        <h3 class="t3">Onboarding</h3>
+        <p class="body">New users choose whether they’re using ContentPlus at home or with school. School users enter a class code, while home users sign up with a parent’s email and password. Then, they select their favorite content categories, like music, games, and sports.</p>
+        <ol class="flow card" aria-label="Onboarding flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/onboarding-welcome.jpg" data-alt="Welcome, Parents!: Koko waves above a card with Sign up and Login buttons, on a yellow screen with the ContentPlus logo" aria-label="View the Welcome screen full size"><img class="shot" src="../assets/img/content-plus/screens/onboarding-welcome.jpg" alt="Welcome, Parents!: Koko waves above a card with Sign up and Login buttons, on a yellow screen with the ContentPlus logo" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Welcome</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/onboarding-home-or-school.jpg" data-alt="Are you using ContentPlus with your children at home or at school? Koko thinks above two choices, Home and School" aria-label="View the Home or school screen full size"><img class="shot" src="../assets/img/content-plus/screens/onboarding-home-or-school.jpg" alt="Are you using ContentPlus with your children at home or at school? Koko thinks above two choices, Home and School" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Home or school</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/onboarding-class-code.jpg" data-alt="Class Signup: each student types in the unique code from their teacher, then taps Next" aria-label="View the Class code screen full size"><img class="shot" src="../assets/img/content-plus/screens/onboarding-class-code.jpg" alt="Class Signup: each student types in the unique code from their teacher, then taps Next" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>Class code</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/onboarding-topics.jpg" data-alt="What do you want to learn about? A grid of topic tiles with Science, History and Animals selected, and a Next button" aria-label="View the Topics screen full size"><img class="shot" src="../assets/img/content-plus/screens/onboarding-topics.jpg" alt="What do you want to learn about? A grid of topic tiles with Science, History and Animals selected, and a Next button" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">04</span>Topics</p>
+          </li>
+        </ol>
       </div>
 
       <div class="block">
         <h3 class="t3">Videos</h3>
         <p class="body">The Videos feature gives kids access to a curated library of safe, age-appropriate educational videos designed to be both fun and engaging. It was informed by our observation studies, where we noted that most videos are reviewed by AI, and by user testing feedback pointing toward expanding video, activity, and game options.</p>
-        <div class="card strip-card">
-          <div class="fit">
-            <img src="https://framerusercontent.com/images/pwectkOrb1SwNzXRyVcL7miyksU.png?scale-down-to=2048"
-                 alt="Videos feature on phone and landscape screens: home feed and video player" width="14644" height="5513" loading="lazy">
-          </div>
-        </div>
+        <ol class="flow card" aria-label="Videos flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/videos-home.jpg" data-alt="Home on the Videos tab: Hi, Mia! with streak and star counts, a search field, category tabs, and video cards under Suggested and Favorites" aria-label="View the Home screen full size"><img class="shot" src="../assets/img/content-plus/screens/videos-home.jpg" alt="Home on the Videos tab: Hi, Mia! with streak and star counts, a search field, category tabs, and video cards under Suggested and Favorites" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Home</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/videos-video.jpg" data-alt="How T. Rex’s Hunt: the video, the Krazy Koala channel with a VIDEO badge, a short description, a Watch to the end to earn a star! hint, and Up Next" aria-label="View the Video screen full size"><img class="shot" src="../assets/img/content-plus/screens/videos-video.jpg" alt="How T. Rex’s Hunt: the video, the Krazy Koala channel with a VIDEO badge, a short description, a Watch to the end to earn a star! hint, and Up Next" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Video</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/videos-playing.jpg" data-alt="How T. Rex’s Hunt playing, with skip and pause controls and a progress bar at 3:20 of 5:50" aria-label="View the Playing screen full size"><img class="shot" src="../assets/img/content-plus/screens/videos-playing.jpg" alt="How T. Rex’s Hunt playing, with skip and pause controls and a progress bar at 3:20 of 5:50" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>Playing</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/videos-favorites.jpg" data-alt="Favorite Videos: a two-column grid of saved videos, including Pyramids Across the Globe, Why Thanksgiving?, Miracle on Ice and 7 Wonders of the World" aria-label="View the Favorites screen full size"><img class="shot" src="../assets/img/content-plus/screens/videos-favorites.jpg" alt="Favorite Videos: a two-column grid of saved videos, including Pyramids Across the Globe, Why Thanksgiving?, Miracle on Ice and 7 Wonders of the World" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">04</span>Favorites</p>
+          </li>
+        </ol>
       </div>
 
       <div class="block">
         <h3 class="t3">Activities</h3>
         <p class="body">The Activities feature keeps kids actively engaged while they watch. During videos, short quiz-style questions appear to check understanding and encourage participation</p>
-        <div class="card strip-card">
-          <div class="fit">
-            <img src="https://framerusercontent.com/images/7SNTvbps6RJwujfhg92D7x63qQ.png?scale-down-to=2048"
-                 alt="Activities feature on phone and landscape screens: a quiz prompt during a video" width="2343" height="882" loading="lazy">
-          </div>
-        </div>
+        <ol class="flow card" aria-label="Activities flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/activities-feed.jpg" data-alt="Home on the Activities tab: activity cards such as The GOAT of Baseball and Ali vs Forman under Play Like the Best, and more under Suggested" aria-label="View the Activities screen full size"><img class="shot" src="../assets/img/content-plus/screens/activities-feed.jpg" alt="Home on the Activities tab: activity cards such as The GOAT of Baseball and Ali vs Forman under Play Like the Best, and more under Suggested" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Activities</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/activities-activity.jpg" data-alt="The Goat of Baseball activity playing, with an ACTIVITY badge, a description, a star reward hint and Up Next" aria-label="View the Activity screen full size"><img class="shot" src="../assets/img/content-plus/screens/activities-activity.jpg" alt="The Goat of Baseball activity playing, with an ACTIVITY badge, a description, a star reward hint and Up Next" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Activity</p>
+          </li>
+          <li class="flow__wide">
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/activities-agenda.jpg" data-alt="Let’s Get Started!, in landscape: the activity’s six-step agenda beside the video, from Learn about Babe Ruth’s Childhood to Become the best baseball player of all time, with a Play button" aria-label="View the Let’s get started screen full size"><img class="shot shot--land" src="../assets/img/content-plus/screens/activities-agenda.jpg" alt="Let’s Get Started!, in landscape: the activity’s six-step agenda beside the video, from Learn about Babe Ruth’s Childhood to Become the best baseball player of all time, with a Play button" width="1688" height="780" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>Let’s get started</p>
+          </li>
+        </ol>
       </div>
 
-      <div class="block split split--phone split--media-left">
-        <div>
-          <h3 class="t3">Friends &amp; Co-Play Feature</h3>
-          <p class="body">Kids can invite friends from their friend list to watch videos, play games, or complete activities together in a safe environment</p>
-        </div>
-        <div class="split__media phone-card fit">
-          <video data-autoplay controls muted loop playsinline preload="metadata"
-                 aria-label="Screen recording of inviting a friend to co-play"
-                 src="https://framerusercontent.com/assets/YDB80S7CfAkTqRwYKoPmxEz90u4.mp4"></video>
-        </div>
+      <div class="block">
+        <h3 class="t3">Friends &amp; Co-Play Feature</h3>
+        <p class="body">Kids can invite friends from their friend list to watch videos, play games, or complete activities together in a safe environment</p>
+        <ol class="flow card" aria-label="Friends and co-play flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/coplay-friends.jpg" data-alt="Social: Who do you want to play with? Liam, Mia, William and Isabella, with Play With Friends, Send Notification and Add Friends" aria-label="View the Friends screen full size"><img class="shot" src="../assets/img/content-plus/screens/coplay-friends.jpg" alt="Social: Who do you want to play with? Liam, Mia, William and Isabella, with Play With Friends, Send Notification and Add Friends" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Friends</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/coplay-ready.jpg" data-alt="Social: Liam is ready to play! Liam is selected, with a Play With Liam button" aria-label="View the Ready to play screen full size"><img class="shot" src="../assets/img/content-plus/screens/coplay-ready.jpg" alt="Social: Liam is ready to play! Liam is selected, with a Play With Liam button" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Ready to play</p>
+          </li>
+          <li class="flow__wide">
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/coplay-game.jpg" data-alt="Dinosaur Run, in landscape: the game at Level 2, with stars earned, a back button and pause" aria-label="View the Play screen full size"><img class="shot shot--land" src="../assets/img/content-plus/screens/coplay-game.jpg" alt="Dinosaur Run, in landscape: the game at Level 2, with stars earned, a back button and pause" width="1688" height="780" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>Play</p>
+          </li>
+        </ol>
       </div>
 
-      <div class="block split split--phone">
-        <div>
-          <h3 class="t3">Parental Controls</h3>
-          <p class="body">The Parental Controls section lets parents control what their children can access and block any content they don’t want them to see. It was informed by our observation studies, where we noted minimal parental controls, and by user testing feedback calling for clear and detailed options for parents.</p>
-        </div>
-        <div class="split__media phone-card fit">
-          <video data-autoplay controls muted loop playsinline preload="metadata"
-                 aria-label="Screen recording of the parental controls screen"
-                 src="https://framerusercontent.com/assets/4Tn0yINiNXFZream5LLd6fNWI.mp4"></video>
-        </div>
+      <div class="block">
+        <h3 class="t3">Parental Controls</h3>
+        <p class="body">The Parental Controls section lets parents control what their children can access and block any content they don’t want them to see. It was informed by our observation studies, where we noted minimal parental controls, and by user testing feedback calling for clear and detailed options for parents.</p>
+        <ol class="flow card" aria-label="Parental controls flow">
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/parental-menu.jpg" data-alt="Menu: Account, Parents, Preferences and Settings, with a Send Notification button" aria-label="View the Menu screen full size"><img class="shot" src="../assets/img/content-plus/screens/parental-menu.jpg" alt="Menu: Account, Parents, Preferences and Settings, with a Send Notification button" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">01</span>Menu</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/parental-kid-profile.jpg" data-alt="Account: Mia’s kid profile, managed by you, with Profile, Interests and School, Send Notification, Logout and Delete account" aria-label="View the Kid profile screen full size"><img class="shot" src="../assets/img/content-plus/screens/parental-kid-profile.jpg" alt="Account: Mia’s kid profile, managed by you, with Profile, Interests and School, Send Notification, Logout and Delete account" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">02</span>Kid profile</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/parental-parents.jpg" data-alt="Parents: choose what Mia can see and for how long, with Blocked Categories, Age level, Education Level and Screen Time" aria-label="View the Parents screen full size"><img class="shot" src="../assets/img/content-plus/screens/parental-parents.jpg" alt="Parents: choose what Mia can see and for how long, with Blocked Categories, Age level, Education Level and Screen Time" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">03</span>Parents</p>
+          </li>
+          <li>
+            <button class="flow__open" type="button" data-full="../assets/img/content-plus/screens/parental-blocked.jpg" data-alt="Blocked Categories: tap a topic to block or unblock it for Mia; Events and Trade are locked, with an Unblock button" aria-label="View the Blocked categories screen full size"><img class="shot" src="../assets/img/content-plus/screens/parental-blocked.jpg" alt="Blocked Categories: tap a topic to block or unblock it for Mia; Events and Trade are locked, with an Unblock button" width="780" height="1688" loading="lazy"></button>
+            <p class="flow__cap"><span class="flow__n">04</span>Blocked categories</p>
+          </li>
+        </ol>
       </div>
 
       <div class="block">
         <h3 class="t3">ContentPlus Device</h3>
         <p class="body">Our exclusive ContentPlus device <strong>minimizes eye strain</strong> and runs only our app</p>
         <div class="card device-card">
-          <div class="device-pair">
-            <div class="fit">
-              <img src="https://framerusercontent.com/images/EMvsZLDm40FiKheuK9PvrbXYYdU.png?scale-down-to=1024"
-                   alt="ContentPlus device, screen side" width="3882" height="2861" loading="lazy">
-            </div>
-            <div class="fit">
-              <img src="https://framerusercontent.com/images/73nrkj6DDIg0cNhOWEdbWRTWEg.png?scale-down-to=1024"
-                   alt="ContentPlus device, back side with stand" width="3468" height="2431" loading="lazy">
-            </div>
-          </div>
+          <img src="../assets/img/content-plus/device-front.jpg"
+               alt="The ContentPlus device: a tablet in a chunky yellow case showing the kids&#39; home screen, with Koko peeking over the top" width="1536" height="1024" loading="lazy">
         </div>
       </div>
     </section>
@@ -1338,7 +1649,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <ul>
           <li><a href="mailto:jamyanart@gmail.com">Email</a></li>
           <li><a href="https://www.linkedin.com/in/jbatnyam" target="_blank" rel="noopener">LinkedIn</a></li>
-          <li><a href="https://drive.google.com/file/d/1n59fu4pS5daSCbGWl0T3oztfOcWMoSbP/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
+          <li><a href="https://drive.google.com/file/d/1pItyx2MR89-dWQJc5hhjjewwKZ3RN7SD/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
         </ul>
       </div>
       <div>
@@ -1356,7 +1667,6 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
         <span id="copy-email-label">Copy email</span>
       </button>
-      <button class="footer-btn" type="button" id="motion-toggle" aria-pressed="false" hidden>Reduce motion: off</button>
       <a class="footer-btn footer-btn--plain" href="#top">Back to top &uarr;</a>
       <span class="footer-status" role="status" id="footer-status"></span>
     </div>
@@ -1425,58 +1735,46 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   }
 
   /* ---------------------------------------------------------------- tickers */
-  // Scroll forever. Holds still under reduced motion (OS setting or the footer
-  // toggle), while offscreen, while focused for arrow keys, and briefly after
-  // the visitor scrolls or drags it themselves.
-  var html = document.documentElement;
-  function motionOff() { return reduce.matches || html.classList.contains("motion-off"); }
+  // The loop itself is the "Ticker strips" script at the end of the page.
+  // Here: while a strip is a plain scroller (reduced motion), a mouse drag
+  // scrolls it; touch and trackpads already do natively. A drag swallows the
+  // click that ends it, so it never counts as one.
   Array.prototype.forEach.call(document.querySelectorAll("[data-ticker]"), function (root) {
     var vp = root.querySelector(".ticker__viewport");
-    var track = root.querySelector(".ticker__track");
-    var SPEED = 32; // px per second
-
-    // Duplicate the set once so the loop is seamless; clones are hidden from AT.
-    Array.prototype.slice.call(track.children).forEach(function (li) {
-      var c = li.cloneNode(true);
-      c.setAttribute("aria-hidden", "true");
-      Array.prototype.forEach.call(c.querySelectorAll("img"), function (i) { i.alt = ""; });
-      track.appendChild(c);
+    var drag = null, dragged = false;
+    vp.addEventListener("pointerdown", function (e) {
+      dragged = false;
+      if (e.pointerType === "mouse" && e.button === 0 && !root.classList.contains("is-looping")) {
+        drag = { x: e.clientX, id: e.pointerId, moved: false };
+      }
     });
-
-    var pos = 0, last = null, visible = !hasIO, focused = false, resumeAt = 0;
-    function half() { return track.scrollWidth / 2; }
-    function frame(t) {
-      requestAnimationFrame(frame);
-      var still = motionOff();
-      root.classList.toggle("is-static", still);
-      if (last === null) { last = t; return; }
-      var dt = Math.min((t - last) / 1000, 0.1);
-      last = t;
-      if (still || !visible || focused || performance.now() < resumeAt) return;
-      pos += SPEED * dt;
-      var h = half();
-      if (h > 0 && pos >= h) pos -= h;
-      vp.scrollLeft = pos;
+    vp.addEventListener("pointermove", function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x;
+      if (!drag.moved) {
+        if (Math.abs(dx) < 5) return;
+        drag.moved = true;
+        root.classList.add("is-dragging");
+        if (vp.setPointerCapture) vp.setPointerCapture(e.pointerId);
+      }
+      drag.x = e.clientX;
+      vp.scrollLeft -= dx;
+    });
+    function endDrag(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      dragged = drag.moved;
+      drag = null;
+      root.classList.remove("is-dragging");
     }
-    requestAnimationFrame(frame);
-
-    // Any scroll we didn't cause is the visitor's: follow it, wrap, and hold off.
-    vp.addEventListener("scroll", function () {
-      if (Math.abs(vp.scrollLeft - pos) < 2) return;
-      var h = half();
-      if (h > 0 && vp.scrollLeft >= h) vp.scrollLeft -= h;
-      pos = vp.scrollLeft;
-      resumeAt = performance.now() + 1000;
-    }, { passive: true });
-    vp.addEventListener("pointerdown", function () { resumeAt = performance.now() + 1000; });
-    root.addEventListener("focusin", function () { focused = true; });
-    root.addEventListener("focusout", function () { focused = false; });
-
-    if (hasIO) {
-      new IntersectionObserver(function (entries) {
-        visible = entries[0].isIntersecting;
-      }).observe(vp);
-    }
+    vp.addEventListener("pointerup", endDrag);
+    vp.addEventListener("pointercancel", endDrag);
+    vp.addEventListener("click", function (e) {
+      if (!dragged) return;
+      dragged = false;
+      e.preventDefault();
+      e.stopPropagation();
+    }, true);
+    vp.addEventListener("dragstart", function (e) { e.preventDefault(); });
   });
 
   /* ---------------------------------------------------------- rail scrollspy */
@@ -1617,14 +1915,17 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     { sel: ".harm__list li", kind: "row" },
     { sel: ".method .note", kind: "note" },
     { sel: ".ut__hub, .ut__item", kind: "rise" },
-    { sel: ".ia-tree .ia-node", kind: "rise" }
+    { sel: ".ia-tree .ia-node", kind: "rise" },
+    /* each flow steps in on its own count, so step 1 always leads */
+    { sel: ".flow > li", kind: "rise", local: true }
   ];
   var marked = [];
   groups.forEach(function (g) {
     var els = Array.prototype.slice.call(document.querySelectorAll(g.sel));
     els.forEach(function (el, i) {
+      var n = g.local ? Array.prototype.indexOf.call(el.parentNode.children, el) : i;
       el.setAttribute("data-reveal", g.kind);
-      el.style.setProperty("--i", g.stagger === false ? 0 : i % 8);
+      el.style.setProperty("--i", g.stagger === false ? 0 : n % 8);
       marked.push(el);
     });
   });
@@ -1672,8 +1973,8 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 </script>
 
 <script>
-/* Footer utilities. Both buttons are revealed only once this runs, so they are
-   never present as dead controls when JavaScript is off. */
+/* Footer utilities. The copy button is revealed only once this runs, so it is
+   never present as a dead control when JavaScript is off. */
 (function () {
   "use strict";
 
@@ -1701,32 +2002,54 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     });
   }
 
-  /* ------------------------------------------------ reduce-motion override */
-  var motionBtn = document.getElementById("motion-toggle");
-  if (motionBtn) {
-    var root = document.documentElement;
-    var osReduce = false;
-    try { osReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
-    var saved = null;
-    try { saved = window.localStorage.getItem("reduceMotion"); } catch (e) {}
-    /* The OS setting is the default; an explicit choice here overrides it. */
-    var reduced = saved === null ? osReduce : saved === "1";
-
-    var apply = function () {
-      root.classList.toggle("motion-off", reduced);
-      motionBtn.setAttribute("aria-pressed", reduced ? "true" : "false");
-      motionBtn.textContent = "Reduce motion: " + (reduced ? "on" : "off");
-    };
-    apply();
-    motionBtn.hidden = false;
-    motionBtn.addEventListener("click", function () {
-      reduced = !reduced;
-      try { window.localStorage.setItem("reduceMotion", reduced ? "1" : "0"); } catch (e) {}
-      apply();
-      if (status) status.textContent = "Motion " + (reduced ? "reduced" : "restored") + ".";
-    });
-  }
 })();
+</script>
+<script>
+/* Ticker strips (Sketches, Mid-Fi Wireframes): an endless loop. Each strip's screens are cloned once
+   (hidden from assistive tech), so half the track is one whole set. Runs
+   after the footer script, and follows its motion-off class from then on:
+   while motion is reduced the strips are plain scrollers again. */
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var SPEED = 40;   /* px per second, whatever the screen size */
+  var strips = Array.prototype.slice.call(document.querySelectorAll("[data-ticker]"));
+  if (!strips.length) return;
+
+  strips.forEach(function (strip) {
+    var track = strip.querySelector(".ticker__track");
+    Array.prototype.slice.call(track.children).forEach(function (li) {
+      var copy = li.cloneNode(true);
+      copy.setAttribute("aria-hidden", "true");
+      copy.setAttribute("data-clone", "");
+      track.appendChild(copy);
+    });
+  });
+
+  var sync = function () {
+    var loop = !root.classList.contains("motion-off");
+    strips.forEach(function (strip) {
+      var track = strip.querySelector(".ticker__track");
+      var view = strip.querySelector(".ticker__viewport");
+      var label = view.getAttribute("data-label") || view.getAttribute("aria-label");
+      view.setAttribute("data-label", label);
+      strip.classList.toggle("is-looping", loop);
+      if (loop) {
+        /* nothing to scroll by hand while it loops, so no tab stop */
+        view.removeAttribute("tabindex");
+        view.setAttribute("aria-label", label.replace(/, scrollable$/, ""));
+        track.style.animationDuration = (track.scrollWidth / 2 / SPEED).toFixed(1) + "s";
+      } else {
+        view.setAttribute("tabindex", "0");
+        view.setAttribute("aria-label", label);
+      }
+    });
+  };
+  new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["class"] });
+  var phone = window.matchMedia("(max-width: 760px)");
+  if (phone.addEventListener) phone.addEventListener("change", sync);
+  sync();
+}());
 </script>
 </body>
 </html>

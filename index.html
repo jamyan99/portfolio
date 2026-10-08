@@ -5,68 +5,72 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jamiyan Batnyam — UX Designer</title>
 <meta name="description" content="Jamiyan Batnyam is a UX designer. Case studies on educational screen time for kids, a wellness app for anxiety support, and an AI-assisted embedded dashboard prototype.">
-<link rel="preconnect" href="https://api.fontshare.com">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://api.fontshare.com/v2/css?f%5B%5D=satoshi@500,700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#F8F7F4">
+<link rel="preload" href="assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/img/hero-poster.webp" as="image" type="image/webp" fetchpriority="high" media="(max-width: 760px)">
+<link rel="preload" href="assets/img/hero-poster-4k.webp" as="image" type="image/webp" fetchpriority="high" media="(min-width: 761px)">
+<script>
+/* Before anything renders: mark script support, and apply the OS Reduce
+   motion setting so no animation or page transition starts first. */
+(function (root) {
+  root.classList.add("js");
+  // Clear the choice the old footer toggle used to save; the OS setting rules now.
+  try { localStorage.removeItem("reduceMotion"); } catch (e) {}
+  try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) root.classList.add("motion-off"); } catch (e) {}
+}(document.documentElement));
+</script>
+<!-- Chromium: start loading a page as soon as its link is hovered, so the click is instant -->
+<script type="speculationrules">
+{ "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+</script>
 <style>
 
 /* ==========================================================================
-   Tokens
-   Site chrome: zinc neutrals, Satoshi + Inter, 20px card radius (measured
-   from the live Framer site). ContentPlus brand palette is sampled from the
-   page's own style guide board and is only used inside ContentPlus content.
+   Fonts
+   The Design Playbook's pair, self-hosted: Bricolage Grotesque for display,
+   Manrope for body. Both files are variable, so one face per subset covers
+   every weight. Licences: assets/fonts/*-OFL.txt
    ========================================================================== */
-:root {
-  --bg: #F4F4F5;
-  --surface: #FFFFFF;
-  --surface-sunk: #FAFAFA;
-  --ink: #18181B;
-  --ink-dim: #5F5F63;
-  --line: #E4E4E7;
-
-  --brand-purple: #6C3CF0;  /* eyebrow text: brand purple, passes AA on --bg */
-  --brand-mint: #7CF6C5;
-  --brand-yellow: #F9EB5F;
-  --brand-orange: #E86A44;
-
-  --font-display: "Satoshi", "Inter", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-
-  --radius: 20px;
-  --radius-sm: 12px;
-
-  /* spacing scale */
-  --space-2xs: 8px;
-  --space-xs: 12px;
-  --space-s: 16px;
-  --space-m: 24px;
-  --space-l: 40px;
-  --space-xl: 64px;
-  --space-2xl: 112px;
-
-  /* rhythm */
-  --gap-section: var(--space-2xl);  /* between Tier 2 sections   */
-  --gap-block: var(--space-xl);     /* between Tier 3 blocks      */
-  --card-pad: var(--space-l);       /* inside every white card    */
-
-  /* type scale — Tier 2 is 1.8x Tier 3 and a heavier weight */
-  --h1: 44px;
-  --t2: 36px;
-  --t3: 20px;
-  --t1: 14px;
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(assets/fonts/bricolage-grotesque-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(assets/fonts/bricolage-grotesque-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(assets/fonts/manrope-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap;
+  src: url(assets/fonts/manrope-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-@media (max-width: 760px) {
-  :root {
-    --gap-section: 72px;
-    --gap-block: 48px;
-    --card-pad: var(--space-m);
-    --h1: 34px;
-    --t2: 28px;   /* 1.56x Tier 3 */
-    --t3: 18px;
-  }
+/* ==========================================================================
+   Tokens
+   Home only, taken from the Design Playbook: warm paper, near-black ink,
+   cool grey-blue supporting copy, one orange. The case studies keep their
+   own tokens.
+   ========================================================================== */
+:root {
+  --paper: #F8F7F4;
+  --surface: #FFFFFF;
+  --ink: #111216;
+  --muted: #656B7C;
+  --line: #DEDFE2;
+  --accent: #F3480B;       /* large type and marks only: 3.4:1 on paper */
+  --accent-text: #C53606;  /* small orange text: 5:1 on paper */
+
+  --display: "Bricolage Grotesque", Arial, sans-serif;
+  --body: "Manrope", "Segoe UI", sans-serif;
+  --ease: cubic-bezier(.22, 1, .36, 1);
 }
 
 /* ==========================================================================
@@ -76,236 +80,151 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--paper);
   color: var(--ink);
-  font: 400 16px/1.6 var(--font-body);
+  font: 400 16px/1.7 var(--body);
   -webkit-font-smoothing: antialiased;
 }
-img, video { display: block; max-width: 100%; }
-h1, h2, h3, h4, p, figure, dl, dd { margin: 0; }
-a { color: inherit; }
-:focus-visible { outline: 2px solid var(--brand-purple); outline-offset: 3px; border-radius: 4px; }
-strong { font-weight: 500; color: var(--ink); }
+img, video { display: block; max-width: 100%; height: auto; }
+h1, h2, h3, p, figure, ol { margin: 0; }
+h1, h2, h3 { font-family: var(--display); font-weight: 500; line-height: 1.07; letter-spacing: -0.045em; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+svg { flex-shrink: 0; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+::selection { background: #E6B59A; color: var(--ink); }
+
+/* lucide line icons, drawn inline */
+.icon { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 .skip-link {
-  position: absolute; left: 16px; top: -48px;
-  background: var(--ink); color: #fff; padding: 10px 14px; border-radius: 8px;
-  font-size: 14px; text-decoration: none; z-index: 20;
+  position: fixed; top: 10px; left: 10px; z-index: 100;
+  padding: 10px 20px; background: var(--ink); color: #fff;
+  transform: translateY(-180%);
 }
-.skip-link:focus { top: 12px; }
+.skip-link:focus { transform: none; }
 
-/* ==========================================================================
-   Site nav + layout
-   ========================================================================== */
-.site-nav { background: var(--surface); border-bottom: 1px solid var(--line); }
-.site-nav__inner {
-  max-width: 1240px; margin: 0 auto; padding: 18px 24px;
-  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-.site-nav__mark { font-size: 15px; text-decoration: none; color: var(--ink-dim); }
-.site-nav ul { display: flex; gap: 28px; list-style: none; margin: 0; padding: 0; }
-.site-nav ul a { font-size: 14px; text-decoration: none; }
-.site-nav ul a:hover { color: var(--ink-dim); }
 
-.layout {
-  max-width: 1240px; margin: 0 auto; padding: 40px 24px 0;
-  display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 56px;
-}
-.content { min-width: 0; max-width: 960px; }
+/* the site's one container, shared with the header and every other page:
+   1192px wide with 24px gutters */
+.wrap { width: min(1192px, calc(100% - 48px)); margin-inline: auto; }
 
-.rail {
-  position: sticky; top: 32px; align-self: start;
-  background: var(--surface); border-radius: var(--radius-sm); padding: 10px 16px;
+.eyebrow {
+  display: block; color: var(--muted);
+  font-size: 11px; font-weight: 600; line-height: 1.5; letter-spacing: .095em; text-transform: uppercase;
 }
-.rail a {
-  display: block; padding: 6px 0; font-size: 13px; line-height: 1.5;
-  color: var(--ink-dim); text-decoration: none;
-}
-.rail a:hover { color: var(--ink); }
-.rail a[aria-current="true"] { color: var(--ink); font-weight: 500; }
+.dot { color: var(--accent); }
 
-@media (max-width: 1000px) {
-  .layout { grid-template-columns: 1fr; gap: 0; padding-top: 0; }
-  .rail {
-    position: sticky; top: 0; z-index: 10;
-    display: flex; gap: 22px; overflow-x: auto;
-    margin: 0 -24px 32px; padding: 12px 24px; border-radius: 0;
-    border-bottom: 1px solid var(--line); scrollbar-width: none;
-  }
-  .rail::-webkit-scrollbar { display: none; }
-  .rail a { white-space: nowrap; padding: 0; }
+.arrow-link {
+  display: inline-flex; align-items: center; gap: 20px; width: fit-content; min-height: 44px;
+  padding: 10px 0; border-bottom: 1px solid currentColor;
+  font-size: 13px; font-weight: 600; line-height: 1.5;
 }
 
 /* ==========================================================================
-   Type tiers
-   Tier 1 eyebrow · Tier 2 section heading · Tier 3 subheading
+   Hero
+   The Playbook's looping court video, full bleed, with the copy over its
+   lighter left side. The poster is the video's first frame.
    ========================================================================== */
-.eyebrow { font: 500 var(--t1)/1.4 var(--font-body); color: var(--brand-purple); margin-bottom: var(--space-2xs); }
-.t2 { font: 700 var(--t2)/1.15 var(--font-display); letter-spacing: -0.02em; }
-.t3 { font: 500 var(--t3)/1.3 var(--font-display); letter-spacing: -0.005em; }
-.body { color: var(--ink-dim); max-width: 64ch; }
-.t3 + .body, .t3 + .body-group { margin-top: var(--space-xs); }
-.body + .body { margin-top: var(--space-s); }
-.section-head .body { margin-top: var(--space-m); }
-
-/* ==========================================================================
-   Rhythm: sections and blocks
-   ========================================================================== */
-.section { margin-top: var(--gap-section); scroll-margin-top: 72px; }
-.section-head + .block { margin-top: var(--space-l); }
-.block + .block,
-.rings + .block { margin-top: var(--gap-block); }
-.block > .t3 + .body + .media-row,
-.block > .t3 + .body + .card,
-.block > .t3 + .body + .ticker,
-.block > .t3 + .card,
-.block > .body + .card { margin-top: var(--space-m); }
-
-/* ==========================================================================
-   Surfaces
-   ========================================================================== */
-.card { background: var(--surface); border-radius: var(--radius); padding: var(--card-pad); }
-
-/* fit: contain media inside a sized box so it can never be clipped */
-.fit { position: relative; }
-.fit > img, .fit > video {
-  position: absolute; inset: var(--fit-pad, 24px);
-  width: calc(100% - 2 * var(--fit-pad, 24px));
-  height: calc(100% - 2 * var(--fit-pad, 24px));
-  object-fit: contain;
+.hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: 680px; min-height: max(680px, 100svh);
+  background: var(--paper);
 }
-
-/* ==========================================================================
-   Hero + header
-   ========================================================================== */
-.hero-media { border-radius: var(--radius); overflow: hidden; aspect-ratio: 7 / 4; background: #E7E7EA; }
-.hero-media img { width: 100%; height: 100%; object-fit: cover; }
-
-.case-head {
-  display: flex; justify-content: space-between; align-items: flex-start; gap: 32px;
-  margin-top: var(--space-xl);
+.hero__stage {
+  --hero-pos: 51% center;
+  position: absolute; inset: 0; z-index: 0; overflow: hidden; background: var(--paper);
 }
-.case-title { font: 700 var(--h1)/1.1 var(--font-display); letter-spacing: -0.02em; }
-.case-sub { margin-top: 6px; color: var(--ink-dim); font-size: 14px; }
-.facts { display: flex; gap: 56px; }
-.facts dt { font: 500 16px/1.3 var(--font-display); }
-.facts dd { margin-top: 4px; color: var(--ink-dim); font-size: 14px; }
-@media (max-width: 560px) {
-  .case-head { flex-direction: column; gap: 20px; }
-  .facts { gap: 40px; }
+.hero__stage::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(248, 247, 244, .16) 0%, rgba(248, 247, 244, .07) 39%, transparent 66%);
 }
+.hero__video {
+  position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
+  object-fit: cover; object-position: var(--hero-pos); pointer-events: none;
+}
+/* With scripting off, browsers add native controls to the video (and these
+   could not be clicked here), so show the poster frame as a still instead. */
+html:not(.js) .hero__video { display: none; }
+html:not(.js) .hero__stage { background: url(assets/img/hero-poster.webp) var(--hero-pos) / cover no-repeat; }
+/* A 32 x 18 copy of the poster, blurred, so the hero is never an empty band
+   while the real poster loads; the video covers it as soon as it can. */
+.hero__stage::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: url(data:image/webp;base64,UklGRnYCAABXRUJQVlA4WAoAAAAgAAAAHwAAEQAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZWUDggiAAAADAEAJ0BKiAAEgA+tVChTCckoyIoCqjgFolnAMxYOG89BC8mJRuQEAfN0AD++HfIxs6dPYHojCXlApvhqEPmN8ue4TLoI9qEhqWPXNpE7d2vnb1EZeVHpKuKwhECm6xFMrasKDWjGGrT9yMAkHa9aKUvSI+oOf782kTNfKWFRwP8OUAWd0JIAAA=) var(--hero-pos) / cover no-repeat;
+  filter: blur(16px); transform: scale(1.08);
+}
+html:not(.js) .hero__stage::before { content: none; }
 
-.intro { margin-top: var(--space-xl); }
-
-/* My Roles showcase: one tall card, two stacked wide cards */
-.showcase {
-  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 5fr); gap: var(--space-s);
-  margin-top: var(--space-xl);
+/* the copy and the scroll link start on the left edge of the page container
+   (.wrap), so they line up with the header and every section below */
+.hero__copy { position: absolute; z-index: 4; top: 17.5%; left: max(24px, calc((100% - 1192px) / 2)); width: min(47vw, 760px); }
+.hero__eyebrow {
+  display: flex; align-items: center; gap: 23px; margin: 0 0 28px;
+  color: #4F566A; font-size: 11px; font-weight: 700; line-height: 1.5; letter-spacing: .28em; text-transform: uppercase;
 }
-.showcase__tall { grid-row: span 2; background: var(--surface); border-radius: var(--radius); }
-.showcase__wide { aspect-ratio: 2 / 1; background: var(--surface); border-radius: var(--radius); }
-@media (max-width: 760px) {
-  .showcase { grid-template-columns: 1fr; }
-  .showcase__tall { grid-row: auto; aspect-ratio: 4 / 5; }
+.hero__eyebrow > span:last-child { width: 38px; height: 1px; background: currentColor; }
+.hero h1 {
+  max-width: 780px;
+  font-size: clamp(56px, 5.6vw, 96px); font-weight: 800; line-height: .99; letter-spacing: -0.06em;
 }
-
-/* ==========================================================================
-   Two-column text + media
-   Rule: the first split in each Tier 2 section puts media on the right,
-   then splits alternate within that section.
-   ========================================================================== */
-.split {
-  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  gap: var(--space-xl); align-items: center;
+.hero h1 em { color: var(--accent); font-style: italic; }
+.hero__intro {
+  max-width: 570px; margin: 30px 0 28px; color: var(--muted);
+  font-size: clamp(16px, 1.35vw, 21px); line-height: 1.55; letter-spacing: -0.018em;
 }
-.split--media-left { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
-.split--phone { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.split--media-left .split__media { order: -1; }
-@media (max-width: 760px) {
-  .split, .split--media-left, .split--phone { grid-template-columns: 1fr; gap: var(--space-m); }
-  .split--media-left .split__media { order: 0; }
+.hero__actions { display: flex; align-items: center; gap: 28px; }
+.pill-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 24px;
+  min-height: 58px; padding: 0 27px; border: 1px solid transparent; border-radius: 999px;
+  background: var(--ink); color: #fff; font-size: 15px; font-weight: 600;
 }
-
-.problem-img { border-radius: var(--radius-sm); overflow: hidden; }
-.problem-img img { width: 100%; height: auto; }
-
-/* single-phone recording cards (Onboarding, Friends & Co-Play, Parental Controls) */
-.phone-card { aspect-ratio: 4 / 5; background: var(--surface); border-radius: var(--radius); --fit-pad: 24px; }
-
-
-/* ==========================================================================
-   Ticker carousels (Sketches, Mid-Fi Wireframes)
-   A plain horizontal scroll container: touch, trackpad, drag, and arrow keys
-   all work. Nothing moves on its own, so there is no pause control to give.
-   ========================================================================== */
-.ticker__viewport {
-  /* scrolled by hand now, so the bar is the affordance and the edge fade goes */
-  overflow-x: auto; overflow-y: hidden;
-  scrollbar-width: thin; padding-bottom: 8px;
-}
-.ticker__viewport:focus-visible { outline-offset: 4px; }
-.ticker__track { display: flex; gap: var(--space-s); list-style: none; margin: 0; padding: 0; width: max-content; }
-.ticker__track img {
-  height: var(--ticker-h); width: auto; max-width: none;
-  border-radius: var(--radius-sm); background: var(--surface);
-}
-.ticker--sketches { --ticker-h: 280px; }
-.ticker--wireframes { --ticker-h: 400px; }
-@media (max-width: 760px) {
-  .ticker--sketches { --ticker-h: 200px; }
-  .ticker--wireframes { --ticker-h: 300px; }
-}
-
-
-
-/* ==========================================================================
-   Home
-   ========================================================================== */
-.wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
-.home-section { margin-top: var(--space-2xl); scroll-margin-top: 72px; }
-@media (max-width: 760px) { .home-section { margin-top: 72px; } }
-
-/* --- hero --------------------------------------------------------------- */
-.hero { padding: clamp(64px, 11vw, 132px) 24px 0; }   /* side padding restored: the shorthand was cancelling .wrap */
-.hero__hi {
-  font: 500 11px/1 var(--font-body); color: var(--brand-purple);
-  letter-spacing: .14em; text-transform: uppercase;
-}
-.hero__name {
-  margin-top: var(--space-m);
-  font: 700 clamp(46px, 9.4vw, 112px)/0.96 var(--font-display); letter-spacing: -0.042em;
-}
-.hero__dot { color: var(--brand-purple); }
-.hero__line {
-  margin-top: var(--space-l); max-width: 26ch;
-  font: 500 clamp(20px, 2.6vw, 30px)/1.36 var(--font-display); letter-spacing: -0.015em; color: var(--ink);
-}
-.hero__actions { margin-top: var(--space-xl); display: flex; flex-wrap: wrap; gap: 12px; }
-.cta {
-  appearance: none; cursor: pointer; position: relative;
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 13px 20px; border-radius: 999px; text-decoration: none;
-  font: 500 15px/1 var(--font-body);
-  background: var(--ink); color: #fff; border: 1px solid var(--ink);
-}
-.cta--ghost { background: transparent; color: var(--ink); border-color: var(--line); }
-.cta--ghost:hover { border-color: #C2C2C9; background: var(--surface); }
-.cta svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.pill-button:hover { background: #292B31; }
+.hero__secondary { display: inline-flex; align-items: center; gap: 9px; min-height: 48px; color: #3F475B; font-size: 15px; font-weight: 600; }
 
 .hero__scroll {
-  margin-top: var(--space-2xl); display: inline-flex; align-items: center; gap: 10px;
-  font-size: 14px; color: var(--ink-dim); text-decoration: none;
+  position: absolute; z-index: 4; bottom: 5.5%; left: max(24px, calc((100% - 1192px) / 2));
+  display: inline-flex; align-items: center; gap: 13px; color: #51586C; font-size: 13px;
 }
-.hero__scroll svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.hero__scroll-icon {
+  display: grid; place-items: center; width: 42px; height: 42px;
+  border: 1px solid #9BA0AD; border-radius: 50%; color: var(--ink);
+}
+.hero__scroll:hover .hero__scroll-icon { border-color: var(--accent); color: var(--accent); }
 
-/* --- section headings --------------------------------------------------- */
-.home-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.home-head h2 { font: 700 clamp(28px, 3.6vw, 40px)/1.15 var(--font-display); letter-spacing: -0.025em; }
-.home-head a { font-size: 14px; color: var(--ink-dim); text-underline-offset: 3px; }
-.home-head a:hover { color: var(--ink); }
+@media (max-width: 1100px) {
+  .hero__copy { top: 18%; width: 50vw; }
+  .hero h1 { font-size: clamp(54px, 6vw, 78px); }
+  .hero__intro { max-width: 440px; margin-block: 22px; font-size: 16px; }
+  .hero__eyebrow { margin-bottom: 22px; }
+  .pill-button { min-height: 52px; gap: 17px; padding-inline: 22px; }
+}
+@media (min-width: 761px) and (max-width: 1100px) and (max-aspect-ratio: 6/5) {
+  .hero__stage { --hero-pos: 58% center; }
+  .hero__intro { max-width: 42vw; }
+}
 
-/* --- project cards: 2 x 2, equal, image inset inside a white card ------- */
-.work { margin-top: var(--space-l); display: grid; gap: 24px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* ==========================================================================
+   Section headings
+   ========================================================================== */
+.section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 52px; }
+.section-head .eyebrow, .about .eyebrow { margin: 0 0 18px; font-size: 10px; letter-spacing: .14em; }
+.section-head h2 { font-size: clamp(44px, 5.2vw, 76px); font-weight: 700; line-height: 1.02; }
+
+/* ==========================================================================
+   Selected work
+   The project cards are the ones this site already had: white card, image
+   inset at 11:10, title and one line under it. Every card is the same size:
+   equal columns, and grid-auto-rows: 1fr makes every row as tall as the
+   tallest card, so a title that wraps can't make its card taller.
+   ========================================================================== */
+.work-section { padding: clamp(90px, 10vw, 150px) 0 clamp(64px, 7vw, 96px); }
+
+.work { display: grid; gap: 24px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; }
 @media (max-width: 760px) { .work { grid-template-columns: 1fr; gap: 20px; } }
 
 .project {
@@ -316,8 +235,8 @@ strong { font-weight: 500; color: var(--ink); }
 .project__media { border-radius: 12px; overflow: hidden; background: #ECECEF; aspect-ratio: 11 / 10; }
 .project__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .project__body { padding: 16px 2px 4px; }
-.project__title { font: 700 20px/1.3 var(--font-display); letter-spacing: -0.015em; }
-.project__sub { margin-top: 6px; color: var(--ink-dim); font-size: 15px; }
+.project__title { font: 700 20px/1.3 var(--display); letter-spacing: -0.015em; }
+.project__sub { margin-top: 6px; color: var(--muted); font-size: 15px; line-height: 1.6; }
 .project--locked { cursor: default; }
 @media (max-width: 560px) {
   .project { padding: 14px; }
@@ -325,102 +244,229 @@ strong { font-weight: 500; color: var(--ink); }
   .project__sub { font-size: 14px; }
 }
 
-/* --- gallery teaser ----------------------------------------------------- */
-.teaser { margin-top: var(--space-l); display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-s); }
-.teaser a { display: block; border-radius: var(--radius-sm); overflow: hidden; background: #ECECEF; aspect-ratio: 1; }
-.teaser img { width: 100%; height: 100%; object-fit: cover; display: block; }
-@media (max-width: 760px) { .teaser { grid-template-columns: repeat(3, minmax(0, 1fr)); } .teaser a:nth-child(n+4) { display: none; } }
-
-/* --- about -------------------------------------------------------------- */
-.about { margin-top: var(--space-l); display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: var(--space-xl); align-items: start; }
+/* ==========================================================================
+   About
+   ========================================================================== */
+.about {
+  display: grid; grid-template-columns: .86fr 1.14fr; align-items: center;
+  gap: clamp(60px, 9vw, 140px);
+  padding: clamp(88px, 10vw, 140px) 0;
+  border-top: 1px solid var(--line);
+}
 .about > * { min-width: 0; }
-.toolbelt, .ticker--tools, .ticker--tools .ticker__viewport { min-width: 0; }
-@media (max-width: 860px) { .about { grid-template-columns: 1fr; gap: var(--space-l); } }
-.about__photo { border-radius: var(--radius); overflow: hidden; background: #ECECEF; }
-.about__photo img { width: 100%; height: auto; display: block; }
-.about__kicker { font: 500 15px/1.3 var(--font-display); }
-.about__text p { margin-top: var(--space-m); color: var(--ink-dim); max-width: 62ch; line-height: 1.7; }
+.about__photo { max-width: 470px; overflow: hidden; border-radius: 10px; background: #EFEEEB; }
+.about__photo img {
+  width: 100%; aspect-ratio: 4 / 5; max-height: 540px;
+  /* the face sits right of centre in this photo; 60% keeps it whole when
+     the frame is at its narrowest (about 800px wide windows) */
+  object-fit: cover; object-position: 60% 34%; filter: saturate(.76);
+}
+/* Beside the text, the photo is exactly as tall as the text column: top edge
+   level with the eyebrow, bottom edge level with the toolbelt. The image is
+   taken out of flow so the text, not the photo, sets the row height. */
+@media (min-width: 761px) {
+  .about { align-items: stretch; }
+  .about__photo { position: relative; max-width: none; }
+  .about__photo img { position: absolute; inset: 0; height: 100%; max-height: none; aspect-ratio: auto; }
+}
+.about .eyebrow { margin-bottom: 21px; }
+.about h2 { margin: 0 0 23px; font-size: clamp(46px, 5.2vw, 74px); font-weight: 700; line-height: 1.02; }
+.about h2 em { color: var(--accent); font-style: normal; }
+.about__text p { max-width: 500px; color: var(--muted); font-size: 16px; line-height: 1.7; }
+.about__text p + p { margin-top: 1.3em; }
 
-/* --- toolbelt ----------------------------------------------------------- */
-.toolbelt { margin-top: var(--space-xl); }
-.toolbelt h3 { font: 500 15px/1.3 var(--font-display); }
-.ticker--tools { --ticker-h: 56px; margin-top: var(--space-m); }
-.ticker--tools .ticker__track img { background: var(--surface); border: 1px solid var(--line); padding: 10px; border-radius: 14px; }
+/* --- toolbelt ---------------------------------------------------------------
+   With script it loops endlessly (is-looping): the icons are cloned so the
+   track can slide by exactly half its width and start over without a seam.
+   It pauses under the pointer. Reduce motion (the OS setting) turns
+   it back into a plain horizontal scroller, which is also what shows without
+   script. */
+.toolbelt { max-width: 500px; margin-top: 40px; }
+.toolbelt h3 { margin-bottom: 14px; color: var(--muted); font: 600 10px/1.5 var(--body); letter-spacing: .14em; text-transform: uppercase; }
+.ticker, .ticker__viewport { min-width: 0; }
+.ticker__viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; padding-bottom: 8px; }
+.ticker__viewport:focus-visible { outline-offset: 4px; }
+.ticker__track { display: flex; gap: 12px; list-style: none; margin: 0; padding: 0; width: max-content; }
+.ticker__track img {
+  height: 56px; width: auto; max-width: none;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px;
+}
+.ticker [data-clone] { display: none; }
+.ticker.is-looping [data-clone] { display: block; }
+.ticker.is-looping .ticker__viewport {
+  overflow: hidden; padding-bottom: 0;   /* no scrollbar to make room for */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+/* the spacing rides on each item instead of the gap, so half the track is
+   exactly two whole sets and the jump back to the start is invisible */
+.ticker.is-looping .ticker__track { gap: 0; animation: toolbelt-loop 20s linear infinite; }
+.ticker.is-looping .ticker__track > li { padding-right: 12px; }
+.ticker.is-looping:hover .ticker__track { animation-play-state: paused; }
+@keyframes toolbelt-loop { to { transform: translateX(-50%); } }
 
 /* ==========================================================================
-   Motion — same vocabulary as the rest of the site
+   Beyond the interface: three gallery pieces, staggered
    ========================================================================== */
-:root { --mo-fast: 130ms; --mo-mid: 260ms; --mo-ease: cubic-bezier(.34, 1.2, .48, 1); }
+.beyond { padding: 18px 0 clamp(86px, 10vw, 140px); }
+.beyond__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; margin-bottom: 37px; }
+.beyond__head .eyebrow { margin-top: 16px; }
+.beyond h2 { margin-top: 15px; font-size: clamp(37px, 4.3vw, 60px); }
+.art-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; align-items: start; }
+.art-strip a { display: block; position: relative; }
+.art-strip a:nth-child(2) { padding-top: 65px; }
+.art-strip a:nth-child(3) { padding-top: 22px; }
+.art-strip img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; background: #EFEEEB; }
+.art-strip span { display: block; padding-top: 14px; color: var(--muted); font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.site-footer { padding: 50px 0 0; border-top: 1px solid var(--line); background: #EFEDE8; }
+.footer-top { display: flex; justify-content: space-between; gap: 20px; }
+/* Headline on the left; the looping character on the right, under "Let's find the next good move."
+   He is sized in ems of the headline type, so he matches it at every width: head level with the
+   cap top of "Let's make", soles on the baseline of "move.". */
+.footer-hero { --footer-type: clamp(60px, 8.4vw, 118px); display: flex; align-items: flex-end; gap: calc(var(--footer-type) * .3); padding: 64px 0 40px; }
+.footer-headline {
+  min-width: 0; margin: 0;
+  font: 700 var(--footer-type)/.98 var(--display); letter-spacing: -0.065em;
+}
+.footer-headline em { color: var(--accent); font-style: normal; }
+/* In the 540x706 clip he spans 4.7%-93.9% of the height, so 1.843em makes him 1.644em tall
+   (.98em line + .664em caps). The bottom margin lifts his soles from the line box bottom
+   (.16em under the baseline) onto the baseline; the negative right margin lines his right
+   edge up with the eyebrow text above him. */
+.footer-figure { flex: none; margin: 0 -.17em .048em auto; font-size: var(--footer-type); }
+/* The studio grey is flattened to this footer's colour in the video itself (background plate
+   divided out, floor shadow kept); the feathered edges hide what little is left, and let the
+   shadow fade out to the left instead of stopping at the frame. */
+.footer-video {
+  display: block; width: auto; height: 1.843em; aspect-ratio: 540 / 706;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 20%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 95%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 20%, #000 91%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 95%, transparent);
+  mask-composite: intersect;
+}
+.footer-links {
+  display: flex; align-items: center; gap: 45px; padding: 15px 0 65px;
+  font-size: 14px;
+}
+.footer-email { display: flex; align-items: center; gap: 13px; margin-right: auto; }
+.footer-links > a { display: flex; align-items: center; gap: 9px; }
+.copy-btn { display: grid; place-items: center; width: 44px; height: 44px; }
+/* beats display:grid, so the script-only button stays hidden without JS */
+.copy-btn[hidden] { display: none; }
+.copy-btn .icon-done, .copy-btn.is-copied .icon-copy { display: none; }
+.copy-btn.is-copied .icon-done { display: block; }
+.footer-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ==========================================================================
+   Phones and small tablets
+   ========================================================================== */
+@media (max-width: 760px) {
+  /* hero: copy first, then the video as a band */
+  .hero { --gutter: 24px; min-height: 0; overflow: clip; padding: 0 var(--gutter) 26px; }
+  .hero__copy { position: relative; top: auto; left: auto; width: 100%; padding-top: 112px; }
+  html:not(.js) .hero__copy { padding-top: 40px; }
+  .hero__eyebrow { gap: 16px; margin-bottom: 20px; font-size: 10px; letter-spacing: .22em; }
+  .hero__eyebrow > span:last-child { width: 28px; }
+  .hero h1 { max-width: 560px; font-size: clamp(47px, 10.5vw, 72px); }
+  .hero__intro { max-width: 530px; margin: 19px 0; font-size: 15px; line-height: 1.58; }
+  .hero__actions { gap: 18px; }
+  .pill-button { min-height: 48px; gap: 12px; padding-inline: 18px; font-size: 13px; }
+  .hero__secondary { font-size: 13px; }
+  .hero__stage {
+    --hero-pos: 70% center;
+    position: relative; inset: auto; height: clamp(330px, 49svh, 460px); margin: 8px calc(-1 * var(--gutter)) 0;
+  }
+  .hero__stage::after { background: linear-gradient(180deg, rgba(248, 247, 244, .09) 0%, transparent 26%, rgba(248, 247, 244, .05) 100%); }
+  .hero__scroll { position: relative; bottom: auto; left: auto; font-size: 12px; }
+  .hero__scroll-icon { width: 38px; height: 38px; }
+
+  /* section heads */
+  .section-head { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
+  .section-head .eyebrow, .about .eyebrow { margin-bottom: 13px; }
+  .section-head h2 { font-size: clamp(39px, 9vw, 58px); }
+  .work-section { padding: 74px 0 64px; }
+
+  /* about */
+  .about { grid-template-columns: .8fr 1.2fr; gap: 24px; padding: 74px 0; }
+  .about__photo { align-self: start; margin-top: 30px; }
+  .about__photo img { aspect-ratio: 3 / 4; }
+  .about .eyebrow { margin-bottom: 12px; }
+  .about h2 { margin-bottom: 14px; font-size: clamp(30px, 6.8vw, 42px); }
+  .about__text p { font-size: 14px; line-height: 1.65; }
+
+  /* beyond */
+  .beyond { padding: 4px 0 72px; }
+  .beyond__head { flex-direction: column; align-items: flex-start; gap: 18px; }
+  .beyond h2 { font-size: 35px; }
+  .art-strip { gap: 12px; }
+  .art-strip a:nth-child(2) { padding-top: 34px; }
+  .art-strip a:nth-child(3) { padding-top: 13px; }
+  .art-strip span { padding-top: 10px; font-size: 10px; letter-spacing: .04em; }
+
+  /* footer */
+  .site-footer { padding-top: 32px; }
+  .footer-top .eyebrow { max-width: 150px; font-size: 10px; }
+  .footer-top .eyebrow:last-child { text-align: right; }
+  /* Headline (6.01em at phone sizes: Bricolage widens as it gets smaller) + gap + character
+     come to about 7.55em, so on the narrowest phones the type is capped at the content width / 7.7
+     and the pair always stays on two lines. */
+  .footer-hero { --footer-type: min(clamp(42px, 9.6vw, 62px), calc((100vw - 48px) / 7.7)); padding: 40px 0 28px; }
+  .footer-links { display: grid; grid-template-columns: auto auto 1fr; gap: 4px 17px; padding: 20px 0 48px; font-size: 13px; }
+  .footer-links > a.to-top { justify-self: end; }
+  .footer-email { grid-column: 1 / -1; margin: 0; }
+  .footer-links > a { min-height: 44px; width: fit-content; }
+}
+@media (max-width: 560px) {
+  .about { grid-template-columns: 1fr; gap: 28px; }
+  .about__photo { width: min(74%, 310px); margin: 0 auto; }
+  .about h2 { font-size: 42px; }
+}
+@media (max-width: 420px) {
+  .hero h1 { font-size: clamp(44px, 10.2vw, 52px); }
+  .hero__intro { font-size: 14px; }
+  .hero__stage { height: 355px; }
+}
+
+/* ==========================================================================
+   Motion — the site's own vocabulary, all behind prefers-reduced-motion
+   ========================================================================== */
+:root { --mo-fast: 180ms; --mo-mid: 260ms; --mo-ease: cubic-bezier(.34, 1.2, .48, 1); }
 
 @media (prefers-reduced-motion: no-preference) {
-  .cta { transition: transform var(--mo-fast) var(--mo-ease), background-color var(--mo-mid) ease, border-color var(--mo-mid) ease; position: relative; }
-  .cta:active { transform: scale(.97); }
-  .cta::after {
-    content: ""; position: absolute; inset: -3px; border-radius: 999px;
-    border: 1.5px solid currentColor; opacity: 0; pointer-events: none;
-  }
-  .is-hit::after { animation: mo-ring 420ms var(--mo-ease); }
-  @keyframes mo-ring { 0% { opacity: .75; transform: scale(1); } 100% { opacity: 0; transform: scale(1.1); } }
+  .pill-button { transition: transform 200ms var(--ease), background-color 200ms ease; }
+  .pill-button:hover { transform: translateY(-2px); }
+  .hero__actions .icon, .arrow-link .icon, .footer-links > a .icon { transition: transform var(--mo-fast) var(--ease); }
+  .hero__actions a:hover .icon { transform: translateX(4px); }
+  .arrow-link:hover .icon, .footer-links > a:hover .icon { transform: translate(3px, -3px); }
+  .footer-links > a.to-top:hover .icon { transform: translateY(-3px); }
+  .hero__scroll-icon { transition: border-color var(--mo-fast) ease, color var(--mo-fast) ease, transform var(--mo-fast) var(--ease); }
+  .hero__scroll:hover .hero__scroll-icon { transform: translateY(3px); }
 
-  .project:not(.project--locked), .teaser a { transition: transform var(--mo-mid) var(--mo-ease), box-shadow var(--mo-mid) ease; }
-  .project__media img, .teaser img { transition: transform 420ms var(--mo-ease); }
-  @media (hover: hover) {
-    .project:not(.project--locked):hover { transform: translateY(-3px); box-shadow: 0 1px 2px rgba(24, 24, 27, .06), 0 18px 40px -26px rgba(24, 24, 27, .5); }
-    .project:not(.project--locked):hover .project__media img { transform: scale(1.03); }
-    .teaser a:hover img { transform: scale(1.06); }
-  }
-  .hero__scroll svg { animation: nudge 2.4s ease-in-out infinite; }
-  @keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+  .project { transition: transform var(--mo-mid) var(--mo-ease), box-shadow var(--mo-mid) ease; }
 
   .motion-ready [data-reveal] { opacity: 0; transform: translateY(16px);
     transition: opacity var(--mo-mid) var(--mo-ease), transform 420ms var(--mo-ease);
     transition-delay: calc(var(--i, 0) * 70ms); }
   .motion-ready [data-reveal].is-in { opacity: 1; transform: none; }
+
+  /* Hovers. This block sits AFTER the reveal rules on purpose: both set
+     transform on the same elements at equal specificity, so whichever comes
+     last wins. Move it back above them and the card hover stops working. */
+  @media (hover: hover) {
+    .work .project:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 2px 4px rgba(24, 24, 27, .06), 0 28px 50px -28px rgba(24, 24, 27, .55);
+    }
+  }
 }
 
-/* ==========================================================================
-   Footer
-   ========================================================================== */
-.site-footer { margin-top: var(--gap-section); border-top: 1px solid var(--line); }
-.site-footer__inner {
-  max-width: 1240px; margin: 0 auto; padding: 56px 24px 72px;
-  display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;
-}
-.site-footer__display { font: 700 32px/1.1 var(--font-display); letter-spacing: -0.01em; }
-.site-footer__sub { margin-top: 8px; font-size: 14px; }
-.site-footer__cols { display: flex; gap: 72px; }
-.site-footer h2 { font: 500 15px/1.3 var(--font-display); margin-bottom: 12px; }
-.site-footer ul { list-style: none; margin: 0; padding: 0; }
-.site-footer li + li { margin-top: 8px; }
-.site-footer ul a { font-size: 14px; color: var(--ink-dim); text-decoration: none; }
-.site-footer ul a:hover { color: var(--ink); }
-
-/* --- footer utilities: copy email, reduce motion, back to top ------------ */
-.site-footer__bottom {
-  flex: 0 0 100%; width: 100%;                 /* own row inside the flex footer */
-  margin-top: var(--space-m); padding-top: var(--space-m);
-  border-top: 1px solid var(--line);
-  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px;
-}
-.footer-btn {
-  appearance: none; background: transparent; cursor: pointer;
-  border: 1px solid var(--line); border-radius: 999px; padding: 8px 15px;
-  font: 500 13px/1 var(--font-body); color: var(--ink-dim); text-decoration: none;
-  display: inline-flex; align-items: center; gap: 7px;
-}
-.footer-btn:hover { color: var(--ink); border-color: #C2C2C9; }
-/* beats display:inline-flex, so the script-only buttons stay hidden without JS */
-.footer-btn[hidden] { display: none; }
-.footer-btn[aria-pressed="true"] { color: var(--ink); border-color: var(--ink); }
-.footer-btn--plain { border-color: transparent; padding-inline: 0; margin-left: auto; }
-.footer-btn--plain:hover { border-color: transparent; text-decoration: underline; text-underline-offset: 3px; }
-.footer-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.footer-status {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-}
 /* Author-level motion kill switch. The CSS media query cannot be overridden
-   from script, so the toggle collapses durations instead. */
+   from script, so the toggle collapses durations instead. The hero video is
+   paused by script. */
 html.motion-off { scroll-behavior: auto !important; }
 html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   animation-duration: 1ms !important; animation-delay: 0ms !important;
@@ -431,54 +477,238 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+/* ==========================================================================
+   Global header
+   The same on every page. Fixed: transparent over the home hero until the
+   page scrolls, solid from the start everywhere else (site-header--solid).
+   It carries its own colours and type, so no page theme can restyle it.
+   ========================================================================== */
+/* One height for the header, scrolled or not, on every page: nothing in it
+   moves when the page scrolls or changes. Anchors and sticky elements read it. */
+:root { --site-header-h: 84px; }
+html { scroll-padding-top: var(--site-header-h); }
 
-.sr-only {
-  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+.site-header {
+  --nav-paper: #F8F7F4; --nav-ink: #111216; --nav-muted: #656B7C; --nav-link: #51586C;
+  --nav-line: #DEDFE2; --nav-accent: #F3480B; --nav-accent-text: #C53606;
+  --nav-ease: cubic-bezier(.22, 1, .36, 1);
+  position: fixed; inset: 0 0 auto; z-index: 40;
+  /* content sits in the site's one container, 1192px wide with 24px gutters:
+     the same as the case studies, gallery, 404, footers and home page */
+  height: var(--site-header-h); padding: 0 max(24px, calc((100% - 1192px) / 2));
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  color: var(--nav-ink); font: 400 16px/1.7 "Manrope", "Segoe UI", sans-serif;
+  letter-spacing: normal; text-transform: none; -webkit-font-smoothing: antialiased;
 }
+.site-header--solid, .site-header[data-scrolled="true"], html:not(.js) .site-header {
+  background: var(--nav-paper); border-bottom-color: var(--nav-line);
+}
+/* keeps the page clear of the fixed header where no hero sits under it */
+.site-header__spacer { height: var(--site-header-h); }
+.skip-link:focus { z-index: 100; }
+
+.site-header a { color: inherit; text-decoration: none; }
+.site-header :focus-visible { outline: 2px solid var(--nav-accent); outline-offset: 6px; }
+.wordmark:focus-visible, .main-nav a:not(.nav-contact):focus-visible { border-radius: 0; }
+.site-header svg { display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.wordmark { display: flex; align-items: center; gap: 15px; flex-shrink: 0; font-size: 13px; font-weight: 600; line-height: 1.25; }
+.monogram { font: 700 38px/1 "Bricolage Grotesque", Arial, sans-serif; letter-spacing: -0.1em; padding-right: .1em; }
+.monogram span { color: var(--nav-accent); }
+.wordmark__copy { display: grid; gap: 3px; }
+.wordmark__copy strong { color: var(--nav-ink); font-size: 14px; font-weight: 700; letter-spacing: -0.035em; }
+.wordmark__copy small { color: var(--nav-muted); font-size: 12px; font-weight: 500; }
+
+.main-nav {
+  display: flex; align-items: center; gap: clamp(18px, 3vw, 48px);
+  margin-left: auto;
+  font-size: 14px; font-weight: 500;
+}
+.main-nav a { position: relative; padding: 12px 0; color: var(--nav-link); }
+.main-nav a:hover, .main-nav a[aria-current] { color: var(--nav-ink); }
+/* the current page (on a case study, Work) and the hovered link get a dot */
+.main-nav a::after {
+  content: ""; position: absolute; bottom: 1px; left: 50%;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--nav-accent);
+  transform: translateX(-50%) scale(0);
+}
+.main-nav a:hover::after, .main-nav a[aria-current]::after { transform: translateX(-50%) scale(1); }
+.main-nav .nav-contact {
+  display: flex; align-items: center; gap: 12px; min-height: 46px; padding: 0 20px;
+  border: 1px solid rgba(17, 18, 22, .12); border-radius: 999px;
+  background: var(--nav-ink); color: #fff;
+}
+.main-nav .nav-contact:hover { background: var(--nav-accent-text); border-color: var(--nav-accent-text); color: #fff; }
+.main-nav .nav-contact::after { content: none; }
+
+.menu-toggle { display: none; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
+/* beats the display:grid below, so the script-only button stays hidden without JS */
+.menu-toggle[hidden] { display: none !important; }
+.menu-toggle .icon-close, .menu-toggle[aria-expanded="true"] .icon-open { display: none; }
+.menu-toggle[aria-expanded="true"] .icon-close { display: block; }
+
+@media (max-width: 1100px) {
+  .main-nav { gap: clamp(15px, 2vw, 25px); font-size: 13px; }
+  .main-nav .nav-contact { min-height: 42px; gap: 8px; padding-inline: 14px; }
+}
+@media (max-width: 760px) {
+  .js .menu-toggle {
+    display: grid; place-items: center; width: 44px; height: 44px;
+    border: 1px solid rgba(17, 18, 22, .15); border-radius: 50%; background: rgba(248, 247, 244, .75);
+  }
+  .js .main-nav {
+    position: absolute; top: calc(100% - 1px); right: 12px; left: 12px;
+    display: none; flex-direction: column; align-items: stretch; gap: 0;
+    margin: 0; padding: 10px 22px 18px;
+    border: 1px solid rgba(17, 18, 22, .09); border-radius: 0 0 16px 16px;
+    background: rgba(248, 247, 244, .98); box-shadow: 0 18px 40px rgba(17, 18, 22, .1);
+  }
+  .js .main-nav.open { display: flex; }
+  .js .main-nav a { min-height: 46px; padding: 12px 0; font-size: 15px; }
+  .js .main-nav a::after { bottom: 8px; left: auto; right: 0; }
+  .js .main-nav .nav-contact { justify-content: center; margin-top: 9px; padding-inline: 18px; }
+}
+@media (max-width: 760px) {
+  :root { --site-header-h: 72px; }
+  .wordmark { gap: 11px; font-size: 11px; }
+  .monogram { font-size: 33px; }
+  .wordmark__copy strong { font-size: 12px; }
+  .wordmark__copy small { font-size: 10px; }
+  /* without script the links simply wrap under the wordmark */
+  html:not(.js) .site-header { position: static; height: auto; flex-wrap: wrap; gap: 6px 16px; padding-block: 16px; }
+  html:not(.js) .main-nav { flex-wrap: wrap; width: 100%; margin: 0; gap: 0 18px; }
+  html:not(.js) .site-header__spacer { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-header { transition: background-color 240ms ease, border-color 240ms ease; }
+  .main-nav a { transition: color 180ms ease; }
+  .main-nav a::after { transition: transform 180ms cubic-bezier(.2, .7, .2, 1); }
+  .main-nav .nav-contact { transition: background-color 180ms ease, border-color 180ms ease; }
+  @media (max-width: 760px) {
+    .js .main-nav.open { animation: nav-menu-enter 320ms var(--nav-ease) both; }
+  }
+  @keyframes nav-menu-enter { from { opacity: 0; transform: translateY(-8px); } }
+}
+
+/* Moving between pages. The page cross-fades instead of flashing, and the
+   header is a layer of its own, so it holds still while the page changes
+   under it. Typed (page-nav) so a page's own same-page transitions, like the
+   Vibe Coding simulator's, keep their rules. Reduce motion skips it; browsers
+   without cross-document view transitions simply navigate. */
+@view-transition { navigation: auto; types: page-nav; }
+.site-header { view-transition-name: site-header; }
+html:active-view-transition-type(page-nav)::view-transition-old(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-out; mix-blend-mode: plus-lighter; }
+html:active-view-transition-type(page-nav)::view-transition-new(root) { animation: 260ms cubic-bezier(.4, 0, .2, 1) both page-in; mix-blend-mode: plus-lighter; }
+@keyframes page-out { to { opacity: 0; } }
+@keyframes page-in { from { opacity: 0; } }
+html.motion-off::view-transition-group(*),
+html.motion-off::view-transition-old(*),
+html.motion-off::view-transition-new(*) { animation: none !important; }
 </style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-nav">
-  <div class="site-nav__inner">
-    <a class="site-nav__mark" href="#home">Jamiyan Batnyam</a>
-    <nav aria-label="Main">
-      <ul>
-        <li><a href="#home" aria-current="page">Home</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="visual.html">Gallery</a></li>
-        <li><a href="#about-me">About</a></li>
-      </ul>
-    </nav>
-  </div>
+<header class="site-header" data-scrolled="false">
+  <a class="wordmark" href="#home" aria-label="Jamiyan Batnyam, home">
+    <span class="monogram" aria-hidden="true">JB<span>·</span></span>
+    <span class="wordmark__copy">
+      <strong>Jamiyan Batnyam</strong>
+      <small>UX / Product Designer</small>
+    </span>
+  </a>
+  <nav class="main-nav" id="main-nav" aria-label="Main">
+    <a href="#home" aria-current="page">Home</a>
+    <a href="#projects">Work</a>
+    <a href="#about-me">About</a>
+    <a href="visual.html">Gallery</a>
+    <a href="#contact">Contact</a>
+    <a class="nav-contact" href="mailto:jamyanart@gmail.com">Let’s connect <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+  </nav>
+  <button class="menu-toggle" type="button" id="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Open menu" hidden>
+    <svg class="icon-open" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    <svg class="icon-close" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+  </button>
 </header>
+<script>
+/* Global header, the same on every page: solid once the page leaves the top,
+   and the phone menu. */
+(function () {
+  "use strict";
+  var header = document.querySelector(".site-header");
+  if (!header) return;
+
+  var frame = 0;
+  var paint = function () {
+    frame = 0;
+    header.setAttribute("data-scrolled", window.scrollY > 40 ? "true" : "false");
+  };
+  window.addEventListener("scroll", function () {
+    if (!frame) frame = window.requestAnimationFrame(paint);
+  }, { passive: true });
+  paint();
+
+  var toggle = document.getElementById("menu-toggle");
+  var nav = document.getElementById("main-nav");
+  if (!toggle || !nav) return;
+  toggle.hidden = false;
+  var isOpen = function () { return nav.classList.contains("open"); };
+  var setMenu = function (open, returnFocus) {
+    nav.classList.toggle("open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    if (open) {
+      var first = nav.querySelector("a");
+      if (first) first.focus({ preventScroll: true });
+    } else if (returnFocus) {
+      toggle.focus();
+    }
+  };
+  toggle.addEventListener("click", function () { setMenu(!isOpen()); });
+  nav.addEventListener("click", function (e) { if (isOpen() && e.target.closest("a")) setMenu(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && isOpen()) setMenu(false, true); });
+  document.addEventListener("pointerdown", function (e) { if (isOpen() && !header.contains(e.target)) setMenu(false); });
+  header.addEventListener("focusout", function (e) {
+    if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setMenu(false);
+  });
+}());
+</script>
 
 <main id="main">
 
   <!-- ================================================================= HERO -->
-  <section id="home" class="wrap hero">
-    <p class="hero__hi">Hi, I'm Jamiyan</p>
-    <h1 class="hero__name">Jamiyan Batnyam<span class="hero__dot" aria-hidden="true">.</span></h1>
-    <p class="hero__line">I'm a UX Designer with a passion for basketball, drawing up winning plays to solve complex user challenges.</p>
-    <div class="hero__actions">
-      <a class="cta" href="#projects">See the work <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-      <a class="cta cta--ghost" href="https://drive.google.com/file/d/1n59fu4pS5daSCbGWl0T3oztfOcWMoSbP/view?usp=sharing" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg> Resume</a>
-      <a class="cta cta--ghost" href="mailto:jamyanart@gmail.com"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg> Email</a>
+  <section id="home" class="hero" aria-labelledby="hero-title">
+    <div class="hero__copy">
+      <p class="hero__eyebrow"><span>Design playground</span><span aria-hidden="true"></span></p>
+      <h1 id="hero-title">From the court<br>to the <em>canvas.</em></h1>
+      <p class="hero__intro">I’m Jamiyan — a UX designer who brings the curiosity, teamwork, and discipline I learned through basketball into digital products.</p>
+      <div class="hero__actions">
+        <a class="pill-button" href="#projects">Explore my work <svg class="icon" width="19" height="19" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        <a class="hero__secondary" href="#about-me">About me <svg class="icon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </div>
     </div>
-    <a class="hero__scroll" href="#projects">Scroll down to see projects <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+    <div class="hero__stage" aria-hidden="true">
+      <video class="hero__video" src="assets/video/hero-loop.mp4" poster="assets/img/hero-poster.webp" width="1920" height="1080" muted playsinline loop preload="none" disablepictureinpicture disableremoteplayback tabindex="-1"></video>
+    </div>
+    <a class="hero__scroll" href="#projects">
+      <span class="hero__scroll-icon"><svg class="icon" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></span>
+      <span>Scroll to explore</span>
+    </a>
   </section>
 
-  <!-- ========================================================= FEATURED WORK -->
-  <section id="projects" class="wrap home-section">
-    <div class="home-head">
-      <h2>Featured Work</h2>
+  <!-- ========================================================= SELECTED WORK -->
+  <section id="projects" class="wrap work-section" aria-labelledby="work-heading">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">01 / Selected work</p>
+        <h2 id="work-heading">Selected work<span class="dot">.</span></h2>
+      </div>
     </div>
     <div class="work">
       <a class="project" href="projects/content-plus.html" data-reveal style="--i:0">
         <div class="project__media">
-          <img src="https://framerusercontent.com/images/lo1avRb91BBF060CPnvXiDb5s.png?scale-down-to=1024" alt="Kids holding up a board showing ContentPlus on a tablet, phone, and TV" width="1122" height="1027" loading="lazy" decoding="async">
+          <img src="assets/img/content-plus/thumb.jpg" alt="ContentPlus 2.0 home screen on a tablet in a yellow stand" width="1254" height="1254" loading="lazy" decoding="async">
         </div>
         <div class="project__body">
           <h3 class="project__title">Content Plus</h3>
@@ -487,7 +717,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
       </a>
       <a class="project" href="projects/liminal.html" data-reveal style="--i:1">
         <div class="project__media">
-          <img src="https://framerusercontent.com/images/nZACbKRsUi9wy80llCBwkkI3H00.png?scale-down-to=1024" alt="The Liminal app icon on a lavender gradient" width="2909" height="1581" loading="lazy" decoding="async">
+          <img src="assets/img/liminal/thumb-phones.jpg" alt="Liminal v3 SubLab, home and journal screens on three lavender phones" width="691" height="628" loading="lazy" decoding="async">
         </div>
         <div class="project__body">
           <h3 class="project__title">Liminal</h3>
@@ -515,106 +745,129 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     </div>
   </section>
 
-  <!-- ======================================================== GALLERY TEASER -->
-  <section class="wrap home-section">
-    <div class="home-head">
-      <h2>Gallery</h2>
-      <a href="visual.html">See all 9 pieces &rarr;</a>
-    </div>
-    <div class="teaser" data-reveal>
-        <a href="visual.html" aria-label="Gallery piece 1">
-          <img src="https://framerusercontent.com/images/pn2Jgi2titY05EUATOa3Y7ea3E.png?scale-down-to=512" alt="" width="2254" height="2000" loading="lazy" decoding="async">
-        </a>
-        <a href="visual.html" aria-label="Gallery piece 2">
-          <img src="https://framerusercontent.com/images/3ZDxyTsRmwMAxQRYoGSvxVnF18.png?scale-down-to=512" alt="" width="3912" height="5294" loading="lazy" decoding="async">
-        </a>
-        <a href="visual.html" aria-label="Gallery piece 3">
-          <img src="https://framerusercontent.com/images/Ym60n3KDMM98H7c7oJw7LjKmBk.png?scale-down-to=512" alt="" width="4000" height="3000" loading="lazy" decoding="async">
-        </a>
-        <a href="visual.html" aria-label="Gallery piece 4">
-          <img src="https://framerusercontent.com/images/dIqZEaIS5jPMlG4JyzL0o6iwMM.png?scale-down-to=512" alt="" width="7000" height="4789" loading="lazy" decoding="async">
-        </a>
-        <a href="visual.html" aria-label="Gallery piece 5">
-          <img src="https://framerusercontent.com/images/hGRdwGYtUFRMOd6EblRUjuaOek.png?scale-down-to=512" alt="" width="2400" height="2381" loading="lazy" decoding="async">
-        </a>
-    </div>
-  </section>
+  <!-- ================================================================= ABOUT -->
+  <section id="about-me" class="wrap about" aria-labelledby="about-heading">
+    <figure class="about__photo" data-reveal>
+      <img src="assets/img/about-portrait.webp" alt="Jamiyan Batnyam" width="1122" height="1402" loading="lazy" decoding="async">
+    </figure>
+    <div class="about__text" data-reveal style="--i:1">
+      <p class="eyebrow">02 / A little about me</p>
+      <h2 id="about-heading">Basketball<br>turned <em>designer.</em></h2>
+      <p>I’m originally from Ulaanbaatar, Mongolia, and I’ve developed a strong passion for basketball. Funny enough, I didn’t enjoy the game much as a kid—until my older cousins kept beating me at it. Determined to improve, I joined a local club with a group of strangers, and over time, I fell in love with the sport.</p>
+      <p>Basketball taught me more than just how to play—it taught me how to communicate, work as a team, and think strategically under pressure. Those lessons have shaped the way I approach design. My competitive nature pushes me to stay resilient, find creative solutions when challenges arise, and keep improving until things work</p>
 
-  <!-- ================================================================ ABOUT -->
-  <section id="about-me" class="wrap home-section">
-    <div class="home-head">
-      <h2>About Me</h2>
-    </div>
-    <div class="about">
-      <figure class="about__photo" data-reveal>
-        <img src="https://framerusercontent.com/images/YhcnSNSzmTd3Kpg6JEDdWHDE.jpg?scale-down-to=1024" alt="Jamiyan Batnyam" width="1168" height="1668" loading="lazy" decoding="async">
-      </figure>
-      <div class="about__text" data-reveal style="--i:1">
-        <p class="about__kicker">From the court to design</p>
-        <p>I’m originally from Ulaanbaatar, Mongolia, and I’ve developed a strong passion for basketball. Funny enough, I didn’t enjoy the game much as a kid—until my older cousins kept beating me at it. Determined to improve, I joined a local club with a group of strangers, and over time, I fell in love with the sport.</p>
-        <p>Basketball taught me more than just how to play—it taught me how to communicate, work as a team, and think strategically under pressure. Those lessons have shaped the way I approach design. My competitive nature pushes me to stay resilient, find creative solutions when challenges arise, and keep improving until things work</p>
-
-        <div class="toolbelt">
-          <h3>Toolbelt</h3>
-          <div class="ticker ticker--tools" data-ticker>
-            <div class="ticker__viewport" tabindex="0" role="region" aria-label="Tools, scrollable">
-              <ul class="ticker__track">
-              <li><img src="https://framerusercontent.com/images/ZmCD2VxP1mEpQrlumiCOqYHRBpY.png?scale-down-to=256" alt="" width="512" height="512" loading="lazy"></li>
-              <li><img src="https://framerusercontent.com/images/epOeBktJZzCZLyywzIgtUbSQ.png?scale-down-to=256" alt="" width="512" height="512" loading="lazy"></li>
-              <li><img src="https://framerusercontent.com/images/zNivrDAGssgcKc2FDBc3G46me8.png?scale-down-to=256" alt="" width="1200" height="1170" loading="lazy"></li>
-              <li><img src="https://framerusercontent.com/images/YMCrOzOEy2IgTetJu5tSvvJZNU.jpg?scale-down-to=256" alt="" width="225" height="225" loading="lazy"></li>
-              <li><img src="https://framerusercontent.com/images/QLGkSt1j3YGoNJEExildC0jLQM.png?scale-down-to=256" alt="" width="3840" height="3823" loading="lazy"></li>
-              <li><img src="https://framerusercontent.com/images/vRLibkmELuryfLc85DpKnlDUt8.jpg?scale-down-to=256" alt="" width="1280" height="1280" loading="lazy"></li>
-              </ul>
-            </div>
+      <div class="toolbelt">
+        <h3>Toolbelt</h3>
+        <div class="ticker ticker--tools" data-ticker>
+          <div class="ticker__viewport" tabindex="0" role="region" aria-label="Tools, scrollable">
+            <ul class="ticker__track">
+            <li><img src="https://framerusercontent.com/images/ZmCD2VxP1mEpQrlumiCOqYHRBpY.png?scale-down-to=256" alt="" width="512" height="512" loading="lazy"></li>
+            <li><img src="https://framerusercontent.com/images/epOeBktJZzCZLyywzIgtUbSQ.png?scale-down-to=256" alt="" width="512" height="512" loading="lazy"></li>
+            <li><img src="https://framerusercontent.com/images/zNivrDAGssgcKc2FDBc3G46me8.png?scale-down-to=256" alt="" width="1200" height="1170" loading="lazy"></li>
+            <li><img src="https://framerusercontent.com/images/YMCrOzOEy2IgTetJu5tSvvJZNU.jpg?scale-down-to=256" alt="" width="225" height="225" loading="lazy"></li>
+            <li><img src="https://framerusercontent.com/images/QLGkSt1j3YGoNJEExildC0jLQM.png?scale-down-to=256" alt="" width="3840" height="3823" loading="lazy"></li>
+            <li><img src="https://framerusercontent.com/images/vRLibkmELuryfLc85DpKnlDUt8.jpg?scale-down-to=256" alt="" width="1280" height="1280" loading="lazy"></li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
   </section>
 
+  <!-- ================================================== BEYOND THE INTERFACE -->
+  <section class="wrap beyond" aria-labelledby="beyond-heading">
+    <div class="beyond__head">
+      <div>
+        <p class="eyebrow">Curiosity doesn’t clock out</p>
+        <h2 id="beyond-heading">Beyond the interface.</h2>
+      </div>
+      <a class="arrow-link" href="visual.html">See all 9 pieces <svg class="icon" width="19" height="19" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+    </div>
+    <div class="art-strip" data-reveal>
+      <a href="visual.html" aria-label="Explore Abstract mark in the gallery">
+        <img src="https://framerusercontent.com/images/pn2Jgi2titY05EUATOa3Y7ea3E.png?scale-down-to=1024" alt="An abstract black ink form displayed in a frame." width="2254" height="2000" loading="lazy" decoding="async">
+        <span>Drawing</span>
+      </a>
+      <a href="visual.html" aria-label="Explore A western G in the gallery">
+        <img src="https://framerusercontent.com/images/dIqZEaIS5jPMlG4JyzL0o6iwMM.png?scale-down-to=1024" alt="A western-inspired dimensional letter G with a cowboy hat." width="7000" height="4789" loading="lazy" decoding="async">
+        <span>Visual design</span>
+      </a>
+      <a href="visual.html" aria-label="Explore Geometric landscape in the gallery">
+        <img src="https://framerusercontent.com/images/hGRdwGYtUFRMOd6EblRUjuaOek.png?scale-down-to=1024" alt="A layered triangle and circle over a star-trail landscape." width="2400" height="2381" loading="lazy" decoding="async">
+        <span>Experiments</span>
+      </a>
+    </div>
+  </section>
+
 </main>
 
-<footer class="site-footer">
-  <div class="site-footer__inner">
-    <div>
-      <p class="site-footer__display">THANKS FOR VISITING</p>
-      <p class="site-footer__sub">Let's keep in touch!</p>
+<footer class="site-footer" id="contact">
+  <div class="wrap">
+    <div class="footer-top">
+      <span class="eyebrow">Have something in mind?</span>
+      <span class="eyebrow">Let’s find the next good move.</span>
     </div>
-    <div class="site-footer__cols">
-      <div>
-        <h2>Connect</h2>
-        <ul>
-          <li><a href="mailto:jamyanart@gmail.com">Email</a></li>
-          <li><a href="https://www.linkedin.com/in/jbatnyam" target="_blank" rel="noopener">LinkedIn</a></li>
-          <li><a href="https://drive.google.com/file/d/1n59fu4pS5daSCbGWl0T3oztfOcWMoSbP/view?usp=sharing" target="_blank" rel="noopener">Resume</a></li>
-        </ul>
-      </div>
-      <div>
-        <h2>My Work</h2>
-        <ul>
-          <li><a href="projects/content-plus.html">ContentPlus</a></li>
-          <li><a href="projects/liminal.html">Liminal</a></li>
-          <li><a href="projects/vibe-coding.html">Vibe Coding</a></li>
-        </ul>
+    <div class="footer-hero">
+      <p class="footer-headline">Let’s make<br><em>the next move.</em></p>
+      <div class="footer-figure" aria-hidden="true">
+        <video class="footer-video" src="assets/video/footer-character.mp4" poster="assets/img/footer-character-poster.webp" width="540" height="706" muted playsinline loop preload="none" disablepictureinpicture disableremoteplayback tabindex="-1"></video>
       </div>
     </div>
-
-    <div class="site-footer__bottom">
-      <button class="footer-btn" type="button" id="copy-email" data-email="jamyanart@gmail.com" hidden>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
-        <span id="copy-email-label">Copy email</span>
-      </button>
-      <button class="footer-btn" type="button" id="motion-toggle" aria-pressed="false" hidden>Reduce motion: off</button>
-      <a class="footer-btn footer-btn--plain" href="#top">Back to top &uarr;</a>
-      <span class="footer-status" role="status" id="footer-status"></span>
+    <div class="footer-links">
+      <div class="footer-email">
+        <a href="mailto:jamyanart@gmail.com">jamyanart@gmail.com</a>
+        <button class="copy-btn" type="button" id="copy-email" data-email="jamyanart@gmail.com" aria-label="Copy email address" hidden>
+          <svg class="icon icon-copy" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          <svg class="icon icon-done" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+        </button>
+      </div>
+      <a href="https://www.linkedin.com/in/jbatnyam" target="_blank" rel="noopener">LinkedIn <svg class="icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+      <a href="https://drive.google.com/file/d/1pItyx2MR89-dWQJc5hhjjewwKZ3RN7SD/view?usp=sharing" target="_blank" rel="noopener">Résumé <svg class="icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+      <a class="to-top" href="#top">Back to top <svg class="icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></a>
     </div>
+    <span class="footer-status" role="status" id="footer-status"></span>
   </div>
 </footer>
 
 <script>
+/* Footer utilities. The copy button is revealed only once this runs, so it is
+   never present as a dead control when JavaScript is off. This script runs
+   first: the hero video reads the motion setting it applies. */
 (function () {
   "use strict";
+
+  var status = document.getElementById("footer-status");
+
+  /* ------------------------------------------------------- copy the email */
+  var copyBtn = document.getElementById("copy-email");
+  if (copyBtn && navigator.clipboard && navigator.clipboard.writeText) {
+    copyBtn.hidden = false;
+    var resetTimer = 0;
+    copyBtn.addEventListener("click", function () {
+      var email = copyBtn.getAttribute("data-email");
+      navigator.clipboard.writeText(email).then(function () {
+        copyBtn.classList.add("is-copied");
+        copyBtn.setAttribute("aria-label", "Email copied");
+        if (status) status.textContent = "Email address copied.";
+      }, function () {
+        if (status) status.textContent = "Copy failed. The address is " + email;
+      });
+      window.clearTimeout(resetTimer);
+      resetTimer = window.setTimeout(function () {
+        copyBtn.classList.remove("is-copied");
+        copyBtn.setAttribute("aria-label", "Copy email address");
+        if (status) status.textContent = "";
+      }, 2400);
+    });
+  }
+
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+
   /* The six toolbelt icons are unlabeled on the live site and could not be
      identified. Fill in a name for each and it becomes the image's alt text. */
   var TOOLS = [
@@ -630,12 +883,121 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
     if (t && t.name) img.alt = t.name;
   });
 
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var hasIO = "IntersectionObserver" in window;
+  /* ---- toolbelt: endless loop ----------------------------------------------
+     Three clones of the six icons make four sets, so half the track (two sets,
+     about 820px) is always wider than the 500px strip and the loop never shows
+     a gap. Clones are hidden from assistive tech, and from view whenever motion
+     is reduced and the strip is a plain scroller again. */
+  var belt = document.querySelector(".ticker--tools");
+  if (belt) {
+    var beltView = belt.querySelector(".ticker__viewport");
+    var beltTrack = belt.querySelector(".ticker__track");
+    var originals = Array.prototype.slice.call(beltTrack.children);
+    for (var n = 0; n < 3; n++) {
+      originals.forEach(function (li) {
+        var copy = li.cloneNode(true);
+        copy.setAttribute("aria-hidden", "true");
+        copy.setAttribute("data-clone", "");
+        beltTrack.appendChild(copy);
+      });
+    }
+    var syncBelt = function () {
+      var loop = !root.classList.contains("motion-off");
+      belt.classList.toggle("is-looping", loop);
+      /* while it loops there is nothing to scroll by hand, so no tab stop */
+      if (loop) {
+        beltView.removeAttribute("tabindex");
+        beltView.setAttribute("aria-label", "Tools");
+      } else {
+        beltView.setAttribute("tabindex", "0");
+        beltView.setAttribute("aria-label", "Tools, scrollable");
+      }
+    };
+    document.addEventListener("motionchange", syncBelt);
+    syncBelt();
+  }
 
-  /* ---- reveals and press rings ------------------------------------------ */
-  if (reduce.matches || !hasIO) return;
-  document.documentElement.classList.add("motion-ready");
+  /* ---- hero video ----------------------------------------------------------
+     Muted and looping, never autoplayed by the markup: it plays only while on
+     screen, in a visible tab, with motion allowed, and only once the page has
+     loaded, so it never competes with the poster and the rest of the page.
+     Reduce motion (the OS setting) holds the first frame. If the browser
+     refuses to play, the poster simply stays.
+     Wide or dense screens get the 4K cut (3.6 MB), others keep the 1080p one
+     in the markup (2.5 MB). Same rule as the Design Playbook hero, chosen once
+     before anything is requested so a resize never swaps it mid-loop. */
+  var video = document.querySelector(".hero__video");
+  if (video) {
+    if (window.innerWidth > 760 || window.innerWidth * (window.devicePixelRatio || 1) >= 1280) {
+      video.poster = "assets/img/hero-poster-4k.webp";
+      video.src = "assets/video/hero-loop-4k.mp4";
+      video.width = 3840;
+      video.height = 2160;
+    }
+    var stage = video.parentNode;
+    var box = stage.getBoundingClientRect();
+    var inView = box.bottom > 0 && box.top < window.innerHeight;
+    var loaded = document.readyState === "complete";
+    var still = function () { return root.classList.contains("motion-off"); };
+    var sync = function () {
+      if (still() || !inView || document.hidden || !loaded) {
+        video.pause();
+        if (still() && video.readyState >= 1 && video.currentTime !== 0) video.currentTime = 0;
+        return;
+      }
+      if (video.preload !== "auto") video.preload = "auto";
+      var p = video.play();
+      if (p && p.catch) p.catch(function () {});
+    };
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        inView = entries[0].isIntersecting;
+        sync();
+      }).observe(stage);
+    }
+    video.addEventListener("loadedmetadata", sync);
+    video.addEventListener("canplay", sync);
+    document.addEventListener("visibilitychange", sync);
+    window.addEventListener("pageshow", sync);
+    document.addEventListener("motionchange", sync);
+    window.addEventListener("load", function () { loaded = true; sync(); });
+    sync();
+  }
+
+  /* ---- footer character -----------------------------------------------------
+     Same rules as the hero video: muted loop, plays only while on screen in a
+     visible tab with motion allowed; Reduce motion holds the first frame. It
+     starts loading only as the footer approaches (112 KB). */
+  var figure = document.querySelector(".footer-video");
+  if (figure) {
+    var figureNear = false, figureInView = false;
+    var syncFigure = function () {
+      if (root.classList.contains("motion-off") || !figureInView || document.hidden) {
+        figure.pause();
+        return;
+      }
+      var p = figure.play();
+      if (p && p.catch) p.catch(function () {});
+    };
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        figureNear = entries[0].isIntersecting;
+        if (figureNear && figure.preload !== "auto") figure.preload = "auto";
+      }, { rootMargin: "400px 0px" }).observe(figure);
+      new IntersectionObserver(function (entries) {
+        figureInView = entries[0].isIntersecting;
+        syncFigure();
+      }).observe(figure);
+    }
+    figure.addEventListener("canplay", syncFigure);
+    document.addEventListener("visibilitychange", syncFigure);
+    window.addEventListener("pageshow", syncFigure);
+  }
+
+  /* ---- reveals ------------------------------------------------------------ */
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (reduce.matches || !("IntersectionObserver" in window)) return;
+  root.classList.add("motion-ready");
   var marked = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
@@ -655,72 +1017,7 @@ html.motion-off *, html.motion-off *::before, html.motion-off *::after {
   window.setTimeout(function () {
     marked.forEach(function (el) { el.classList.add("is-in"); });
   }, 4000);
-  document.addEventListener("click", function (e) {
-    var b = e.target.closest(".cta");
-    if (!b) return;
-    b.classList.remove("is-hit"); void b.offsetWidth; b.classList.add("is-hit");
-    b.addEventListener("animationend", function h() {
-      b.classList.remove("is-hit"); b.removeEventListener("animationend", h);
-    });
-  });
 }());
-</script>
-<script>
-/* Footer utilities. Both buttons are revealed only once this runs, so they are
-   never present as dead controls when JavaScript is off. */
-(function () {
-  "use strict";
-
-  /* ------------------------------------------------------- copy the email */
-  var copyBtn = document.getElementById("copy-email");
-  var label   = document.getElementById("copy-email-label");
-  var status  = document.getElementById("footer-status");
-  if (copyBtn && label && navigator.clipboard && navigator.clipboard.writeText) {
-    copyBtn.hidden = false;
-    var resetTimer = 0;
-    copyBtn.addEventListener("click", function () {
-      var email = copyBtn.getAttribute("data-email");
-      navigator.clipboard.writeText(email).then(function () {
-        label.textContent = "Copied";
-        if (status) status.textContent = "Email address copied.";
-      }, function () {
-        label.textContent = "Press Ctrl+C";
-        if (status) status.textContent = "Copy failed. The address is " + email;
-      });
-      window.clearTimeout(resetTimer);
-      resetTimer = window.setTimeout(function () {
-        label.textContent = "Copy email";
-        if (status) status.textContent = "";
-      }, 2400);
-    });
-  }
-
-  /* ------------------------------------------------ reduce-motion override */
-  var motionBtn = document.getElementById("motion-toggle");
-  if (motionBtn) {
-    var root = document.documentElement;
-    var osReduce = false;
-    try { osReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
-    var saved = null;
-    try { saved = window.localStorage.getItem("reduceMotion"); } catch (e) {}
-    /* The OS setting is the default; an explicit choice here overrides it. */
-    var reduced = saved === null ? osReduce : saved === "1";
-
-    var apply = function () {
-      root.classList.toggle("motion-off", reduced);
-      motionBtn.setAttribute("aria-pressed", reduced ? "true" : "false");
-      motionBtn.textContent = "Reduce motion: " + (reduced ? "on" : "off");
-    };
-    apply();
-    motionBtn.hidden = false;
-    motionBtn.addEventListener("click", function () {
-      reduced = !reduced;
-      try { window.localStorage.setItem("reduceMotion", reduced ? "1" : "0"); } catch (e) {}
-      apply();
-      if (status) status.textContent = "Motion " + (reduced ? "reduced" : "restored") + ".";
-    });
-  }
-})();
 </script>
 </body>
 </html>

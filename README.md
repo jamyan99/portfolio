@@ -15,17 +15,29 @@ step, no dependencies. Every page is a single self-contained file.
 | `404.html` | Not-found page, served automatically by GitHub Pages |
 | `.nojekyll` | Stops GitHub from running Jekyll over the files |
 
-## Publishing to GitHub Pages
+## Publishing
 
-1. Create a repository (for a personal site, name it `<your-username>.github.io`).
-2. Copy everything in this folder into it, keeping the structure.
-3. `git add . && git commit -m "Portfolio site" && git push`
-4. In the repository: **Settings → Pages → Build and deployment → Deploy from a
-   branch**, pick `main` and `/ (root)`.
-5. It goes live in a minute or two.
+Live at **https://jamiyanbatnyam.com**, served by GitHub Pages from the `main` branch
+of `github.com/jamyan99/portfolio` (`CNAME` holds the domain, `.nojekyll` turns off
+Jekyll). To update the site, commit and `git push`; Pages rebuilds in a minute or two.
 
-To preview locally, run `python3 -m http.server` in this folder and open
-<http://localhost:8000>.
+DNS records at Spaceship for jamiyanbatnyam.com:
+
+| Type | Host | Value |
+|---|---|---|
+| A | @ | 185.199.108.153 |
+| A | @ | 185.199.109.153 |
+| A | @ | 185.199.110.153 |
+| A | @ | 185.199.111.153 |
+| CNAME | www | jamyan99.github.io |
+
+Every page has a favicon (`favicon.ico`, `apple-touch-icon.png`), a canonical URL and
+link-preview tags; the 1200x630 preview images are in `assets/img/og/`. `404.html` uses
+root-relative paths because Pages serves it at whatever missing address was requested.
+
+To preview locally, run `npx --yes http-server -p 5180 -c-1` in this folder and open
+<http://localhost:5180>. Opened straight from disk (`file://`), the browser blocks the
+self-hosted fonts, so serve it to see the real thing.
 
 ## Images
 

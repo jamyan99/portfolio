@@ -27,17 +27,12 @@ step, no dependencies. Every page is a single self-contained file.
 To preview locally, run `python3 -m http.server` in this folder and open
 <http://localhost:8000>.
 
-## ⚠️ Read this before unpublishing the Framer site
+## Images
 
-Many images and videos on these pages still load from Framer's servers
-(`framerusercontent.com`): the research boards, sketches, wireframes, testing
-photos and the remaining screen recordings. **If you unpublish or delete the
-Framer site, those disappear from here too.**
-
-Run `./fetch-assets.sh` first. It downloads every asset into `assets/`, rewrites
-the HTML to point at the local copies, and saves `.bak` files in case you want to
-undo it. Some source files are very large — the biggest is 7000px wide — so resize
-them before committing if repository size matters.
+Every image and video is self-hosted under `assets/`. The ones that used to load
+from Framer's CDN live in `assets/img/framer/` as WebP, named `<framer id>-<size>.webp`
+at the sizes the pages ask for (the gallery viewer uses `-1600`, its zoom `-4096`), so
+the old Framer site can be unpublished without breaking anything here.
 
 ## Things left to fill in
 
